@@ -96,11 +96,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('Usuario:', response.user);
       console.log('Rol del usuario:', response.user?.role);
       
-      setUser(response.user);
-      localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(response.user));
-      localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, response.token);
+      // Handle different response structures
+      let userData: User;
       
-      return response.user;
+      // Case 1: response has user property
+      if (response.user) {
+        userData = response.user;
+      } 
+      // Case 2: response IS the user (no wrapper)
+      else if ((response as any).role) {
+        userData = response as any as User;
+      }
+      // Case 3: Try to get token and find user data
+      else {
+        throw new Error('Invalid response structure from backend');
+      }
+      
+      // Extract token
+      const token = response.token || (response as any).accessToken || '';
+      
+      setUser(userData);
+      localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(userData));
+      localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
+      
+      return userData;
     } catch (error) {
       throw error;
     } finally {
@@ -116,11 +135,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const response = await authService.register(userData);
       
-      setUser(response.user);
-      localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(response.user));
-      localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, response.token);
+      // Handle different response structures
+      let user: User;
       
-      return response.user;
+      // Case 1: response has user property
+      if (response.user) {
+        user = response.user;
+      } 
+      // Case 2: response IS the user (no wrapper)
+      else if ((response as any).role) {
+        user = response as any as User;
+      }
+      // Case 3: Invalid structure
+      else {
+        throw new Error('Invalid response structure from backend');
+      }
+      
+      // Extract token
+      const token = response.token || (response as any).accessToken || '';
+      
+      setUser(user);
+      localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(user));
+      localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
+      
+      return user;
     } catch (error) {
       throw error;
     } finally {
