@@ -108,7 +108,7 @@ export class LinkedList<T> {
 
     let current = this.head;
     while (current?.next !== null) {
-      if (current.next.value === value) {
+      if (current?.next?.value === value) {
         current.next = current.next.next;
         if (current.next === null) {
           this.tail = current;
@@ -116,7 +116,7 @@ export class LinkedList<T> {
         this.length--;
         return true;
       }
-      current = current.next;
+      current = current?.next ?? null;
     }
 
     return false;
