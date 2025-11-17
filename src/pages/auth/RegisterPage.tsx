@@ -15,7 +15,7 @@ import {
   validateUsername,
   normalizeSpaces,
 } from '@/utils/validation';
-import { ROUTES, SUCCESS_MESSAGES, APP_INFO, USER_ROLES, STORAGE_KEYS } from '@/utils/constants';
+import { ROUTES, SUCCESS_MESSAGES, APP_INFO, USER_ROLES } from '@/utils/constants';
 import type { UserRole } from '@/types';
 
 export const RegisterPage: React.FC = () => {
@@ -157,21 +157,12 @@ export const RegisterPage: React.FC = () => {
         role: formData.role as UserRole,
       };
 
-      await registerUser(registerData);
+      const user = await registerUser(registerData);
       toast.success(SUCCESS_MESSAGES.REGISTER);
       
-      // Small delay to ensure localStorage is updated
-      setTimeout(() => {
-        const storedUser = localStorage.getItem(STORAGE_KEYS.USER_DATA);
-        if (storedUser) {
-          const user = JSON.parse(storedUser);
-          const dashboardRoute = getDashboardByRole(user.role);
-          navigate(dashboardRoute, { replace: true });
-        } else {
-          // Fallback to login if user data not found
-          navigate(ROUTES.LOGIN);
-        }
-      }, 100);
+      // Redirect based on user role
+      const dashboardRoute = getDashboardByRole(user.role);
+      navigate(dashboardRoute, { replace: true });
     } catch (error: any) {
       console.error('Error de registro:', error);
       const errorMessage =

@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks';
 import { Button, Input, Card } from '@/components/ui';
 import { validateRequired, normalizeSpaces } from '@/utils/validation';
-import { ROUTES, SUCCESS_MESSAGES, APP_INFO, USER_ROLES, STORAGE_KEYS } from '@/utils/constants';
+import { ROUTES, SUCCESS_MESSAGES, APP_INFO, USER_ROLES } from '@/utils/constants';
 
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
@@ -109,18 +109,12 @@ export const LoginPage: React.FC = () => {
         password: formData.password, // Password should not be normalized
       };
 
-      await login(loginData);
+      // Get user directly from login response
+      const user = await login(loginData);
       toast.success(SUCCESS_MESSAGES.LOGIN);
       
-      // Small delay to ensure localStorage is updated
-      setTimeout(() => {
-        const storedUser = localStorage.getItem(STORAGE_KEYS.USER_DATA);
-        if (storedUser) {
-          const user = JSON.parse(storedUser);
-          const dashboardRoute = getDashboardByRole(user.role);
-          navigate(dashboardRoute, { replace: true });
-        }
-      }, 100);
+      const dashboardRoute = getDashboardByRole(user.role);
+      navigate(dashboardRoute, { replace: true });
     } catch (error: any) {
       const errorMessage = error?.message || 'Credenciales inválidas. Por favor, verifica tus datos.';
       toast.error(errorMessage);

@@ -16,8 +16,8 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: LoginRequest) => Promise<void>;
-  register: (userData: RegisterRequest) => Promise<void>;
+  login: (credentials: LoginRequest) => Promise<User>;
+  register: (userData: RegisterRequest) => Promise<User>;
   logout: () => Promise<void>;
   updateUser: (user: User) => void;
 }
@@ -88,7 +88,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   /**
    * Login user
    */
-  const login = async (credentials: LoginRequest): Promise<void> => {
+  const login = async (credentials: LoginRequest): Promise<User> => {
     setIsLoading(true);
     try {
       const response = await authService.login(credentials);
@@ -96,6 +96,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(response.user);
       localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(response.user));
       localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, response.token);
+      
+      return response.user;
     } catch (error) {
       throw error;
     } finally {
@@ -106,7 +108,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   /**
    * Register user
    */
-  const registerUser = async (userData: RegisterRequest): Promise<void> => {
+  const registerUser = async (userData: RegisterRequest): Promise<User> => {
     setIsLoading(true);
     try {
       const response = await authService.register(userData);
@@ -114,6 +116,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(response.user);
       localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(response.user));
       localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, response.token);
+      
+      return response.user;
     } catch (error) {
       throw error;
     } finally {
