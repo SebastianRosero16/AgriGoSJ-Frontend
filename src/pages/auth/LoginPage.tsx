@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks';
 import { Button, Input, Card } from '@/components/ui';
@@ -12,7 +12,6 @@ import { validateRequired, normalizeSpaces } from '@/utils/validation';
 import { ROUTES, SUCCESS_MESSAGES, APP_INFO } from '@/utils/constants';
 
 export const LoginPage: React.FC = () => {
-  const navigate = useNavigate();
   const { login } = useAuth();
   
   const [formData, setFormData] = useState({

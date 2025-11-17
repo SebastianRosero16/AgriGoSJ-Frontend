@@ -24,7 +24,7 @@ class HTTPClient {
   private axiosInstance: AxiosInstance;
   private requestQueue: Queue<QueuedRequest>;
   private isRefreshing: boolean = false;
-  private refreshSubscribers: Array<(token: string) => void> = [];
+  // private refreshSubscribers: Array<(token: string) => void> = [];
 
   constructor() {
     this.axiosInstance = axios.create({
