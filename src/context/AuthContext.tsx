@@ -92,6 +92,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       const response = await authService.login(credentials);
+      console.log('Respuesta en AuthContext:', response);
+      console.log('Usuario:', response.user);
+      console.log('Rol del usuario:', response.user?.role);
       
       setUser(response.user);
       localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(response.user));

@@ -111,8 +111,14 @@ export const LoginPage: React.FC = () => {
 
       // Get user directly from login response
       const user = await login(loginData);
-      toast.success(SUCCESS_MESSAGES.LOGIN);
+      console.log('Usuario después de login:', user); // Debug
       
+      if (!user || !user.role) {
+        toast.error('Error: Datos de usuario incompletos');
+        return;
+      }
+      
+      toast.success(SUCCESS_MESSAGES.LOGIN);
       const dashboardRoute = getDashboardByRole(user.role);
       navigate(dashboardRoute, { replace: true });
     } catch (error: any) {
