@@ -22,6 +22,24 @@ export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const { register: registerUser } = useAuth();
 
+  /**
+   * Get dashboard route by role
+   */
+  const getDashboardByRole = (role: string): string => {
+    switch (role) {
+      case USER_ROLES.FARMER:
+        return ROUTES.FARMER.DASHBOARD;
+      case USER_ROLES.STORE:
+        return ROUTES.STORE.DASHBOARD;
+      case USER_ROLES.BUYER:
+        return ROUTES.BUYER.DASHBOARD;
+      case USER_ROLES.ADMIN:
+        return ROUTES.ADMIN.DASHBOARD;
+      default:
+        return ROUTES.HOME;
+    }
+  };
+
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -141,7 +159,17 @@ export const RegisterPage: React.FC = () => {
 
       await registerUser(registerData);
       toast.success(SUCCESS_MESSAGES.REGISTER);
-      navigate(ROUTES.LOGIN);
+      
+      // Get user from localStorage after successful registration
+      const storedUser = localStorage.getItem('agrigo_user_data');
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        const dashboardRoute = getDashboardByRole(user.role);
+        navigate(dashboardRoute, { replace: true });
+      } else {
+        // Fallback to login if user data not found
+        navigate(ROUTES.LOGIN);
+      }
     } catch (error: any) {
       console.error('Error de registro:', error);
       const errorMessage =

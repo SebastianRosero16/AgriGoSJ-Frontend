@@ -92,24 +92,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       const response = await authService.login(credentials);
-      console.log('Login response:', response);
       
-      // Ensure user data is properly structured (handle snake_case from backend)
-      const userData: User = {
-        id: response.user.id,
-        username: response.user.username,
-        email: response.user.email,
-        role: response.user.role,
-        fullName: response.user.fullName || (response.user as any).full_name,
-        createdAt: response.user.createdAt || (response.user as any).created_at,
-        updatedAt: response.user.updatedAt || (response.user as any).updated_at,
-      };
-      
-      setUser(userData);
-      localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(userData));
+      setUser(response.user);
+      localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(response.user));
       localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, response.token);
     } catch (error) {
-      console.error('Login error:', error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -123,24 +110,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       const response = await authService.register(userData);
-      console.log('Register response:', response);
       
-      // Ensure user data is properly structured (handle snake_case from backend)
-      const userDataProcessed: User = {
-        id: response.user.id,
-        username: response.user.username,
-        email: response.user.email,
-        role: response.user.role,
-        fullName: response.user.fullName || (response.user as any).full_name,
-        createdAt: response.user.createdAt || (response.user as any).created_at,
-        updatedAt: response.user.updatedAt || (response.user as any).updated_at,
-      };
-      
-      setUser(userDataProcessed);
-      localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(userDataProcessed));
+      setUser(response.user);
+      localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(response.user));
       localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, response.token);
     } catch (error) {
-      console.error('Register error:', error);
       throw error;
     } finally {
       setIsLoading(false);

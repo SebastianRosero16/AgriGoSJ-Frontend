@@ -4,15 +4,16 @@
  */
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks';
 import { Button, Input, Card } from '@/components/ui';
 import { validateRequired, normalizeSpaces } from '@/utils/validation';
-import { ROUTES, SUCCESS_MESSAGES, APP_INFO } from '@/utils/constants';
+import { ROUTES, SUCCESS_MESSAGES, APP_INFO, USER_ROLES } from '@/utils/constants';
 
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
+  const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
     username: '',
@@ -25,6 +26,24 @@ export const LoginPage: React.FC = () => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+
+  /**
+   * Get dashboard route by role
+   */
+  const getDashboardByRole = (role: string): string => {
+    switch (role) {
+      case USER_ROLES.FARMER:
+        return ROUTES.FARMER.DASHBOARD;
+      case USER_ROLES.STORE:
+        return ROUTES.STORE.DASHBOARD;
+      case USER_ROLES.BUYER:
+        return ROUTES.BUYER.DASHBOARD;
+      case USER_ROLES.ADMIN:
+        return ROUTES.ADMIN.DASHBOARD;
+      default:
+        return ROUTES.HOME;
+    }
+  };
 
   /**
    * Handle input change with validation
@@ -92,7 +111,14 @@ export const LoginPage: React.FC = () => {
 
       await login(loginData);
       toast.success(SUCCESS_MESSAGES.LOGIN);
-      // Navigation is handled by App.tsx based on user role
+      
+      // Get user from localStorage after successful login
+      const storedUser = localStorage.getItem('agrigo_user_data');
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        const dashboardRoute = getDashboardByRole(user.role);
+        navigate(dashboardRoute, { replace: true });
+      }
     } catch (error: any) {
       const errorMessage = error?.message || 'Credenciales inválidas. Por favor, verifica tus datos.';
       toast.error(errorMessage);

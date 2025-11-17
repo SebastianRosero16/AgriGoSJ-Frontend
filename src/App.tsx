@@ -49,23 +49,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles 
 
 // Get dashboard route by role
 function getDashboardByRole(role: string): string {
-  console.log('getDashboardByRole called with role:', role);
-  
   switch (role) {
     case USER_ROLES.FARMER:
-      console.log('Redirecting to FARMER dashboard');
       return ROUTES.FARMER.DASHBOARD;
     case USER_ROLES.STORE:
-      console.log('Redirecting to STORE dashboard');
       return ROUTES.STORE.DASHBOARD;
     case USER_ROLES.BUYER:
-      console.log('Redirecting to BUYER dashboard');
       return ROUTES.BUYER.DASHBOARD;
     case USER_ROLES.ADMIN:
-      console.log('Redirecting to ADMIN dashboard');
       return ROUTES.ADMIN.DASHBOARD;
     default:
-      console.log('Unknown role, redirecting to HOME');
       return ROUTES.HOME;
   }
 }
@@ -73,11 +66,6 @@ function getDashboardByRole(role: string): string {
 // App Component
 const App: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
-  
-  // Log auth state for debugging
-  React.useEffect(() => {
-    console.log('Auth state changed:', { isAuthenticated, user });
-  }, [isAuthenticated, user]);
 
   return (
     <React.Suspense fallback={<LoadingFallback />}>
