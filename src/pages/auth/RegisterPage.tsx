@@ -15,7 +15,7 @@ import {
   validateUsername,
   normalizeSpaces,
 } from '@/utils/validation';
-import { ROUTES, SUCCESS_MESSAGES, APP_INFO, USER_ROLES } from '@/utils/constants';
+import { ROUTES, SUCCESS_MESSAGES, APP_INFO, USER_ROLES, STORAGE_KEYS } from '@/utils/constants';
 import type { UserRole } from '@/types';
 
 export const RegisterPage: React.FC = () => {
@@ -160,16 +160,18 @@ export const RegisterPage: React.FC = () => {
       await registerUser(registerData);
       toast.success(SUCCESS_MESSAGES.REGISTER);
       
-      // Get user from localStorage after successful registration
-      const storedUser = localStorage.getItem('agrigo_user_data');
-      if (storedUser) {
-        const user = JSON.parse(storedUser);
-        const dashboardRoute = getDashboardByRole(user.role);
-        navigate(dashboardRoute, { replace: true });
-      } else {
-        // Fallback to login if user data not found
-        navigate(ROUTES.LOGIN);
-      }
+      // Small delay to ensure localStorage is updated
+      setTimeout(() => {
+        const storedUser = localStorage.getItem(STORAGE_KEYS.USER_DATA);
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          const dashboardRoute = getDashboardByRole(user.role);
+          navigate(dashboardRoute, { replace: true });
+        } else {
+          // Fallback to login if user data not found
+          navigate(ROUTES.LOGIN);
+        }
+      }, 100);
     } catch (error: any) {
       console.error('Error de registro:', error);
       const errorMessage =

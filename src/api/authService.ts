@@ -3,7 +3,7 @@
  */
 
 import { httpClient } from './httpClient';
-import { API_ENDPOINTS } from '@/utils/constants';
+import { API_ENDPOINTS, STORAGE_KEYS } from '@/utils/constants';
 import type { AuthResponse, LoginRequest, RegisterRequest } from '@/types';
 
 /**
@@ -40,7 +40,7 @@ class AuthService {
    * Check if user is authenticated
    */
   isAuthenticated(): boolean {
-    const token = localStorage.getItem('agrigosj_auth_token');
+    const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
     return !!token;
   }
 
@@ -48,7 +48,7 @@ class AuthService {
    * Get current user from storage
    */
   getCurrentUser(): any | null {
-    const userData = localStorage.getItem('agrigosj_user_data');
+    const userData = localStorage.getItem(STORAGE_KEYS.USER_DATA);
     return userData ? JSON.parse(userData) : null;
   }
 }

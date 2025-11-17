@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks';
 import { Button, Input, Card } from '@/components/ui';
 import { validateRequired, normalizeSpaces } from '@/utils/validation';
-import { ROUTES, SUCCESS_MESSAGES, APP_INFO, USER_ROLES } from '@/utils/constants';
+import { ROUTES, SUCCESS_MESSAGES, APP_INFO, USER_ROLES, STORAGE_KEYS } from '@/utils/constants';
 
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
@@ -112,13 +112,15 @@ export const LoginPage: React.FC = () => {
       await login(loginData);
       toast.success(SUCCESS_MESSAGES.LOGIN);
       
-      // Get user from localStorage after successful login
-      const storedUser = localStorage.getItem('agrigo_user_data');
-      if (storedUser) {
-        const user = JSON.parse(storedUser);
-        const dashboardRoute = getDashboardByRole(user.role);
-        navigate(dashboardRoute, { replace: true });
-      }
+      // Small delay to ensure localStorage is updated
+      setTimeout(() => {
+        const storedUser = localStorage.getItem(STORAGE_KEYS.USER_DATA);
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          const dashboardRoute = getDashboardByRole(user.role);
+          navigate(dashboardRoute, { replace: true });
+        }
+      }, 100);
     } catch (error: any) {
       const errorMessage = error?.message || 'Credenciales inválidas. Por favor, verifica tus datos.';
       toast.error(errorMessage);
