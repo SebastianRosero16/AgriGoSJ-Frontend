@@ -13,7 +13,7 @@ import type { Product } from '@/types';
 interface ProductFormData {
   name: string;
   description: string;
-  price: number;
+  price: string;
   unit: string;
   stock: number;
   category: string;
@@ -38,7 +38,7 @@ export const FarmerProducts: React.FC = () => {
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     description: '',
-    price: 0,
+    price: '',
     unit: 'kg',
     stock: 0,
     category: '',
@@ -141,12 +141,17 @@ export const FarmerProducts: React.FC = () => {
     }
 
     // Validar precio
-    if (isNaN(formData.price) || formData.price <= 0) {
+    if (!formData.price || formData.price.trim() === '') {
+      toast.error('El precio es requerido');
+      return false;
+    }
+    const priceNum = parseInt(formData.price, 10);
+    if (isNaN(priceNum) || priceNum <= 0) {
       toast.error('El precio debe ser un número mayor a 0');
       return false;
     }
-    if (formData.price > 1000000) {
-      toast.error('El precio no puede exceder $1,000,000');
+    if (priceNum > 999999999) {
+      toast.error('El precio no puede exceder $999,999,999 COP');
       return false;
     }
 
@@ -229,7 +234,7 @@ export const FarmerProducts: React.FC = () => {
     setFormData({
       name: product.name,
       description: product.description,
-      price: product.price,
+      price: product.price.toString(),
       unit: product.unit,
       stock: product.stock,
       category: product.category,
@@ -262,7 +267,7 @@ export const FarmerProducts: React.FC = () => {
     setFormData({
       name: '',
       description: '',
-      price: 0,
+      price: '',
       unit: 'kg',
       stock: 0,
       category: '',
@@ -277,11 +282,22 @@ export const FarmerProducts: React.FC = () => {
     
     // Validaciones en tiempo real
     if (name === 'price') {
-      const numValue = parseFloat(value);
-      if (value && (isNaN(numValue) || numValue < 0)) {
-        return; // No actualizar si el valor no es válido
+      // Permitir solo números sin decimales (moneda colombiana)
+      const cleanedValue = value.replace(/[^\d]/g, '');
+      
+      if (cleanedValue === '') {
+        setFormData(prev => ({ ...prev, [name]: '' }));
+        return;
       }
-      setFormData(prev => ({ ...prev, [name]: numValue || 0 }));
+      
+      const numValue = parseInt(cleanedValue, 10);
+      
+      // Validar que sea un número positivo y no exceda un límite razonable
+      if (isNaN(numValue) || numValue < 0 || numValue > 999999999) {
+        return;
+      }
+      
+      setFormData(prev => ({ ...prev, [name]: cleanedValue }));
     } else if (name === 'stock') {
       const numValue = parseFloat(value);
       if (value && (isNaN(numValue) || numValue < 0 || !Number.isInteger(numValue))) {
@@ -399,14 +415,13 @@ export const FarmerProducts: React.FC = () => {
                 required
               />
               <Input
-                label="Precio *"
-                type="number"
+                label="Precio (COP) *"
+                type="text"
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
-                placeholder="0.00"
-                step="0.01"
-                min="0.01"
+                placeholder="Ej: 5000"
+                helperText="Solo números positivos mayores a 0"
                 required
               />
               <div>
