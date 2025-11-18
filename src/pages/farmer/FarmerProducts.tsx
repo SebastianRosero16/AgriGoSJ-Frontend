@@ -167,15 +167,27 @@ export const FarmerProducts: React.FC = () => {
 
     // Validar URL de imagen si está presente
     if (formData.imageUrl && formData.imageUrl.trim()) {
-      try {
-        new URL(formData.imageUrl);
-        if (!formData.imageUrl.match(/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i)) {
-          toast.error('La URL de la imagen debe ser una URL válida que termine en .jpg, .png, .gif o .webp');
+      // Permitir imágenes Base64 o URLs tradicionales
+      const isBase64 = formData.imageUrl.startsWith('data:image/');
+      const isUrl = formData.imageUrl.startsWith('http://') || formData.imageUrl.startsWith('https://');
+      
+      if (!isBase64 && !isUrl) {
+        toast.error('La imagen debe ser una URL válida o una imagen subida desde tu dispositivo');
+        return false;
+      }
+      
+      // Si es URL, validar formato
+      if (isUrl) {
+        try {
+          new URL(formData.imageUrl);
+          if (!formData.imageUrl.match(/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i)) {
+            toast.error('La URL de la imagen debe terminar en .jpg, .png, .gif o .webp');
+            return false;
+          }
+        } catch {
+          toast.error('La URL de la imagen no es válida');
           return false;
         }
-      } catch {
-        toast.error('La URL de la imagen no es válida');
-        return false;
       }
     }
 
