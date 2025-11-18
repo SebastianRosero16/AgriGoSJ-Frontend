@@ -2,6 +2,8 @@
 
 Plataforma Agrícola Inteligente de San José
 
+**Backend API**: https://web-production-a81779.up.railway.app
+
 ## 🌾 Descripción
 
 AgriGoSJ es una plataforma web moderna para conectar agricultores, agrotiendas y compradores en un ecosistema digital agrícola. Desarrollada con React, TypeScript y estructuras de datos avanzadas.
