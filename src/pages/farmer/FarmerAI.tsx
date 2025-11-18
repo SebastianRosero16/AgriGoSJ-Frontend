@@ -32,31 +32,31 @@ export const FarmerAI: React.FC = () => {
 
   const recommendationTypes = [
     {
-      id: 'planting',
+      id: 'GENERAL',
       title: 'Recomendaciones de Siembra',
       icon: '🌱',
       description: 'Mejor época y técnicas para sembrar tus cultivos',
       color: 'bg-green-50 border-green-200',
     },
     {
-      id: 'irrigation',
+      id: 'OPTIMIZATION',
       title: 'Gestión de Riego',
       icon: '💧',
       description: 'Optimiza el uso de agua según clima y cultivo',
       color: 'bg-blue-50 border-blue-200',
     },
     {
-      id: 'pests',
+      id: 'PESTICIDE',
       title: 'Control de Plagas',
       icon: '🐛',
       description: 'Identifica y controla plagas de forma natural',
       color: 'bg-yellow-50 border-yellow-200',
     },
     {
-      id: 'harvest',
-      title: 'Momento de Cosecha',
+      id: 'FERTILIZER',
+      title: 'Fertilización',
       icon: '🌾',
-      description: 'Determina el mejor momento para cosechar',
+      description: 'Recomendaciones de fertilizantes para tus cultivos',
       color: 'bg-orange-50 border-orange-200',
     },
   ];
