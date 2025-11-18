@@ -1,0 +1,11 @@
+{
+  "name": "agrigosj-frontend",
+  "buildCommand": "npm install && npm run build",
+  "outputDirectory": "dist",
+  "environmentVariables": {
+    "VITE_API_BASE_URL": "https://back-agrigo.onrender.com",
+    "VITE_APP_NAME": "AgriGoSJ",
+    "VITE_TOKEN_REFRESH_INTERVAL": "840000",
+    "VITE_REQUEST_TIMEOUT": "30000"
+  }
+}
