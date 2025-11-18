@@ -235,3 +235,76 @@ export function isFutureDate(date: string): boolean {
   const d = new Date(date);
   return d > new Date();
 }
+
+/**
+ * Validate Gmail email format (advanced)
+ */
+export function isValidGmail(email: string): { isValid: boolean; error?: string } {
+  if (!email.endsWith('@gmail.com') && !email.endsWith('@googlemail.com')) {
+    return { isValid: false, error: 'El email debe ser de Gmail' };
+  }
+
+  const localPart = email.split('@')[0];
+
+  // No puede empezar o terminar con punto
+  if (localPart.startsWith('.') || localPart.endsWith('.')) {
+    return { isValid: false, error: 'El email de Gmail no puede empezar o terminar con punto' };
+  }
+
+  // No puede tener puntos consecutivos
+  if (localPart.includes('..')) {
+    return { isValid: false, error: 'El email de Gmail no puede tener puntos consecutivos' };
+  }
+
+  // Solo letras, números y puntos
+  if (!/^[a-zA-Z0-9.]+$/.test(localPart)) {
+    return { isValid: false, error: 'El email de Gmail solo puede contener letras, números y puntos' };
+  }
+
+  return { isValid: true };
+}
+
+/**
+ * Validate advanced email with Gmail check
+ */
+export function validateEmailAdvanced(email: string): { isValid: boolean; error?: string } {
+  const requiredError = validateRequired(email);
+  if (requiredError) {
+    return { isValid: false, error: requiredError };
+  }
+
+  // Formato básico
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return { isValid: false, error: 'Formato de email inválido' };
+  }
+
+  // Validación específica de Gmail
+  if (email.endsWith('@gmail.com') || email.endsWith('@googlemail.com')) {
+    return isValidGmail(email);
+  }
+
+  return { isValid: true };
+}
+
+/**
+ * Validate verification code (6 digits)
+ */
+export function validateVerificationCode(code: string): { isValid: boolean; error?: string } {
+  if (!code || code.trim().length === 0) {
+    return { isValid: false, error: 'El código es obligatorio' };
+  }
+
+  if (!/^\d{6}$/.test(code)) {
+    return { isValid: false, error: 'El código debe tener exactamente 6 dígitos' };
+  }
+
+  return { isValid: true };
+}
+
+/**
+ * Check if code is numeric
+ */
+export function isNumericCode(code: string): boolean {
+  return /^\d+$/.test(code);
+}

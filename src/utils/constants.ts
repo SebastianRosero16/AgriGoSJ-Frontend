@@ -107,6 +107,13 @@ export const API_ENDPOINTS = {
     LOGIN: '/auth/login',
     LOGOUT: '/auth/logout',
     REFRESH: '/auth/refresh',
+    VALIDATE_EMAIL: '/auth/validate-email',
+    SEND_VERIFICATION_CODE: '/auth/send-verification-code',
+    VERIFY_CODE: '/auth/verify-code',
+    CHECK_VERIFICATION: (email: string) => `/auth/check-verification/${email}`,
+    VERIFY_EMAIL: '/auth/verify-email',
+    FORGOT_PASSWORD: '/auth/forgot-password',
+    RESET_PASSWORD: '/auth/reset-password',
   },
   
   // Farmer
@@ -159,6 +166,11 @@ export const VALIDATION_RULES = {
   },
   EMAIL: {
     PATTERN: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    GMAIL_PATTERN: /^[a-zA-Z0-9.]+@(gmail|googlemail)\.com$/,
+  },
+  VERIFICATION_CODE: {
+    LENGTH: 6,
+    PATTERN: /^\d{6}$/,
   },
   NAME: {
     MIN_LENGTH: 2,

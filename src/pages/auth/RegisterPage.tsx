@@ -8,9 +8,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks';
 import { Button, Input, Card } from '@/components/ui';
+import { EmailVerification } from '@/components/auth/EmailVerification';
+import { authService } from '@/api';
 import {
   validateRequired,
   validateEmail,
+  validateEmailAdvanced,
   validatePassword,
   validateUsername,
   normalizeSpaces,
@@ -59,6 +62,8 @@ export const RegisterPage: React.FC = () => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [showVerification, setShowVerification] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
 
   /**
    * Handle input change with validation
@@ -136,7 +141,7 @@ export const RegisterPage: React.FC = () => {
   };
 
   /**
-   * Handle form submit
+   * Handle form submit - Step 1: Validate and verify email
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,6 +150,39 @@ export const RegisterPage: React.FC = () => {
       return;
     }
 
+    // If email is not verified, start verification process
+    if (!emailVerified) {
+      setIsLoading(true);
+      try {
+        // Step 1: Validate email with backend
+        const validation = await authService.validateEmail(formData.email);
+        
+        if (!validation.valid) {
+          toast.error(validation.reason || 'Email inválido');
+          setErrors(prev => ({ ...prev, email: validation.reason || 'Email inválido' }));
+          setIsLoading(false);
+          return;
+        }
+
+        // Step 2: Show verification component
+        setShowVerification(true);
+        setIsLoading(false);
+      } catch (error: any) {
+        console.error('Error al validar email:', error);
+        toast.error(error?.message || 'Error al validar email');
+        setIsLoading(false);
+      }
+      return;
+    }
+
+    // If email is verified, proceed with registration
+    await completeRegistration();
+  };
+
+  /**
+   * Complete registration after email verification
+   */
+  const completeRegistration = async () => {
     setIsLoading(true);
 
     try {
@@ -203,6 +241,37 @@ export const RegisterPage: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  /**
+   * Handle email verification success
+   */
+  const handleEmailVerified = () => {
+    setEmailVerified(true);
+    setShowVerification(false);
+    toast.success('Email verificado. Completando registro...');
+    completeRegistration();
+  };
+
+  /**
+   * Handle verification cancel
+   */
+  const handleVerificationCancel = () => {
+    setShowVerification(false);
+    setEmailVerified(false);
+  };
+
+  // Show verification component if needed
+  if (showVerification) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 px-4 py-8">
+        <EmailVerification
+          email={formData.email}
+          onVerified={handleEmailVerified}
+          onCancel={handleVerificationCancel}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 px-4 py-8">

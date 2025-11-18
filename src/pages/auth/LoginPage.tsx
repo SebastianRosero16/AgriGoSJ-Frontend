@@ -7,7 +7,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks';
-import { Button, Input, Card } from '@/components/ui';
+import { Button, Input, Card, Modal } from '@/components/ui';
+import { ForgotPassword } from '@/components/auth/ForgotPassword';
 import { validateRequired, normalizeSpaces } from '@/utils/validation';
 import { ROUTES, SUCCESS_MESSAGES, APP_INFO, USER_ROLES } from '@/utils/constants';
 
@@ -26,6 +27,7 @@ export const LoginPage: React.FC = () => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   /**
    * Get dashboard route by role
@@ -129,6 +131,26 @@ export const LoginPage: React.FC = () => {
     }
   };
 
+  /**
+   * Handle forgot password success
+   */
+  const handleForgotPasswordSuccess = () => {
+    setShowForgotPassword(false);
+    toast.success('Contraseña actualizada. Por favor, inicia sesión con tu nueva contraseña.');
+  };
+
+  // Show forgot password component if needed
+  if (showForgotPassword) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 px-4 py-8">
+        <ForgotPassword
+          onSuccess={handleForgotPasswordSuccess}
+          onCancel={() => setShowForgotPassword(false)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 px-4">
       <Card className="w-full max-w-md">
@@ -165,6 +187,16 @@ export const LoginPage: React.FC = () => {
             required
             disabled={isLoading}
           />
+
+          <div className="flex items-center justify-end">
+            <button
+              type="button"
+              onClick={() => setShowForgotPassword(true)}
+              className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
+          </div>
 
           <Button
             type="submit"
