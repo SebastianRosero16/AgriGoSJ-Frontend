@@ -5,9 +5,9 @@
 
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { Card, Button, Loading } from '@/components/ui';
+import { Card, Button } from '@/components/ui';
 import { aiService } from '@/api';
-import { Queue, Stack } from '@/data-structures';
+import { Stack } from '@/data-structures';
 import { useQueue } from '@/hooks';
 
 interface Recommendation {
@@ -100,8 +100,11 @@ export const FarmerAI: React.FC = () => {
       };
 
       // Add to history (Stack - LIFO)
-      recommendations.push(newRecommendation);
-      setRecommendations(new Stack(...recommendations.toArray()));
+      const updatedRecommendations = new Stack<Recommendation>();
+      const existingRecs = recommendations.toArray();
+      existingRecs.forEach(rec => updatedRecommendations.push(rec));
+      updatedRecommendations.push(newRecommendation);
+      setRecommendations(updatedRecommendations);
 
       toast.success('Recomendación generada exitosamente');
       setShowHistory(true);
