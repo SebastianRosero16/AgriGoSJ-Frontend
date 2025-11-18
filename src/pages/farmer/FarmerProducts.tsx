@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { Card, Button, Input, Loading, Modal } from '@/components/ui';
+import { Card, Button, Input, Loading, Modal, ImageUpload } from '@/components/ui';
 import { marketplaceService } from '@/api';
 import { Stack } from '@/data-structures';
 import type { Product } from '@/types';
@@ -452,14 +452,13 @@ export const FarmerProducts: React.FC = () => {
                 min="0"
                 required
               />
-              <Input
-                label="URL de Imagen"
-                name="imageUrl"
-                value={formData.imageUrl}
-                onChange={handleChange}
-                placeholder="https://ejemplo.com/imagen.jpg"
-              />
             </div>
+            <ImageUpload
+              label="Imagen del Producto"
+              value={formData.imageUrl}
+              onChange={(imageData) => setFormData(prev => ({ ...prev, imageUrl: imageData }))}
+              helperText="Sube una imagen desde tu dispositivo (JPG, PNG, WEBP). Máximo 2MB"
+            />
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Descripción *
