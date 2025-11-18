@@ -62,7 +62,7 @@ export const FarmerAI: React.FC = () => {
 
   const handleCropSelect = (crop: Crop) => {
     // Validate crop has required data
-    if (!crop || !crop.name || !crop.type) {
+    if (!crop || !crop.cropName || !crop.cropType) {
       toast.error('Este cultivo no tiene datos completos. Por favor edítalo primero.');
       return;
     }
@@ -72,7 +72,7 @@ export const FarmerAI: React.FC = () => {
       {
         id: `welcome-${Date.now()}`,
         sender: 'ai',
-        content: `¡Hola! He seleccionado tu cultivo de **${crop.name}** (${crop.type}). Puedo ayudarte con:\n\n🌱 Recomendaciones de siembra\n💧 Optimización de riego\n🐛 Control de plagas\n🌾 Fertilización\n\n¿En qué puedo asistirte hoy? También puedes enviarme fotos de tu cultivo para análisis.`,
+        content: `¡Hola! He seleccionado tu cultivo de **${crop.cropName}** (${crop.cropType}). Puedo ayudarte con:\n\n🌱 Recomendaciones de siembra\n💧 Optimización de riego\n🐛 Control de plagas\n🌾 Fertilización\n\n¿En qué puedo asistirte hoy? También puedes enviarme fotos de tu cultivo para análisis.`,
         timestamp: new Date(),
       },
     ]);
@@ -171,9 +171,9 @@ export const FarmerAI: React.FC = () => {
         cropId: selectedCrop.id,
         context: {
           userMessage: messageInput,
-          cropName: selectedCrop.name,
-          cropType: selectedCrop.type,
-          cropStatus: selectedCrop.status,
+          cropName: selectedCrop.cropName,
+          cropType: selectedCrop.cropType,
+          cropStatus: selectedCrop.stage,
           area: selectedCrop.area,
           location: selectedCrop.location,
           hasImage: !!tempImage,
@@ -281,18 +281,20 @@ export const FarmerAI: React.FC = () => {
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h4 className="font-semibold text-gray-900">{crop.name || 'Sin nombre'}</h4>
-                      <p className="text-sm text-gray-600">{crop.type || 'Sin tipo'}</p>
+                      <h4 className="font-semibold text-gray-900">{crop.cropName || 'Sin nombre'}</h4>
+                      <p className="text-sm text-gray-600">{crop.cropType || 'Sin tipo'}</p>
                     </div>
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      crop.status === 'HARVESTED' ? 'bg-green-100 text-green-800' :
-                      crop.status === 'READY' ? 'bg-yellow-100 text-yellow-800' :
-                      crop.status === 'GROWING' ? 'bg-blue-100 text-blue-800' :
+                      crop.stage === 'HARVEST' ? 'bg-green-100 text-green-800' :
+                      crop.stage === 'FRUITING' ? 'bg-yellow-100 text-yellow-800' :
+                      crop.stage === 'FLOWERING' ? 'bg-purple-100 text-purple-800' :
+                      crop.stage === 'VEGETATIVE' ? 'bg-blue-100 text-blue-800' :
                       'bg-gray-100 text-gray-800'
                     }`}>
-                      {crop.status === 'PLANTED' ? 'Plantado' :
-                       crop.status === 'GROWING' ? 'Creciendo' :
-                       crop.status === 'READY' ? 'Listo' : 'Cosechado'}
+                      {crop.stage === 'SEEDLING' ? 'Plántula' :
+                       crop.stage === 'VEGETATIVE' ? 'Vegetativo' :
+                       crop.stage === 'FLOWERING' ? 'Floreciendo' :
+                       crop.stage === 'FRUITING' ? 'Fructificando' : 'Cosecha'}
                     </span>
                   </div>
                   <p className="text-sm text-gray-600">📏 {crop.area || 0} ha • 📍 {crop.location || 'Sin ubicación'}</p>
@@ -309,8 +311,8 @@ export const FarmerAI: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className="text-3xl">🌱</div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">{selectedCrop.name}</h3>
-                  <p className="text-sm text-gray-600">{selectedCrop.type} • {selectedCrop.area} ha</p>
+                  <h3 className="font-semibold text-gray-900">{selectedCrop.cropName}</h3>
+                  <p className="text-sm text-gray-600">{selectedCrop.cropType} • {selectedCrop.area} ha</p>
                 </div>
               </div>
               <Button variant="secondary" onClick={() => {
