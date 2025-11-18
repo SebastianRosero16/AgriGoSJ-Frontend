@@ -3,12 +3,58 @@
  * Dashboard main view with statistics
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Card } from '@/components/ui';
+import { Card, Loading } from '@/components/ui';
 import { ROUTES } from '@/utils/constants';
+import { marketplaceService } from '@/api';
 
 export const FarmerOverview: React.FC = () => {
+  const [stats, setStats] = useState({
+    activeCrops: 0,
+    publishedProducts: 0,
+    aiRecommendations: 0,
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadStats();
+  }, []);
+
+  const loadStats = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Obtener productos publicados
+      const products = await marketplaceService.getMyProducts();
+      const productsCount = Array.isArray(products) ? products.length : 0;
+
+      // TODO: Cuando el backend tenga endpoints para cultivos y recomendaciones IA, agregar aquí
+      // const crops = await cropsService.getMyCrops();
+      // const recommendations = await aiService.getMyRecommendations();
+
+      setStats({
+        activeCrops: 0, // TODO: Actualizar cuando exista el endpoint
+        publishedProducts: productsCount,
+        aiRecommendations: 0, // TODO: Actualizar cuando exista el endpoint
+      });
+    } catch (error) {
+      console.error('Error al cargar estadísticas:', error);
+      // Si hay error, mantener en 0
+      setStats({
+        activeCrops: 0,
+        publishedProducts: 0,
+        aiRecommendations: 0,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -22,7 +68,7 @@ export const FarmerOverview: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Cultivos Activos</p>
-              <p className="text-3xl font-bold text-primary-600 mt-2">0</p>
+              <p className="text-3xl font-bold text-primary-600 mt-2">{stats.activeCrops}</p>
             </div>
             <div className="text-4xl">🌾</div>
           </div>
@@ -32,7 +78,7 @@ export const FarmerOverview: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Productos Publicados</p>
-              <p className="text-3xl font-bold text-primary-600 mt-2">0</p>
+              <p className="text-3xl font-bold text-primary-600 mt-2">{stats.publishedProducts}</p>
             </div>
             <div className="text-4xl">📦</div>
           </div>
@@ -42,7 +88,7 @@ export const FarmerOverview: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Recomendaciones IA</p>
-              <p className="text-3xl font-bold text-primary-600 mt-2">0</p>
+              <p className="text-3xl font-bold text-primary-600 mt-2">{stats.aiRecommendations}</p>
             </div>
             <div className="text-4xl">🤖</div>
           </div>
