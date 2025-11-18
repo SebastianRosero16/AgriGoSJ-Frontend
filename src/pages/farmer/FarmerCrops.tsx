@@ -62,11 +62,22 @@ export const FarmerCrops: React.FC = () => {
     }
 
     try {
+      // Transform data to match backend expectations
+      const requestData = {
+        cropName: formData.name,
+        cropType: formData.type,
+        plantedDate: formData.plantedDate,
+        area: formData.area,
+        location: formData.location,
+        status: formData.status,
+        notes: formData.notes,
+      };
+
       if (editingCrop) {
-        await farmerService.updateCrop(editingCrop.id, formData);
+        await farmerService.updateCrop(editingCrop.id, requestData);
         toast.success('Cultivo actualizado exitosamente');
       } else {
-        await farmerService.createCrop(formData);
+        await farmerService.createCrop(requestData);
         toast.success('Cultivo creado exitosamente');
       }
       

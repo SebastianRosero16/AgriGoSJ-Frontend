@@ -70,8 +70,8 @@ export interface Crop {
  * Create Crop Request
  */
 export interface CreateCropRequest {
-  name: string;
-  type: string;
+  cropName: string;
+  cropType: string;
   plantedDate: string;
   area: number;
   location: string;
