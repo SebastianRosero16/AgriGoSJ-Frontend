@@ -60,6 +60,7 @@ export const FarmerProducts: React.FC = () => {
       // Validar que sea un array
       if (!Array.isArray(data)) {
         console.error('La respuesta no es un array:', data);
+        toast.error('Error al cargar productos: formato de datos inválido');
         setProducts([]);
         return;
       }
@@ -71,17 +72,18 @@ export const FarmerProducts: React.FC = () => {
     } catch (error: any) {
       console.error('Error loading products:', error);
       
-      // Manejar diferentes tipos de errores - pero no mostrar error si simplemente no hay productos
-      if (error?.status === 401) {
+      // Manejar diferentes tipos de errores
+      if (error?.status === 404 || error?.message?.includes('404')) {
+        // No hay productos aún, esto es normal
+        setProducts([]);
+      } else if (error?.status === 401) {
         toast.error('Sesión expirada. Por favor, inicia sesión nuevamente.');
+        // Opcional: redirigir al login
       } else if (error?.status === 0) {
         toast.error('No se puede conectar con el servidor. Verifica tu conexión a internet.');
-      } else if (error?.status !== 404 && error?.status !== 500) {
-        // Solo mostrar error si no es 404 o 500 (que pueden significar que no hay productos)
-        const errorMessage = error?.message || 'Error al cargar productos.';
-        if (!errorMessage.includes('No static resource')) {
-          toast.error(errorMessage);
-        }
+      } else {
+        const errorMessage = error?.message || 'Error al cargar productos. Por favor, intenta de nuevo.';
+        toast.error(errorMessage);
       }
       setProducts([]);
     } finally {
@@ -182,25 +184,30 @@ export const FarmerProducts: React.FC = () => {
     }
 
     // Limpiar datos antes de enviar
-    const cleanedData = {
-      name: formData.name.trim(),
-      description: formData.description.trim(),
+    // El backend espera productName, productCategory y quantity
+    const cleanedData: any = {
+      productName: formData.name.trim(),
+      productCategory: formData.category.trim(),
+      productDescription: formData.description.trim(),
       price: Number(formData.price),
+      quantity: Number(formData.stock), // El backend usa quantity en lugar de stock
       unit: formData.unit,
-      stock: Number(formData.stock),
-      category: formData.category.trim(),
-      imageUrl: formData.imageUrl.trim() || undefined,
     };
+
+    // Solo agregar imageUrl si tiene valor
+    if (formData.imageUrl && formData.imageUrl.trim()) {
+      cleanedData.imageUrl = formData.imageUrl.trim();
+    }
 
     try {
       if (editingProduct) {
         await marketplaceService.updateProduct(editingProduct.id, cleanedData);
         toast.success('Producto actualizado exitosamente');
-        addToHistory('Actualizar', cleanedData.name);
+        addToHistory('Actualizar', formData.name.trim());
       } else {
         await marketplaceService.createProduct(cleanedData);
         toast.success('Producto publicado exitosamente');
-        addToHistory('Crear', cleanedData.name);
+        addToHistory('Crear', formData.name.trim());
       }
       
       await loadProducts();

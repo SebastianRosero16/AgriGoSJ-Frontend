@@ -159,13 +159,12 @@ export interface Product {
  * Create Product Request
  */
 export interface CreateProductRequest {
-  name: string;
-  description?: string;
+  productName: string;
+  productDescription?: string;
+  productCategory: string;
   price: number;
-  quantity?: number;
-  stock?: number;
+  quantity: number;
   unit: string;
-  category: string;
   imageUrl?: string;
   available?: boolean;
 }
