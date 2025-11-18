@@ -199,6 +199,9 @@ export const FarmerProducts: React.FC = () => {
       cleanedData.imageUrl = formData.imageUrl.trim();
     }
 
+    console.log('📦 Datos a enviar al backend:', cleanedData);
+    console.log('📦 Valores del formulario:', formData);
+
     try {
       if (editingProduct) {
         await marketplaceService.updateProduct(editingProduct.id, cleanedData);
