@@ -14,9 +14,7 @@ class AuthService {
    * User login
    */
   async login(credentials: LoginRequest): Promise<AuthResponse> {
-    const response = await httpClient.post<AuthResponse>(API_ENDPOINTS.AUTH.LOGIN, credentials);
-    console.log('Respuesta completa del backend:', response);
-    return response;
+    return await httpClient.post<AuthResponse>(API_ENDPOINTS.AUTH.LOGIN, credentials);
   }
 
   /**

@@ -165,6 +165,25 @@ class HTTPClient {
     if (error.response) {
       const status = error.response.status;
       const data = error.response.data as any;
+      
+      // Special handling for authentication errors
+      if (status === 500 && data?.message) {
+        const message = data.message.toLowerCase();
+        if (message.includes('bad credentials') || message.includes('incorrect')) {
+          return {
+            message: ERROR_MESSAGES.BAD_CREDENTIALS,
+            status: 401, // Normalize to 401 for consistency
+            errors: data?.errors,
+          };
+        }
+        if (message.includes('user not found') || message.includes('usuario no encontrado')) {
+          return {
+            message: ERROR_MESSAGES.USER_NOT_FOUND,
+            status: 404,
+            errors: data?.errors,
+          };
+        }
+      }
 
       return {
         message: data?.message || this.getErrorMessageByStatus(status),
@@ -175,7 +194,7 @@ class HTTPClient {
 
     if (error.request) {
       return {
-        message: ERROR_MESSAGES.NETWORK_ERROR,
+        message: ERROR_MESSAGES.CONNECTION_ERROR,
         status: 0,
       };
     }

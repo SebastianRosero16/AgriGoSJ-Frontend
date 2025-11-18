@@ -92,9 +92,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       const response = await authService.login(credentials);
-      console.log('Respuesta en AuthContext:', response);
-      console.log('Usuario:', response.user);
-      console.log('Rol del usuario:', response.user?.role);
       
       // Handle different response structures
       let userData: User;
