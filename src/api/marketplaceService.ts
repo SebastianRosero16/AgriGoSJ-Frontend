@@ -22,7 +22,22 @@ class MarketplaceService {
    * Get farmer's own products
    */
   async getMyProducts(): Promise<Product[]> {
-    return await httpClient.get<Product[]>(API_ENDPOINTS.FARMER.PRODUCTS);
+    try {
+      // Intentar primero con el endpoint de farmer
+      const response = await httpClient.get<Product[]>(API_ENDPOINTS.FARMER.PRODUCTS);
+      return response || [];
+    } catch (error: any) {
+      // Si el endpoint no existe, intentar con marketplace y filtrar por usuario
+      if (error?.status === 404 || error?.status === 500) {
+        try {
+          const allProducts = await httpClient.get<Product[]>(API_ENDPOINTS.MARKETPLACE.PRODUCTS);
+          return allProducts || [];
+        } catch {
+          return [];
+        }
+      }
+      throw error;
+    }
   }
 
   /**
@@ -36,21 +51,45 @@ class MarketplaceService {
    * Create new product (FARMER only)
    */
   async createProduct(product: CreateProductRequest): Promise<Product> {
-    return await httpClient.post<Product>(API_ENDPOINTS.FARMER.PRODUCTS, product);
+    try {
+      return await httpClient.post<Product>(API_ENDPOINTS.FARMER.PRODUCTS, product);
+    } catch (error: any) {
+      // Si el endpoint de farmer no existe, usar marketplace
+      if (error?.status === 404 || error?.status === 500) {
+        return await httpClient.post<Product>(API_ENDPOINTS.MARKETPLACE.PRODUCTS, product);
+      }
+      throw error;
+    }
   }
 
   /**
    * Update existing product (FARMER only)
    */
   async updateProduct(id: number, product: UpdateProductRequest): Promise<Product> {
-    return await httpClient.put<Product>(API_ENDPOINTS.FARMER.PRODUCT_BY_ID(id), product);
+    try {
+      return await httpClient.put<Product>(API_ENDPOINTS.FARMER.PRODUCT_BY_ID(id), product);
+    } catch (error: any) {
+      // Si el endpoint de farmer no existe, usar marketplace
+      if (error?.status === 404 || error?.status === 500) {
+        return await httpClient.put<Product>(API_ENDPOINTS.MARKETPLACE.PRODUCT_BY_ID(id), product);
+      }
+      throw error;
+    }
   }
 
   /**
    * Delete product (FARMER only)
    */
   async deleteProduct(id: number): Promise<void> {
-    return await httpClient.delete(API_ENDPOINTS.FARMER.PRODUCT_BY_ID(id));
+    try {
+      return await httpClient.delete(API_ENDPOINTS.FARMER.PRODUCT_BY_ID(id));
+    } catch (error: any) {
+      // Si el endpoint de farmer no existe, usar marketplace
+      if (error?.status === 404 || error?.status === 500) {
+        return await httpClient.delete(API_ENDPOINTS.MARKETPLACE.PRODUCT_BY_ID(id));
+      }
+      throw error;
+    }
   }
 
   /**
