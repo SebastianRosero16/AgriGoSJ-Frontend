@@ -74,18 +74,6 @@ export const StoreDashboard: React.FC = () => {
                 >
                   🧪 Mis Insumos
                 </Link>
-                <Link
-                  to={ROUTES.MARKETPLACE}
-                  className="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
-                >
-                  🛒 Marketplace
-                </Link>
-                <Link
-                  to={ROUTES.PRICE_COMPARATOR}
-                  className="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
-                >
-                  💰 Comparar Precios
-                </Link>
               </nav>
             </Card>
           </aside>

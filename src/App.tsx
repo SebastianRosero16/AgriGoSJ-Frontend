@@ -12,6 +12,8 @@ const FarmerCrops = React.lazy(() => import('./pages/farmer/FarmerCrops'));
 const FarmerProducts = React.lazy(() => import('./pages/farmer/FarmerProducts'));
 const FarmerAI = React.lazy(() => import('./pages/farmer/FarmerAI'));
 const StoreDashboard = React.lazy(() => import('./pages/store/StoreDashboard'));
+const StoreOverview = React.lazy(() => import('./pages/store/StoreOverview'));
+const StoreInputs = React.lazy(() => import('./pages/store/StoreInputs'));
 const BuyerDashboard = React.lazy(() => import('./pages/buyer/BuyerDashboard'));
 const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard'));
 const MarketplacePage = React.lazy(() => import('./pages/public/MarketplacePage'));
@@ -123,7 +125,8 @@ const App: React.FC = () => {
           }
         >
           <Route index element={<Navigate to={ROUTES.STORE.DASHBOARD} replace />} />
-          <Route path="dashboard" element={<div>Store Overview</div>} />
+          <Route path="dashboard" element={<StoreOverview />} />
+          <Route path="inputs" element={<StoreInputs />} />
         </Route>
 
         {/* Buyer Routes */}
