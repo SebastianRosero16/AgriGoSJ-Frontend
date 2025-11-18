@@ -72,10 +72,12 @@ export interface Crop {
 export interface CreateCropRequest {
   cropName: string;
   cropType: string;
-  plantedDate: string;
+  plantingDate: string; // Backend usa plantingDate
   area: number;
   location: string;
-  status: string;
+  stage: string; // Backend usa stage en lugar de status
+  soilType?: string;
+  climate?: string;
   notes?: string;
 }
 

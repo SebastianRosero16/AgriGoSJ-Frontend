@@ -66,10 +66,12 @@ export const FarmerCrops: React.FC = () => {
       const requestData = {
         cropName: formData.name,
         cropType: formData.type,
-        plantedDate: formData.plantedDate,
+        plantingDate: formData.plantedDate, // Backend usa plantingDate sin 'd'
         area: formData.area,
         location: formData.location,
-        status: formData.status,
+        stage: formData.status, // Backend usa stage
+        soilType: 'Fértil', // Valor por defecto
+        climate: 'Templado', // Valor por defecto
         notes: formData.notes,
       };
 
