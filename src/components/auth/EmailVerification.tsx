@@ -25,10 +25,14 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
   const [resendDisabled, setResendDisabled] = useState(true);
   const [countdown, setCountdown] = useState(60);
   const [error, setError] = useState('');
+  const [hasSentInitialCode, setHasSentInitialCode] = useState(false);
 
   useEffect(() => {
-    // Send initial code
-    sendCode();
+    // Send initial code only once
+    if (!hasSentInitialCode) {
+      setHasSentInitialCode(true);
+      sendCode();
+    }
   }, []);
 
   useEffect(() => {

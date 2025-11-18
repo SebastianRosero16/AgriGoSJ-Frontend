@@ -167,7 +167,7 @@ export const RegisterPage: React.FC = () => {
         }
 
         // Step 2: Show verification component
-        toast.success('Email válido. Procede con la verificación.');
+        toast.success('Email válido. Enviando código de verificación...');
         setShowVerification(true);
         setIsLoading(false);
       } catch (error: any) {
