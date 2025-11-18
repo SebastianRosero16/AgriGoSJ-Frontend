@@ -54,12 +54,14 @@ export interface RegisterRequest {
  */
 export interface Crop {
   id: number;
-  name: string;
-  type: string;
-  plantedDate: string;
+  cropName: string; // Backend usa cropName
+  cropType: string; // Backend usa cropType
+  plantingDate: string; // Backend usa plantingDate
   area: number;
   location: string;
-  status: string;
+  stage: string; // Backend usa stage
+  soilType?: string;
+  climate?: string;
   notes?: string;
   farmerId: number;
   createdAt: string;

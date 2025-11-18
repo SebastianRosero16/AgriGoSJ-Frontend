@@ -93,35 +93,35 @@ export const FarmerCrops: React.FC = () => {
   const handleEdit = (crop: Crop) => {
     setEditingCrop(crop);
     
-    // Handle plantedDate safely - it might be null/undefined or invalid
+    // Handle plantingDate safely - it might be null/undefined or invalid
     let formattedDate = '';
-    if (crop.plantedDate) {
+    if (crop.plantingDate) {
       try {
         // If it's already a date string, use it
-        if (typeof crop.plantedDate === 'string' && crop.plantedDate.includes('T')) {
-          formattedDate = crop.plantedDate.split('T')[0];
-        } else if (typeof crop.plantedDate === 'string') {
-          formattedDate = crop.plantedDate;
+        if (typeof crop.plantingDate === 'string' && crop.plantingDate.includes('T')) {
+          formattedDate = crop.plantingDate.split('T')[0];
+        } else if (typeof crop.plantingDate === 'string') {
+          formattedDate = crop.plantingDate;
         } else {
           // Try to convert to date
-          const date = new Date(crop.plantedDate);
+          const date = new Date(crop.plantingDate);
           if (!isNaN(date.getTime())) {
             formattedDate = date.toISOString().split('T')[0];
           }
         }
       } catch (e) {
-        console.warn('Error parsing plantedDate:', e);
+        console.warn('Error parsing plantingDate:', e);
         formattedDate = '';
       }
     }
     
     setFormData({
-      name: crop.name || '',
-      type: crop.type || '',
+      name: crop.cropName || '',
+      type: crop.cropType || '',
       plantedDate: formattedDate,
       area: crop.area || 0,
       location: crop.location || '',
-      status: crop.status || 'PLANTED',
+      status: crop.stage || 'SEEDLING',
       notes: crop.notes || '',
     });
     setShowForm(true);
@@ -307,24 +307,28 @@ export const FarmerCrops: React.FC = () => {
             <Card key={crop.id} className="hover:shadow-lg transition-shadow">
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">{crop.name}</h3>
-                  <p className="text-sm text-gray-600">{crop.type}</p>
+                  <h3 className="text-lg font-semibold text-gray-900">{crop.cropName}</h3>
+                  <p className="text-sm text-gray-600">{crop.cropType}</p>
                 </div>
                 <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                  crop.status === 'HARVESTED' ? 'bg-green-100 text-green-800' :
-                  crop.status === 'READY' ? 'bg-yellow-100 text-yellow-800' :
-                  crop.status === 'GROWING' ? 'bg-blue-100 text-blue-800' :
+                  crop.stage === 'HARVEST' ? 'bg-green-100 text-green-800' :
+                  crop.stage === 'FRUITING' ? 'bg-yellow-100 text-yellow-800' :
+                  crop.stage === 'FLOWERING' ? 'bg-purple-100 text-purple-800' :
+                  crop.stage === 'VEGETATIVE' ? 'bg-blue-100 text-blue-800' :
                   'bg-gray-100 text-gray-800'
                 }`}>
-                  {crop.status === 'PLANTED' ? 'Plantado' :
-                   crop.status === 'GROWING' ? 'Creciendo' :
-                   crop.status === 'READY' ? 'Listo' : 'Cosechado'}
+                  {crop.stage === 'SEEDLING' ? 'Plántula' :
+                   crop.stage === 'VEGETATIVE' ? 'Vegetativo' :
+                   crop.stage === 'FLOWERING' ? 'Floreciendo' :
+                   crop.stage === 'FRUITING' ? 'Fructificando' : 'Cosecha'}
                 </span>
               </div>
               <div className="space-y-2 text-sm text-gray-600 mb-4">
-                <p>📅 Siembra: {new Date(crop.plantedDate).toLocaleDateString()}</p>
+                <p>📅 Siembra: {crop.plantingDate ? new Date(crop.plantingDate).toLocaleDateString() : 'Sin fecha'}</p>
                 <p>📏 Área: {crop.area} ha</p>
                 <p>📍 Ubicación: {crop.location}</p>
+                {crop.soilType && <p>🌱 Suelo: {crop.soilType}</p>}
+                {crop.climate && <p>🌤️ Clima: {crop.climate}</p>}
                 {crop.notes && <p className="text-xs">📝 {crop.notes}</p>}
               </div>
               <div className="flex gap-2">
