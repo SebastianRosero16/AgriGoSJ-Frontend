@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { Card, Button, Input, Loading } from '@/components/ui';
+import { Card, Button, Input, Loading, Modal } from '@/components/ui';
 import { marketplaceService } from '@/api';
 import { Stack } from '@/data-structures';
 import type { Product } from '@/types';
@@ -33,6 +33,8 @@ export const FarmerProducts: React.FC = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [actionHistory] = useState<Stack<ActionHistory>>(new Stack());
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<{ id: number; name: string } | null>(null);
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     description: '',
@@ -236,16 +238,23 @@ export const FarmerProducts: React.FC = () => {
     setShowForm(true);
   };
 
-  const handleDelete = async (id: number, name: string) => {
-    if (!confirm('¿Estás seguro de eliminar este producto del marketplace?')) return;
+  const handleDelete = (id: number, name: string) => {
+    setProductToDelete({ id, name });
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!productToDelete) return;
 
     try {
-      await marketplaceService.deleteProduct(id);
+      await marketplaceService.deleteProduct(productToDelete.id);
       toast.success('Producto eliminado exitosamente');
-      addToHistory('Eliminar', name);
+      addToHistory('Eliminar', productToDelete.name);
       await loadProducts();
     } catch (error: any) {
       toast.error(error?.message || 'Error al eliminar producto');
+    } finally {
+      setProductToDelete(null);
     }
   };
 
@@ -311,8 +320,25 @@ export const FarmerProducts: React.FC = () => {
   const historyArray = actionHistory.toArray();
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <>
+      {/* Modal de confirmación de eliminación */}
+      <Modal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setProductToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="¿Eliminar producto?"
+        message={`¿Estás seguro de que deseas eliminar "${productToDelete?.name}"? Esta acción no se puede deshacer y el producto será removido del marketplace.`}
+        confirmText="Sí, eliminar"
+        cancelText="Cancelar"
+        type="danger"
+        icon="🗑️"
+      />
+
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Mis Productos</h2>
           <p className="text-gray-600">
@@ -515,7 +541,8 @@ export const FarmerProducts: React.FC = () => {
           ))}
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 };
 
