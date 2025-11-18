@@ -109,7 +109,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
       // Case 3: Try to get token and find user data
       else {
-        throw new Error('Invalid response structure from backend');
+        console.error('Estructura de respuesta inválida:', response);
+        throw new Error('Error de autenticación. El servidor respondió con un formato inválido.');
       }
       
       // Extract token
@@ -148,7 +149,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
       // Case 3: Invalid structure
       else {
-        throw new Error('Invalid response structure from backend');
+        console.error('Estructura de respuesta inválida:', response);
+        throw new Error('Error de autenticación. El servidor respondió con un formato inválido.');
       }
       
       // Extract token

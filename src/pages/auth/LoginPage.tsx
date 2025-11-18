@@ -122,8 +122,35 @@ export const LoginPage: React.FC = () => {
       const dashboardRoute = getDashboardByRole(user.role);
       navigate(dashboardRoute, { replace: true });
     } catch (error: any) {
-      const errorMessage = error?.message || 'Credenciales inválidas. Por favor, verifica tus datos.';
-      toast.error(errorMessage);
+      console.error('Error de login:', error);
+      
+      let errorMessage = 'Error al iniciar sesión. Por favor, intenta nuevamente.';
+      
+      // Handle specific error cases
+      if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.response) {
+        const status = error.response.status;
+        const data = error.response.data;
+        
+        if (status === 401 || status === 403) {
+          errorMessage = 'Usuario o contraseña incorrectos.';
+        } else if (status === 500 && data?.message?.toLowerCase().includes('bad credentials')) {
+          errorMessage = 'Usuario o contraseña incorrectos. Por favor, verifica tus datos.';
+        } else if (status === 500 && data?.message?.toLowerCase().includes('user not found')) {
+          errorMessage = 'El usuario no existe. Por favor, verifica el nombre de usuario.';
+        } else if (status === 404) {
+          errorMessage = 'El usuario no existe.';
+        } else if (status >= 500) {
+          errorMessage = 'Error del servidor. Por favor, intenta más tarde.';
+        } else if (data?.message) {
+          errorMessage = data.message;
+        }
+      } else if (error?.request) {
+        errorMessage = 'No se puede conectar con el servidor. Verifica tu conexión a internet.';
+      }
+      
+      toast.error(errorMessage, { autoClose: 5000 });
     } finally {
       setIsLoading(false);
     }

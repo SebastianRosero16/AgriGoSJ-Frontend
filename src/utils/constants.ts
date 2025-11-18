@@ -316,6 +316,14 @@ export const ERROR_MESSAGES = {
   VALIDATION_ERROR: 'Error de validación. Por favor, verifica los datos ingresados.',
   TIMEOUT_ERROR: 'La solicitud ha excedido el tiempo de espera.',
   UNKNOWN_ERROR: 'Ha ocurrido un error inesperado.',
+  BAD_CREDENTIALS: 'Usuario o contraseña incorrectos. Por favor, verifica tus credenciales.',
+  USER_NOT_FOUND: 'El usuario no existe. Por favor, verifica el nombre de usuario.',
+  ACCOUNT_DISABLED: 'Tu cuenta está desactivada. Contacta al administrador.',
+  DUPLICATE_USERNAME: 'El nombre de usuario ya está en uso. Por favor, elige otro.',
+  DUPLICATE_EMAIL: 'El correo electrónico ya está registrado.',
+  INVALID_EMAIL: 'El correo electrónico no es válido.',
+  WEAK_PASSWORD: 'La contraseña es muy débil. Debe tener al menos 8 caracteres.',
+  CONNECTION_ERROR: 'No se puede conectar con el servidor. Verifica que el backend esté corriendo.',
 } as const;
 
 /**

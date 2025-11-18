@@ -165,11 +165,40 @@ export const RegisterPage: React.FC = () => {
       navigate(dashboardRoute, { replace: true });
     } catch (error: any) {
       console.error('Error de registro:', error);
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        'Error al registrar usuario. Verifica que el backend esté corriendo en http://localhost:8080';
-      toast.error(errorMessage, { autoClose: 5000 });
+      
+      let errorMessage = 'Error al registrar usuario. Por favor, intenta nuevamente.';
+      
+      // Handle specific error cases
+      if (error?.response) {
+        const status = error.response.status;
+        const data = error.response.data;
+        
+        if (status === 409 || (data?.message?.toLowerCase().includes('already exists'))) {
+          errorMessage = 'El usuario o correo electrónico ya están registrados. Por favor, usa otros datos.';
+        } else if (status === 400) {
+          if (data?.message?.toLowerCase().includes('username')) {
+            errorMessage = 'El nombre de usuario no es válido o ya está en uso.';
+          } else if (data?.message?.toLowerCase().includes('email')) {
+            errorMessage = 'El correo electrónico no es válido o ya está registrado.';
+          } else if (data?.message?.toLowerCase().includes('password')) {
+            errorMessage = 'La contraseña no cumple con los requisitos de seguridad.';
+          } else if (data?.message) {
+            errorMessage = data.message;
+          } else {
+            errorMessage = 'Datos inválidos. Por favor, verifica todos los campos.';
+          }
+        } else if (status >= 500) {
+          errorMessage = 'Error del servidor. Por favor, intenta más tarde.';
+        } else if (data?.message) {
+          errorMessage = data.message;
+        }
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.request) {
+        errorMessage = 'No se puede conectar con el servidor. Verifica tu conexión a internet o que el backend esté corriendo.';
+      }
+      
+      toast.error(errorMessage, { autoClose: 6000 });
     } finally {
       setIsLoading(false);
     }
