@@ -61,6 +61,12 @@ export const FarmerAI: React.FC = () => {
   };
 
   const handleCropSelect = (crop: Crop) => {
+    // Validate crop has required data
+    if (!crop || !crop.name || !crop.type) {
+      toast.error('Este cultivo no tiene datos completos. Por favor edítalo primero.');
+      return;
+    }
+    
     setSelectedCrop(crop);
     setChatMessages([
       {
@@ -275,8 +281,8 @@ export const FarmerAI: React.FC = () => {
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h4 className="font-semibold text-gray-900">{crop.name}</h4>
-                      <p className="text-sm text-gray-600">{crop.type}</p>
+                      <h4 className="font-semibold text-gray-900">{crop.name || 'Sin nombre'}</h4>
+                      <p className="text-sm text-gray-600">{crop.type || 'Sin tipo'}</p>
                     </div>
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                       crop.status === 'HARVESTED' ? 'bg-green-100 text-green-800' :
@@ -289,7 +295,7 @@ export const FarmerAI: React.FC = () => {
                        crop.status === 'READY' ? 'Listo' : 'Cosechado'}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600">📏 {crop.area} ha • 📍 {crop.location}</p>
+                  <p className="text-sm text-gray-600">📏 {crop.area || 0} ha • 📍 {crop.location || 'Sin ubicación'}</p>
                 </div>
               ))}
             </div>
