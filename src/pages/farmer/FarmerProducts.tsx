@@ -51,10 +51,14 @@ export const FarmerProducts: React.FC = () => {
     try {
       setIsLoading(true);
       const data = await marketplaceService.getMyProducts();
-      setProducts(data);
-      addToHistory('Cargar', 'Productos cargados');
+      setProducts(data || []);
+      if (data && data.length > 0) {
+        addToHistory('Cargar', 'Productos cargados');
+      }
     } catch (error: any) {
-      toast.error(error?.message || 'Error al cargar productos');
+      console.error('Error loading products:', error);
+      // Don't show error toast on initial load - might not have products yet
+      setProducts([]);
     } finally {
       setIsLoading(false);
     }
