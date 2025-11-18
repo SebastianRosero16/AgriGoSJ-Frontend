@@ -82,6 +82,7 @@ export const FarmerAI: React.FC = () => {
       // Get AI recommendation
       const response = await aiService.getRecommendation({
         type,
+        cropId: 1, // Default crop ID for general recommendations
         context: {
           farmerId: 1, // Would come from auth context
           season: getCurrentSeason(),
