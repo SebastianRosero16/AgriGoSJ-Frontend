@@ -5,7 +5,7 @@
 
 import { httpClient } from './httpClient';
 import { API_ENDPOINTS } from '@/utils/constants';
-import type { FarmerProduct, CreateProductRequest, UpdateProductRequest } from '@/types';
+import type { Product, CreateProductRequest, UpdateProductRequest } from '@/types';
 
 /**
  * Marketplace Service Class
@@ -14,42 +14,49 @@ class MarketplaceService {
   /**
    * Get all products (public)
    */
-  async getProducts(): Promise<FarmerProduct[]> {
-    return await httpClient.get<FarmerProduct[]>(API_ENDPOINTS.MARKETPLACE.PRODUCTS);
+  async getProducts(): Promise<Product[]> {
+    return await httpClient.get<Product[]>(API_ENDPOINTS.MARKETPLACE.PRODUCTS);
+  }
+
+  /**
+   * Get farmer's own products
+   */
+  async getMyProducts(): Promise<Product[]> {
+    return await httpClient.get<Product[]>(API_ENDPOINTS.FARMER.PRODUCTS);
   }
 
   /**
    * Get product by ID (public)
    */
-  async getProductById(id: number): Promise<FarmerProduct> {
-    return await httpClient.get<FarmerProduct>(API_ENDPOINTS.MARKETPLACE.PRODUCT_BY_ID(id));
+  async getProductById(id: number): Promise<Product> {
+    return await httpClient.get<Product>(API_ENDPOINTS.MARKETPLACE.PRODUCT_BY_ID(id));
   }
 
   /**
    * Create new product (FARMER only)
    */
-  async createProduct(product: CreateProductRequest): Promise<FarmerProduct> {
-    return await httpClient.post<FarmerProduct>(API_ENDPOINTS.MARKETPLACE.PRODUCTS, product);
+  async createProduct(product: CreateProductRequest): Promise<Product> {
+    return await httpClient.post<Product>(API_ENDPOINTS.FARMER.PRODUCTS, product);
   }
 
   /**
    * Update existing product (FARMER only)
    */
-  async updateProduct(id: number, product: UpdateProductRequest): Promise<FarmerProduct> {
-    return await httpClient.put<FarmerProduct>(API_ENDPOINTS.MARKETPLACE.PRODUCT_BY_ID(id), product);
+  async updateProduct(id: number, product: UpdateProductRequest): Promise<Product> {
+    return await httpClient.put<Product>(API_ENDPOINTS.FARMER.PRODUCT_BY_ID(id), product);
   }
 
   /**
    * Delete product (FARMER only)
    */
   async deleteProduct(id: number): Promise<void> {
-    return await httpClient.delete(API_ENDPOINTS.MARKETPLACE.PRODUCT_BY_ID(id));
+    return await httpClient.delete(API_ENDPOINTS.FARMER.PRODUCT_BY_ID(id));
   }
 
   /**
    * Search products
    */
-  async searchProducts(query: string): Promise<FarmerProduct[]> {
+  async searchProducts(query: string): Promise<Product[]> {
     const products = await this.getProducts();
     const lowerQuery = query.toLowerCase();
     
@@ -63,7 +70,7 @@ class MarketplaceService {
   /**
    * Filter products by category
    */
-  async filterByCategory(category: string): Promise<FarmerProduct[]> {
+  async filterByCategory(category: string): Promise<Product[]> {
     const products = await this.getProducts();
     return products.filter(product => product.category === category);
   }
@@ -71,7 +78,7 @@ class MarketplaceService {
   /**
    * Filter products by price range
    */
-  async filterByPriceRange(minPrice: number, maxPrice: number): Promise<FarmerProduct[]> {
+  async filterByPriceRange(minPrice: number, maxPrice: number): Promise<Product[]> {
     const products = await this.getProducts();
     return products.filter(product => product.price >= minPrice && product.price <= maxPrice);
   }

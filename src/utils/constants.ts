@@ -113,6 +113,8 @@ export const API_ENDPOINTS = {
   FARMER: {
     CROPS: '/farmers/crops',
     CROP_BY_ID: (id: number) => `/farmers/crops/${id}`,
+    PRODUCTS: '/farmers/products',
+    PRODUCT_BY_ID: (id: number) => `/farmers/products/${id}`,
   },
   
   // Store

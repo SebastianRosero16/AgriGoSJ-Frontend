@@ -138,13 +138,32 @@ export interface FarmerProduct {
 }
 
 /**
+ * Product Model (for marketplace)
+ */
+export interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  unit: string;
+  category: string;
+  imageUrl?: string;
+  farmerId?: number;
+  farmerName?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+/**
  * Create Product Request
  */
 export interface CreateProductRequest {
   name: string;
   description?: string;
   price: number;
-  quantity: number;
+  quantity?: number;
+  stock?: number;
   unit: string;
   category: string;
   imageUrl?: string;

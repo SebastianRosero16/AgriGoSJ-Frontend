@@ -100,6 +100,18 @@ class AIService {
   }
 
   /**
+   * Get AI recommendation
+   */
+  async getRecommendation(params: { type: string; context: any }): Promise<any> {
+    return this.requestQueue.enqueue(async () => {
+      return await httpClient.post<any>(
+        API_ENDPOINTS.AI.RECOMMEND,
+        params
+      );
+    });
+  }
+
+  /**
    * Get explanation for crop
    */
   async getExplanation(cropId: number): Promise<string> {
