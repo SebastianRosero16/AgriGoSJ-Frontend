@@ -156,19 +156,34 @@ export const RegisterPage: React.FC = () => {
         // Step 1: Validate email with backend
         const validation = await authService.validateEmail(formData.email);
         
+        console.log('✅ Respuesta de validación:', validation);
+        
         if (!validation.valid) {
-          toast.error(validation.reason || 'Email inválido');
-          setErrors(prev => ({ ...prev, email: validation.reason || 'Email inválido' }));
+          const errorMsg = validation.reason || 'Email inválido';
+          toast.error(errorMsg);
+          setErrors(prev => ({ ...prev, email: errorMsg }));
           setIsLoading(false);
           return;
         }
 
         // Step 2: Show verification component
+        toast.success('Email válido. Procede con la verificación.');
         setShowVerification(true);
         setIsLoading(false);
       } catch (error: any) {
-        console.error('Error al validar email:', error);
-        toast.error(error?.message || 'Error al validar email');
+        console.error('❌ Error al validar email:', error);
+        
+        // Distinguish between network errors and validation errors
+        let errorMessage = 'Error al validar email';
+        
+        if (error?.message?.includes('Network Error') || error?.status === 0) {
+          errorMessage = 'No se puede conectar con el servidor. Verifica que el backend esté corriendo.';
+        } else if (error?.message) {
+          errorMessage = error.message;
+        }
+        
+        toast.error(errorMessage);
+        setErrors(prev => ({ ...prev, email: errorMessage }));
         setIsLoading(false);
       }
       return;
