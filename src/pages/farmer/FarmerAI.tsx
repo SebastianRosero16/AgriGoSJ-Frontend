@@ -174,11 +174,66 @@ export const FarmerAI: React.FC = () => {
         },
       });
 
-      // Add AI response
+      // Debug: Log the response to see what backend returns
+      console.log('🤖 Backend Response:', response);
+      console.log('🤖 Response Type:', typeof response);
+      console.log('🤖 Response Keys:', response ? Object.keys(response) : 'null/undefined');
+      console.log('🤖 Explanation field:', response?.explanation);
+      console.log('🤖 Full Response JSON:', JSON.stringify(response, null, 2));
+
+      // Add AI response - handle multiple response formats
+      let aiContent = '';
+      
+      if (typeof response === 'string') {
+        aiContent = response;
+      } else if (response) {
+        // Backend returns: { explanation, fertilizers, pesticides, quantities }
+        // The explanation field contains the full AI response
+        aiContent = response.explanation;
+        
+        // Fallback to other fields if explanation is empty or placeholder
+        if (!aiContent || aiContent === 'See full recommendation' || aiContent.trim() === '') {
+          aiContent = response.recommendation 
+            || response.content 
+            || response.message
+            || response.response
+            || response.result
+            || response.text
+            || response.advice
+            || response.data;
+        }
+        
+        // If still no content, try to build from multiple fields
+        if (!aiContent || aiContent === 'See full recommendation') {
+          const parts = [];
+          if (response.fertilizers && response.fertilizers !== 'See full recommendation') {
+            parts.push(`**Fertilizantes:**\n${response.fertilizers}`);
+          }
+          if (response.pesticides && response.pesticides !== 'See full recommendation') {
+            parts.push(`**Pesticidas:**\n${response.pesticides}`);
+          }
+          if (response.quantities && response.quantities !== 'See full recommendation') {
+            parts.push(`**Cantidades:**\n${response.quantities}`);
+          }
+          if (parts.length > 0) {
+            aiContent = parts.join('\n\n');
+          }
+        }
+        
+        // If explanation contains error, show user-friendly message
+        if (aiContent && (aiContent.includes('Error generating AI recommendation') || aiContent.includes('400 Bad Request'))) {
+          aiContent = '⚠️ La IA está teniendo problemas para generar la recomendación. Por favor, intenta reformular tu pregunta de manera más específica.\n\nEjemplos:\n• "¿Cuándo debo regar mi cultivo de café?"\n• "¿Qué fertilizante necesita mi maíz?"\n• "Mi planta tiene hojas amarillas, ¿qué hago?"';
+        }
+      }
+      
+      if (!aiContent || aiContent.trim() === '') {
+        aiContent = 'Lo siento, no pude generar una recomendación en este momento.';
+      }
+
       const aiMessage: ChatMessage = {
         id: `ai-${Date.now()}`,
         sender: 'ai',
-        content: response.recommendation || response.content || 'Lo siento, no pude generar una recomendación en este momento.',
+        content: aiContent,
         timestamp: new Date(),
       };
 

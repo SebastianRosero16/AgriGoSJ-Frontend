@@ -90,27 +90,59 @@ export const FarmerCrops: React.FC = () => {
 
   const handleEdit = (crop: Crop) => {
     setEditingCrop(crop);
+    
+    // Handle plantedDate safely - it might be null/undefined or invalid
+    let formattedDate = '';
+    if (crop.plantedDate) {
+      try {
+        // If it's already a date string, use it
+        if (typeof crop.plantedDate === 'string' && crop.plantedDate.includes('T')) {
+          formattedDate = crop.plantedDate.split('T')[0];
+        } else if (typeof crop.plantedDate === 'string') {
+          formattedDate = crop.plantedDate;
+        } else {
+          // Try to convert to date
+          const date = new Date(crop.plantedDate);
+          if (!isNaN(date.getTime())) {
+            formattedDate = date.toISOString().split('T')[0];
+          }
+        }
+      } catch (e) {
+        console.warn('Error parsing plantedDate:', e);
+        formattedDate = '';
+      }
+    }
+    
     setFormData({
-      name: crop.name,
-      type: crop.type,
-      plantedDate: crop.plantedDate.split('T')[0],
-      area: crop.area,
-      location: crop.location,
-      status: crop.status,
+      name: crop.name || '',
+      type: crop.type || '',
+      plantedDate: formattedDate,
+      area: crop.area || 0,
+      location: crop.location || '',
+      status: crop.status || 'PLANTED',
       notes: crop.notes || '',
     });
     setShowForm(true);
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('¿Estás seguro de eliminar este cultivo?')) return;
+    if (!confirm('¿Estás seguro de eliminar este cultivo? Se eliminarán también todas las recomendaciones de IA asociadas.')) return;
 
     try {
       await farmerService.deleteCrop(id);
       toast.success('Cultivo eliminado exitosamente');
       await loadCrops();
     } catch (error: any) {
-      toast.error(error?.message || 'Error al eliminar cultivo');
+      // Handle foreign key constraint error
+      const errorMsg = error?.message || '';
+      if (errorMsg.includes('foreign key constraint') || errorMsg.includes('CONSTRAINT')) {
+        toast.error('No se puede eliminar: Este cultivo tiene recomendaciones de IA asociadas. Contacta al administrador para eliminarlo.');
+      } else if (errorMsg.includes('Internal server error')) {
+        toast.error('Error del servidor: No se puede eliminar el cultivo porque tiene recomendaciones asociadas.');
+      } else {
+        toast.error(errorMsg || 'Error al eliminar cultivo');
+      }
+      console.error('Delete error:', error);
     }
   };
 
