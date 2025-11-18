@@ -444,7 +444,7 @@ export const FarmerProducts: React.FC = () => {
                   name="unit"
                   value={formData.unit}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg relative z-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   required
                 >
                   <option value="kg">Kilogramo (kg)</option>
@@ -480,7 +480,7 @@ export const FarmerProducts: React.FC = () => {
                 value={formData.description}
                 onChange={handleChange}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg relative z-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 placeholder="Describe tu producto..."
                 required
               />
