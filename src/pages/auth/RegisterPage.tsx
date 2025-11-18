@@ -13,7 +13,6 @@ import { authService } from '@/api';
 import {
   validateRequired,
   validateEmail,
-  validateEmailAdvanced,
   validatePassword,
   validateUsername,
   normalizeSpaces,

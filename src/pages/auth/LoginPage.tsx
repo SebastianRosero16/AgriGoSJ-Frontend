@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks';
-import { Button, Input, Card, Modal } from '@/components/ui';
+import { Button, Input, Card } from '@/components/ui';
 import { ForgotPassword } from '@/components/auth/ForgotPassword';
 import { validateRequired, normalizeSpaces } from '@/utils/validation';
 import { ROUTES, SUCCESS_MESSAGES, APP_INFO, USER_ROLES } from '@/utils/constants';
