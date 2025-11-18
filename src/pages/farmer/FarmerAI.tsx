@@ -154,38 +154,67 @@ export const FarmerAI: React.FC = () => {
     try {
       setIsSending(true);
 
-      // Determine recommendation type based on message content
+      // Determine recommendation type based on message content - but prefer GENERAL for questions
       let recommendationType = 'GENERAL';
       const lowerMessage = messageInput.toLowerCase();
-      if (lowerMessage.includes('riego') || lowerMessage.includes('agua')) {
+      
+      // Only use specific types for very clear optimization requests
+      if (lowerMessage.includes('optimi') || lowerMessage.includes('mejor') && (lowerMessage.includes('plan') || lowerMessage.includes('estrategia'))) {
         recommendationType = 'OPTIMIZATION';
-      } else if (lowerMessage.includes('plaga') || lowerMessage.includes('insecto') || lowerMessage.includes('enfermedad')) {
+      } else if (lowerMessage.includes('plaga') || lowerMessage.includes('insecto') || lowerMessage.includes('enfermedad') || lowerMessage.includes('control')) {
         recommendationType = 'PESTICIDE';
       } else if (lowerMessage.includes('fertiliz') || lowerMessage.includes('abono') || lowerMessage.includes('nutriente')) {
         recommendationType = 'FERTILIZER';
       }
 
-      // Get AI recommendation
+      // Get AI recommendation with explicit question
       const response = await aiService.getRecommendation({
         type: recommendationType,
         cropId: selectedCrop.id,
         context: {
-          userMessage: messageInput,
+          question: messageInput, // Pregunta del usuario
+          userMessage: messageInput, // También como userMessage por compatibilidad
           cropName: selectedCrop.cropName,
           cropType: selectedCrop.cropType,
-          cropStatus: selectedCrop.stage,
-          soilType: selectedCrop.soilType,
-          climate: selectedCrop.climate,
+          cropStage: selectedCrop.stage,
+          soilType: selectedCrop.soilType || 'No especificado',
+          climate: selectedCrop.climate || 'No especificado',
           area: selectedCrop.area,
           location: selectedCrop.location,
           hasImage: !!tempImage,
+          responseLanguage: 'SPANISH', // Idioma de respuesta
           language: 'es',
-          instructions: `IMPORTANTE: 
-1. Responde SIEMPRE en español, sin excepciones.
-2. Valida que la pregunta del usuario esté relacionada con el cultivo de ${selectedCrop.cropName} (${selectedCrop.cropType}). Si la pregunta no está relacionada con este cultivo específico, responde: "Tu pregunta no está relacionada con tu cultivo de ${selectedCrop.cropName}. Por favor, haz preguntas específicas sobre este cultivo."
-3. Formatea tu respuesta de manera clara y legible, usando markdown simple (**, -, números) pero sin caracteres especiales extraños.
-4. Sé específico y relevante a la pregunta del usuario, no des siempre la misma respuesta genérica.
-5. Considera las condiciones específicas: suelo ${selectedCrop.soilType}, clima ${selectedCrop.climate}, etapa ${selectedCrop.stage}.`
+          responseFormat: 'CONVERSATIONAL', // Formato conversacional, no técnico
+          instructions: `INSTRUCCIONES CRÍTICAS PARA LA IA:
+
+1. IDIOMA: Responde ÚNICAMENTE en español. Ni una sola palabra en inglés.
+
+2. RESPONDE LA PREGUNTA ESPECÍFICA: El usuario preguntó: "${messageInput}"
+   - NO des un "plan de optimización" genérico
+   - NO des listas de fertilizantes si no preguntó por eso
+   - Responde SOLO lo que se pregunta
+
+3. VALIDACIÓN DE CONTEXTO: 
+   - La pregunta debe ser sobre: ${selectedCrop.cropName} (${selectedCrop.cropType})
+   - Si pregunta sobre otro cultivo, responde: "Tu pregunta no es sobre tu cultivo de ${selectedCrop.cropName}. Por favor pregunta específicamente sobre este cultivo."
+
+4. FORMATO DE RESPUESTA:
+   - Respuesta breve y directa (2-4 párrafos máximo)
+   - Sin títulos en inglés como "Optimization Plan"
+   - Sin secciones numeradas innecesarias
+   - Formato conversacional y amigable
+
+5. INFORMACIÓN DEL CULTIVO:
+   - Cultivo: ${selectedCrop.cropName} (${selectedCrop.cropType})
+   - Etapa actual: ${selectedCrop.stage}
+   - Suelo: ${selectedCrop.soilType}
+   - Clima: ${selectedCrop.climate}
+   - Área: ${selectedCrop.area} hectáreas
+
+EJEMPLO DE BUENA RESPUESTA para "¿Cuánto tiempo dura el cultivo de la cebolla?":
+"El cultivo de cebolla generalmente tarda entre 90 a 120 días desde la siembra hasta la cosecha, dependiendo de la variedad. Para tu caso específico con cebolla tipo Tubérculo en clima templado, el ciclo completo suele ser de aproximadamente 100-110 días. Dado que tu cultivo está en etapa de FLOWERING (floración), te quedan aproximadamente 30-40 días más para la cosecha."
+
+NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimización a menos que específicamente se pregunte por ello.`
         },
       });
 
@@ -223,16 +252,37 @@ export const FarmerAI: React.FC = () => {
         }
       }
       
-      // Clean up response: remove weird characters and format properly
+      // Clean up and translate response if needed
       if (aiContent) {
+        // Remove English section headers and translate common terms
         aiContent = aiContent
+          .replace(/\*\*Optimization Plan for .+?\*\*/gi, '**Plan de Recomendaciones**')
+          .replace(/\*\*Crop Details:\*\*/gi, '**Detalles del Cultivo:**')
+          .replace(/\*\*Optimal Fertilizer Combination:\*\*/gi, '**Fertilización Recomendada:**')
+          .replace(/\*\*Pesticide Strategy:\*\*/gi, '**Control de Plagas:**')
+          .replace(/\*\*Cost-Effective Input Quantities:\*\*/gi, '**Cantidades Recomendadas:**')
+          .replace(/\*\*Expected Yield Improvement:\*\*/gi, '**Mejora Esperada en Rendimiento:**')
+          .replace(/\*\*Detailed Explanation of the Optimization Strategy:\*\*/gi, '**Explicación Detallada:**')
+          .replace(/\*\*Optimization Plan:\*\*/gi, '**Plan de Mejora:**')
+          .replace(/- Type:/gi, '- Tipo:')
+          .replace(/- Area:/gi, '- Área:')
+          .replace(/- Stage:/gi, '- Etapa:')
+          .replace(/- Soil:/gi, '- Suelo:')
+          .replace(/- Climate:/gi, '- Clima:')
           .replace(/\*\*\*/g, '**') // Triple asterisks to double
           .replace(/\n{3,}/g, '\n\n') // Multiple newlines to double
+          .replace(/###/g, '**') // H3 headers to bold
           .trim();
+        
+        // If response is still mostly in English, add a warning
+        const englishWordCount = (aiContent.match(/\b(the|and|for|with|this|that|from|by|at|in|on|is|are|was|were|be|been|being|have|has|had|do|does|did|will|would|should|could|may|might)\b/gi) || []).length;
+        if (englishWordCount > 20) {
+          aiContent = `⚠️ **Nota:** La IA del backend respondió en inglés. Estamos trabajando para mejorar esto. Aquí está la respuesta traducida parcialmente:\n\n${aiContent}\n\n---\n💡 **Sugerencia:** Contacta al desarrollador del backend para configurar respuestas en español.`;
+        }
       }
       
       if (!aiContent || aiContent.trim() === '' || aiContent === 'See full recommendation') {
-        aiContent = 'Lo siento, no pude generar una recomendación en este momento. Por favor, intenta reformular tu pregunta.';
+        aiContent = 'Lo siento, no pude generar una recomendación en este momento. Por favor, intenta reformular tu pregunta.\n\n**Ejemplos de preguntas:**\n• "¿Cuánto tiempo tarda en crecer mi cebolla?"\n• "¿Cuándo debo cosechar?"\n• "¿Qué cuidados necesita en esta etapa?"';
       }
 
       const aiMessage: ChatMessage = {
