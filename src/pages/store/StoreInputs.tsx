@@ -82,6 +82,9 @@ export const StoreInputs: React.FC = () => {
     }
 
     try {
+      // Log para debug
+      console.log('📤 Enviando datos del insumo:', formData);
+      
       if (editingInput) {
         await storeService.updateInput(editingInput.id, formData);
         toast.success('Insumo actualizado exitosamente');
@@ -93,6 +96,7 @@ export const StoreInputs: React.FC = () => {
       await loadInputs();
       resetForm();
     } catch (error: any) {
+      console.error('❌ Error al guardar insumo:', error);
       toast.error(error?.message || 'Error al guardar insumo');
     }
   };
