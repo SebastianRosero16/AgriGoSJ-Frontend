@@ -51,13 +51,40 @@ export const FarmerProducts: React.FC = () => {
     try {
       setIsLoading(true);
       const data = await marketplaceService.getMyProducts();
-      setProducts(data || []);
-      if (data && data.length > 0) {
-        addToHistory('Cargar', 'Productos cargados');
+      
+      if (!data) {
+        setProducts([]);
+        return;
+      }
+      
+      // Validar que sea un array
+      if (!Array.isArray(data)) {
+        console.error('La respuesta no es un array:', data);
+        toast.error('Error al cargar productos: formato de datos inválido');
+        setProducts([]);
+        return;
+      }
+      
+      setProducts(data);
+      if (data.length > 0) {
+        addToHistory('Cargar', `${data.length} productos cargados`);
       }
     } catch (error: any) {
       console.error('Error loading products:', error);
-      // Don't show error toast on initial load - might not have products yet
+      
+      // Manejar diferentes tipos de errores
+      if (error?.status === 404 || error?.message?.includes('404')) {
+        // No hay productos aún, esto es normal
+        setProducts([]);
+      } else if (error?.status === 401) {
+        toast.error('Sesión expirada. Por favor, inicia sesión nuevamente.');
+        // Opcional: redirigir al login
+      } else if (error?.status === 0) {
+        toast.error('No se puede conectar con el servidor. Verifica tu conexión a internet.');
+      } else {
+        const errorMessage = error?.message || 'Error al cargar productos. Por favor, intenta de nuevo.';
+        toast.error(errorMessage);
+      }
       setProducts([]);
     } finally {
       setIsLoading(false);
@@ -72,34 +99,118 @@ export const FarmerProducts: React.FC = () => {
     });
   };
 
+  const validateForm = (): boolean => {
+    // Validar nombre
+    if (!formData.name.trim()) {
+      toast.error('El nombre del producto es requerido');
+      return false;
+    }
+    if (formData.name.trim().length < 3) {
+      toast.error('El nombre debe tener al menos 3 caracteres');
+      return false;
+    }
+    if (formData.name.trim().length > 100) {
+      toast.error('El nombre no puede exceder 100 caracteres');
+      return false;
+    }
+
+    // Validar descripción
+    if (!formData.description.trim()) {
+      toast.error('La descripción es requerida');
+      return false;
+    }
+    if (formData.description.trim().length < 10) {
+      toast.error('La descripción debe tener al menos 10 caracteres');
+      return false;
+    }
+    if (formData.description.trim().length > 500) {
+      toast.error('La descripción no puede exceder 500 caracteres');
+      return false;
+    }
+
+    // Validar categoría
+    if (!formData.category.trim()) {
+      toast.error('La categoría es requerida');
+      return false;
+    }
+    if (formData.category.trim().length < 2) {
+      toast.error('La categoría debe tener al menos 2 caracteres');
+      return false;
+    }
+
+    // Validar precio
+    if (isNaN(formData.price) || formData.price <= 0) {
+      toast.error('El precio debe ser un número mayor a 0');
+      return false;
+    }
+    if (formData.price > 1000000) {
+      toast.error('El precio no puede exceder $1,000,000');
+      return false;
+    }
+
+    // Validar stock
+    if (isNaN(formData.stock) || formData.stock < 0) {
+      toast.error('El stock debe ser un número mayor o igual a 0');
+      return false;
+    }
+    if (formData.stock > 999999) {
+      toast.error('El stock no puede exceder 999,999 unidades');
+      return false;
+    }
+
+    // Validar URL de imagen si está presente
+    if (formData.imageUrl && formData.imageUrl.trim()) {
+      try {
+        new URL(formData.imageUrl);
+        if (!formData.imageUrl.match(/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i)) {
+          toast.error('La URL de la imagen debe ser una URL válida que termine en .jpg, .png, .gif o .webp');
+          return false;
+        }
+      } catch {
+        toast.error('La URL de la imagen no es válida');
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name.trim() || !formData.description.trim() || !formData.category.trim()) {
-      toast.error('Por favor completa todos los campos requeridos');
+    // Validar el formulario
+    if (!validateForm()) {
       return;
     }
 
-    if (formData.price <= 0 || formData.stock < 0) {
-      toast.error('Precio y stock deben ser valores válidos');
-      return;
-    }
+    // Limpiar datos antes de enviar
+    const cleanedData = {
+      name: formData.name.trim(),
+      description: formData.description.trim(),
+      price: Number(formData.price),
+      unit: formData.unit,
+      stock: Number(formData.stock),
+      category: formData.category.trim(),
+      imageUrl: formData.imageUrl.trim() || undefined,
+    };
 
     try {
       if (editingProduct) {
-        await marketplaceService.updateProduct(editingProduct.id, formData);
+        await marketplaceService.updateProduct(editingProduct.id, cleanedData);
         toast.success('Producto actualizado exitosamente');
-        addToHistory('Actualizar', formData.name);
+        addToHistory('Actualizar', cleanedData.name);
       } else {
-        await marketplaceService.createProduct(formData);
+        await marketplaceService.createProduct(cleanedData);
         toast.success('Producto publicado exitosamente');
-        addToHistory('Crear', formData.name);
+        addToHistory('Crear', cleanedData.name);
       }
       
       await loadProducts();
       resetForm();
     } catch (error: any) {
-      toast.error(error?.message || 'Error al guardar producto');
+      console.error('Error al guardar producto:', error);
+      const errorMessage = error?.message || 'Error al guardar producto. Por favor, intenta de nuevo.';
+      toast.error(errorMessage);
     }
   };
 
@@ -146,10 +257,43 @@ export const FarmerProducts: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'price' || name === 'stock' ? parseFloat(value) || 0 : value,
-    }));
+    
+    // Validaciones en tiempo real
+    if (name === 'price') {
+      const numValue = parseFloat(value);
+      if (value && (isNaN(numValue) || numValue < 0)) {
+        return; // No actualizar si el valor no es válido
+      }
+      setFormData(prev => ({ ...prev, [name]: numValue || 0 }));
+    } else if (name === 'stock') {
+      const numValue = parseFloat(value);
+      if (value && (isNaN(numValue) || numValue < 0 || !Number.isInteger(numValue))) {
+        return; // No actualizar si el valor no es válido
+      }
+      setFormData(prev => ({ ...prev, [name]: Math.floor(numValue) || 0 }));
+    } else if (name === 'name') {
+      // Limitar longitud del nombre
+      if (value.length > 100) {
+        toast.warning('El nombre no puede exceder 100 caracteres');
+        return;
+      }
+      setFormData(prev => ({ ...prev, [name]: value }));
+    } else if (name === 'description') {
+      // Limitar longitud de la descripción
+      if (value.length > 500) {
+        toast.warning('La descripción no puede exceder 500 caracteres');
+        return;
+      }
+      setFormData(prev => ({ ...prev, [name]: value }));
+    } else if (name === 'category') {
+      // Limitar longitud de la categoría
+      if (value.length > 50) {
+        return;
+      }
+      setFormData(prev => ({ ...prev, [name]: value }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   if (isLoading) {
