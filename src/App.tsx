@@ -4,6 +4,7 @@ import { useAuth } from './hooks';
 import { ROUTES, USER_ROLES } from './utils/constants';
 
 // Lazy load pages for better performance
+const LandingPage = React.lazy(() => import('./pages/public/LandingPage'));
 const LoginPage = React.lazy(() => import('./pages/auth/LoginPage'));
 const RegisterPage = React.lazy(() => import('./pages/auth/RegisterPage'));
 const FarmerDashboard = React.lazy(() => import('./pages/farmer/FarmerDashboard'));
@@ -156,7 +157,7 @@ const App: React.FC = () => {
             isAuthenticated && user ? (
               <Navigate to={getDashboardByRole(user.role)} replace />
             ) : (
-              <Navigate to={ROUTES.LOGIN} replace />
+              <LandingPage />
             )
           }
         />
