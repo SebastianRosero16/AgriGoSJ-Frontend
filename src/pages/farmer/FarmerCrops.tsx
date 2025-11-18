@@ -31,7 +31,7 @@ export const FarmerCrops: React.FC = () => {
     plantedDate: '',
     area: 0,
     location: '',
-    status: 'PLANTED',
+    status: 'SEEDLING',
     notes: '',
   });
 
@@ -252,10 +252,11 @@ export const FarmerCrops: React.FC = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   required
                 >
-                  <option value="PLANTED">Plantado</option>
-                  <option value="GROWING">Creciendo</option>
-                  <option value="READY">Listo para Cosechar</option>
-                  <option value="HARVESTED">Cosechado</option>
+                  <option value="SEEDLING">Plántula</option>
+                  <option value="VEGETATIVE">Crecimiento Vegetativo</option>
+                  <option value="FLOWERING">Floreciendo</option>
+                  <option value="FRUITING">Fructificando</option>
+                  <option value="HARVEST">Listo para Cosechar</option>
                 </select>
               </div>
             </div>
