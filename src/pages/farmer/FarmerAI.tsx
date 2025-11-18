@@ -72,7 +72,7 @@ export const FarmerAI: React.FC = () => {
       {
         id: `welcome-${Date.now()}`,
         sender: 'ai',
-        content: `¡Hola! He seleccionado tu cultivo de **${crop.cropName}** (${crop.cropType}). Puedo ayudarte con:\n\n🌱 Recomendaciones de siembra\n💧 Optimización de riego\n🐛 Control de plagas\n🌾 Fertilización\n\n¿En qué puedo asistirte hoy? También puedes enviarme fotos de tu cultivo para análisis.`,
+        content: `¡Hola! 👋 He seleccionado tu cultivo de **${crop.cropName}** (${crop.cropType}).\n\nPuedo ayudarte con preguntas específicas sobre este cultivo:\n\n🌱 **Ejemplos de preguntas:**\n• "¿Cuándo debo regar mi ${crop.cropName}?"\n• "¿Qué fertilizante necesita en etapa de ${crop.stage}?"\n• "¿Cómo controlar plagas en mi ${crop.cropName}?"\n• "¿Cuál es el mejor momento para cosechar?"\n\n💡 **Nota:** Solo puedo responder preguntas relacionadas con tu cultivo de ${crop.cropName}. Para otros temas, por favor selecciona otro cultivo.`,
         timestamp: new Date(),
       },
     ]);
@@ -174,9 +174,18 @@ export const FarmerAI: React.FC = () => {
           cropName: selectedCrop.cropName,
           cropType: selectedCrop.cropType,
           cropStatus: selectedCrop.stage,
+          soilType: selectedCrop.soilType,
+          climate: selectedCrop.climate,
           area: selectedCrop.area,
           location: selectedCrop.location,
           hasImage: !!tempImage,
+          language: 'es',
+          instructions: `IMPORTANTE: 
+1. Responde SIEMPRE en español, sin excepciones.
+2. Valida que la pregunta del usuario esté relacionada con el cultivo de ${selectedCrop.cropName} (${selectedCrop.cropType}). Si la pregunta no está relacionada con este cultivo específico, responde: "Tu pregunta no está relacionada con tu cultivo de ${selectedCrop.cropName}. Por favor, haz preguntas específicas sobre este cultivo."
+3. Formatea tu respuesta de manera clara y legible, usando markdown simple (**, -, números) pero sin caracteres especiales extraños.
+4. Sé específico y relevante a la pregunta del usuario, no des siempre la misma respuesta genérica.
+5. Considera las condiciones específicas: suelo ${selectedCrop.soilType}, clima ${selectedCrop.climate}, etapa ${selectedCrop.stage}.`
         },
       });
 
@@ -210,12 +219,20 @@ export const FarmerAI: React.FC = () => {
         
         // If explanation contains error, show user-friendly message
         if (aiContent && (aiContent.includes('Error generating AI recommendation') || aiContent.includes('400 Bad Request'))) {
-          aiContent = '⚠️ La IA está teniendo problemas para generar la recomendación. Por favor, intenta reformular tu pregunta de manera más específica.\n\nEjemplos:\n• "¿Cuándo debo regar mi cultivo de café?"\n• "¿Qué fertilizante necesita mi maíz?"\n• "Mi planta tiene hojas amarillas, ¿qué hago?"';
+          aiContent = '⚠️ La IA está teniendo problemas para generar la recomendación. Por favor, intenta reformular tu pregunta de manera más específica.\n\nEjemplos:\n• "¿Cuándo debo regar mi cultivo de cebolla?"\n• "¿Qué fertilizante necesita mi cebolla en etapa de floración?"\n• "Mi planta de cebolla tiene hojas amarillas, ¿qué hago?"';
         }
       }
       
+      // Clean up response: remove weird characters and format properly
+      if (aiContent) {
+        aiContent = aiContent
+          .replace(/\*\*\*/g, '**') // Triple asterisks to double
+          .replace(/\n{3,}/g, '\n\n') // Multiple newlines to double
+          .trim();
+      }
+      
       if (!aiContent || aiContent.trim() === '' || aiContent === 'See full recommendation') {
-        aiContent = 'Lo siento, no pude generar una recomendación en este momento.';
+        aiContent = 'Lo siento, no pude generar una recomendación en este momento. Por favor, intenta reformular tu pregunta.';
       }
 
       const aiMessage: ChatMessage = {
