@@ -13,6 +13,7 @@ const FarmerOverview = React.lazy(() => import('./pages/farmer/FarmerOverview'))
 const FarmerCrops = React.lazy(() => import('./pages/farmer/FarmerCrops'));
 const FarmerProducts = React.lazy(() => import('./pages/farmer/FarmerProducts'));
 const FarmerAI = React.lazy(() => import('./pages/farmer/FarmerAI'));
+const MyOrders = React.lazy(() => import('./pages/orders/MyOrders'));
 const StoreDashboard = React.lazy(() => import('./pages/store/StoreDashboard'));
 const StoreOverview = React.lazy(() => import('./pages/store/StoreOverview'));
 const StoreInputs = React.lazy(() => import('./pages/store/StoreInputs'));
@@ -139,6 +140,15 @@ const App: React.FC = () => {
           element={
             <ProtectedRoute allowedRoles={[USER_ROLES.BUYER]}>
               <BuyerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        {/* Mis Órdenes */}
+        <Route
+          path={ROUTES.BUYER.ORDERS}
+          element={
+            <ProtectedRoute allowedRoles={[USER_ROLES.BUYER]}>
+              <MyOrders />
             </ProtectedRoute>
           }
         />

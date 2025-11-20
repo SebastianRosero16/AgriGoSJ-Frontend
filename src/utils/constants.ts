@@ -80,6 +80,7 @@ export const ROUTES = {
   BUYER: {
     DASHBOARD: '/buyer/dashboard',
     MARKETPLACE: '/buyer/marketplace',
+    ORDERS: '/buyer/orders',
     CART: '/buyer/cart',
   },
   
