@@ -271,11 +271,12 @@ export const RegisterPage: React.FC = () => {
   };
 
   // Show verification component if needed
-  if (showVerification) {
+    if (showVerification) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 px-4 py-8">
         <EmailVerification
           email={formData.email}
+            username={formData.username}
           onVerified={handleEmailVerified}
           onCancel={handleVerificationCancel}
         />

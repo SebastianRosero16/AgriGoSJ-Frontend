@@ -108,10 +108,14 @@ class AuthService {
   /**
    * Send verification code to email
    */
-  async sendVerificationCode(email: string): Promise<VerificationCodeResponse> {
+  async sendVerificationCode(email: string, username?: string): Promise<VerificationCodeResponse> {
+    // New backend requires username in the payload when available
+    const payload: any = { email };
+    if (username) payload.username = username;
+
     return await httpClient.post<VerificationCodeResponse>(
       API_ENDPOINTS.AUTH.SEND_VERIFICATION_CODE,
-      { email }
+      payload
     );
   }
 

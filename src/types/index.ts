@@ -325,3 +325,64 @@ export interface Statistics {
   totalSales?: number;
   revenue?: number;
 }
+
+/**
+ * Orders and Payments types
+ */
+export type OrderStatus =
+  | 'PENDING_PAYMENT'
+  | 'PAID'
+  | 'PROCESSING'
+  | 'SHIPPED'
+  | 'DELIVERED'
+  | 'CANCELLED'
+  | 'REFUNDED';
+
+export interface OrderItem {
+  productId: number;
+  quantity: number;
+  price: number;
+  unit?: string;
+}
+
+export interface Order {
+  id: number;
+  orderNumber: string;
+  buyerId: number;
+  buyerName: string;
+  items: OrderItem[];
+  subtotal: number;
+  tax: number;
+  shippingCost: number;
+  total: number;
+  status: OrderStatus;
+  shippingAddress: string;
+  createdAt: string;
+}
+
+export interface CreateOrderRequest {
+  items: Array<{ productId: number; quantity: number }>;
+  shippingAddress: string;
+  shippingCity: string;
+  shippingState: string;
+  shippingZipCode: string;
+  shippingPhone: string;
+  notes?: string;
+}
+
+export type PaymentMethod = 'STRIPE' | 'NEQUI' | 'CASH';
+
+export type PaymentStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'REFUNDED' | 'CANCELLED';
+
+export interface PaymentTransaction {
+  transactionId: string;
+  orderNumber: string;
+  paymentMethod: PaymentMethod;
+  status: PaymentStatus;
+  amount: number;
+  currency: string;
+  stripeClientSecret?: string;
+  nequiTransactionId?: string;
+  nequiPhoneNumber?: string;
+  paymentDetails?: string;
+}

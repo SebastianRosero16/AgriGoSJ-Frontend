@@ -11,6 +11,7 @@ import { validateVerificationCode, isNumericCode } from '@/utils/validation';
 
 interface EmailVerificationProps {
   email: string;
+  username?: string; // ahora aceptamos username requerido por el backend
   onVerified: () => void;
   onCancel: () => void;
 }
@@ -51,7 +52,7 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
     setLoading(true);
     setError('');
     try {
-      const response = await authService.sendVerificationCode(email);
+      const response = await authService.sendVerificationCode(email, username);
       if (response.success) {
         toast.success(`Código enviado a ${email}`);
         if (response.note) {
