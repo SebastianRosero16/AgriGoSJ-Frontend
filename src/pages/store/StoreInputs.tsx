@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Card, Button, Input, Loading } from '@/components/ui';
-import { BeakerIcon, ShoppingBagIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ShoppingBagIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import StockModal from '@/components/ui/StockModal';
 import { storeService } from '@/api';
 import type { StoreInput } from '@/types';
@@ -444,10 +444,7 @@ export const StoreInputs: React.FC = () => {
       {/* Lista de insumos */}
       {filteredInputs.length === 0 ? (
         <Card>
-          <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">
-              <BeakerIcon className="w-16 h-16 mx-auto" />
-            </div>
+          <div className="text-center py-6">
             <h3 className="text-xl font-semibold text-gray-700 mb-2">
               {searchTerm || filterType !== 'all' 
                 ? 'No se encontraron insumos' 

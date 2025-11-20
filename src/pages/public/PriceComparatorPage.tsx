@@ -68,10 +68,7 @@ export const PriceComparatorPage: React.FC = () => {
         <div className="space-y-6">
           {/* Empty State */}
           <Card>
-            <div className="text-center py-12">
-              <div className="text-green-700 mb-4">
-                <CurrencyDollarIcon className="w-16 h-16 mx-auto" />
-              </div>
+            <div className="text-center py-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 Busca un producto para comparar
               </h3>

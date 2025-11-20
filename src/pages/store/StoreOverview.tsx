@@ -12,7 +12,6 @@ import {
   ExclamationTriangleIcon,
   PlusIcon,
   ClipboardDocumentListIcon,
-  BeakerIcon,
 } from '@heroicons/react/24/outline';
 import { storeService } from '@/api';
 import { ROUTES } from '@/utils/constants';
@@ -153,10 +152,7 @@ export const StoreOverview: React.FC = () => {
       <Card className="dark:bg-whatsapp-dark">
         <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Insumos Recientes</h3>
         {inputs.length === 0 ? (
-          <div className="text-center py-8">
-            <div className="text-6xl mb-4 text-gray-400">
-              <BeakerIcon className="w-16 h-16 mx-auto" />
-            </div>
+          <div className="text-center py-6">
             <h3 className="text-xl font-semibold text-gray-700 mb-2">
               No tienes insumos registrados
             </h3>
