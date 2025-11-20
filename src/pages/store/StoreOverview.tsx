@@ -79,60 +79,62 @@ export const StoreOverview: React.FC = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100">
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-[#072022] dark:to-[#061917] dark:text-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 font-medium">Total Insumos</p>
-              <p className="text-3xl font-bold text-blue-700">{stats.totalInputs}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">Total Insumos</p>
+              <p className="text-3xl font-bold text-blue-700 dark:text-blue-300">{stats.totalInputs}</p>
             </div>
-            <div className="text-blue-700">
+            <div className="text-blue-700 dark:text-blue-300">
               <ShoppingBagIcon className="w-10 h-10" />
             </div>
           </div>
         </Card>
 
-        <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100">
+        <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-[#3b2a12] dark:to-[#2a1f0f] dark:text-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 font-medium">Stock Bajo</p>
-              <p className="text-3xl font-bold text-yellow-700">{stats.lowStock}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">Stock Bajo</p>
+              <p className="text-3xl font-bold text-yellow-700 dark:text-yellow-300">{stats.lowStock}</p>
             </div>
-            <div className="text-yellow-700">
+            <div className="text-yellow-700 dark:text-yellow-300">
               <ExclamationTriangleIcon className="w-10 h-10" />
             </div>
           </div>
         </Card>
 
-        <Card className="bg-gradient-to-br from-red-50 to-red-100">
+        <Card className="bg-gradient-to-br from-red-50 to-red-100 dark:from-[#3b1616] dark:to-[#2a1010] dark:text-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 font-medium">Sin Stock</p>
-              <p className="text-3xl font-bold text-red-700">{stats.outOfStock}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">Sin Stock</p>
+              <p className="text-3xl font-bold text-red-700 dark:text-red-300">{stats.outOfStock}</p>
             </div>
-            <div className="text-red-700">
+            <div className="text-red-700 dark:text-red-300">
               {/* Icono eliminado porque BanIcon no existe en Heroicons */}
             </div>
           </div>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-50 to-green-100">
+        <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-[#052214] dark:to-[#041712] dark:text-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 font-medium">Valor Total</p>
-              <p className="text-3xl font-bold text-green-700">
+              <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">Valor Total</p>
+              <p className="text-3xl font-bold text-green-700 dark:text-[#25D366]">
                 ${stats.totalValue.toLocaleString()}
               </p>
             </div>
-            <div className="text-green-700">
-              <CurrencyDollarIcon className="w-10 h-10" />
+            <div className="ml-4">
+              <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-[#052014] flex items-center justify-center">
+                <CurrencyDollarIcon className="w-6 h-6 text-green-700 dark:text-[#25D366]" />
+              </div>
             </div>
           </div>
         </Card>
       </div>
 
       {/* Quick Actions */}
-      <Card>
-        <h3 className="text-lg font-semibold mb-4">Acciones Rápidas</h3>
+      <Card className="dark:bg-[#071614]">
+        <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Acciones Rápidas</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Button
             variant="primary"
@@ -154,8 +156,8 @@ export const StoreOverview: React.FC = () => {
       </Card>
 
       {/* Recent Activity */}
-      <Card>
-        <h3 className="text-lg font-semibold mb-4">Insumos Recientes</h3>
+      <Card className="dark:bg-[#071614]">
+        <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Insumos Recientes</h3>
         {inputs.length === 0 ? (
           <div className="text-center py-8">
             <div className="text-6xl mb-4 text-gray-400">
@@ -175,22 +177,22 @@ export const StoreOverview: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Insumo</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Tipo</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-700">Precio</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-700">Stock</th>
-                  <th className="text-center py-3 px-4 font-semibold text-gray-700">Estado</th>
+                <tr className="border-b border-gray-200 dark:border-[#12221f]">
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-200">Insumo</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-200">Tipo</th>
+                  <th className="text-right py-3 px-4 font-semibold text-gray-700 dark:text-gray-200">Precio</th>
+                  <th className="text-right py-3 px-4 font-semibold text-gray-700 dark:text-gray-200">Stock</th>
+                  <th className="text-center py-3 px-4 font-semibold text-gray-700 dark:text-gray-200">Estado</th>
                 </tr>
               </thead>
               <tbody>
                 {inputs.slice(0, 5).map((input) => (
-                  <tr key={input.id} className="border-b border-gray-100 hover:bg-gray-50">
+                  <tr key={input.id} className="border-b border-gray-100 hover:bg-gray-50 dark:border-[#0f2320] dark:hover:bg-[#071614]">
                     <td className="py-3 px-4">
-                      <div className="font-medium text-gray-900">{input.name}</div>
-                      <div className="text-sm text-gray-500">{input.description}</div>
+                      <div className="font-medium text-gray-900 dark:text-gray-100">{input.name}</div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">{input.description}</div>
                     </td>
-                    <td className="py-3 px-4 text-gray-700">{input.type}</td>
+                    <td className="py-3 px-4 text-gray-700 dark:text-gray-200">{input.type}</td>
                     <td className="py-3 px-4 text-right font-medium">
                       ${input.price.toFixed(2)} / {input.unit}
                     </td>
@@ -205,9 +207,9 @@ export const StoreOverview: React.FC = () => {
                     </td>
                     <td className="py-3 px-4 text-center">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        input.stock === 0 ? 'bg-red-100 text-red-800' :
-                        input.stock < 10 ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-green-100 text-green-800'
+                        input.stock === 0 ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' :
+                        input.stock < 10 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
+                        'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
                       }`}>
                         {input.stock === 0 ? 'Sin Stock' :
                          input.stock < 10 ? 'Stock Bajo' :

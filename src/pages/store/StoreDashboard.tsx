@@ -29,13 +29,13 @@ export const StoreDashboard: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0b1412] dark:text-gray-100">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white shadow-sm dark:bg-[#0f1b17] dark:border-b dark:border-[#12221f]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold text-primary-600">
+              <h1 className="text-2xl font-bold text-primary-600 dark:text-[#25D366]">
                 {APP_INFO.NAME}
               </h1>
               <p className="text-sm text-gray-600">
