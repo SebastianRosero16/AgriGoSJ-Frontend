@@ -444,15 +444,16 @@ export const StoreInputs: React.FC = () => {
                   <h3 className="text-lg font-semibold text-gray-900">{input.name}</h3>
                   <p className="text-sm text-gray-600">{input.type}</p>
                 </div>
-                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                  input.stock === 0 ? 'bg-red-100 text-red-800' :
-                  input.stock < 10 ? 'bg-yellow-100 text-yellow-800' :
-                  'bg-green-100 text-green-800'
-                }`}>
-                  {input.stock === 0 ? 'Sin Stock' :
-                   input.stock < 10 ? 'Stock Bajo' :
-                   'Disponible'}
-                </span>
+                {(() => {
+                  const stockNum = Number(input.stock) || 0;
+                  const badgeClass = stockNum === 0 ? 'bg-red-100 text-red-800' : stockNum < 10 ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800';
+                  const badgeText = stockNum === 0 ? 'Sin Stock' : stockNum < 10 ? 'Stock Bajo' : 'Disponible';
+                  return (
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${badgeClass}`}>
+                      {badgeText}
+                    </span>
+                  );
+                })()}
               </div>
 
               {input.description && (
@@ -463,18 +464,20 @@ export const StoreInputs: React.FC = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Precio:</span>
                   <span className="font-semibold text-lg text-primary-600">
-                    ${input.price.toFixed(2)} / {input.unit}
+                    ${ (Number(input.price) || 0).toFixed(2) } / {input.unit}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Stock:</span>
-                  <span className={`font-semibold ${
-                    input.stock === 0 ? 'text-red-600' :
-                    input.stock < 10 ? 'text-yellow-600' :
-                    'text-green-600'
-                  }`}>
-                    {input.stock} {input.unit}
-                  </span>
+                  {(() => {
+                    const stockNum = Number(input.stock) || 0;
+                    const stockClass = stockNum === 0 ? 'text-red-600' : stockNum < 10 ? 'text-yellow-600' : 'text-green-600';
+                    return (
+                      <span className={`font-semibold ${stockClass}`}>
+                        {stockNum} {input.unit}
+                      </span>
+                    );
+                  })()}
                 </div>
               </div>
 
