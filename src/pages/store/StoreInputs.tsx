@@ -42,6 +42,17 @@ export const StoreInputs: React.FC = () => {
     try {
       setIsLoading(true);
       const data = await storeService.getInputs();
+      if (!data) {
+        setInputs([]);
+        return;
+      }
+
+      if (!Array.isArray(data)) {
+        console.error('Respuesta inesperada de getInputs, se esperaba array:', data);
+        setInputs([]);
+        return;
+      }
+
       setInputs(data);
     } catch (error: any) {
       toast.error(error?.message || 'Error al cargar insumos');
