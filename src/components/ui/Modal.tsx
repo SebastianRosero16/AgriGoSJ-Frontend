@@ -92,7 +92,7 @@ export const Modal: React.FC<ModalProps> = ({
         >
           {/* Icon */}
           <div className={`mx-auto flex items-center justify-center h-12 w-12 rounded-full ${styles.bg} mb-4`}>
-            <span className="text-2xl">{styles.icon}</span>
+            <span className="text-2xl">{icon}</span>
           </div>
 
           {/* Content */}

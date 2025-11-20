@@ -10,7 +10,6 @@ import { Card, Button, Loading } from '@/components/ui';
 import {
   ShoppingBagIcon,
   ExclamationTriangleIcon,
-  BanIcon,
   CurrencyDollarIcon,
   PlusIcon,
   ClipboardDocumentListIcon,
@@ -111,7 +110,7 @@ export const StoreOverview: React.FC = () => {
               <p className="text-3xl font-bold text-red-700">{stats.outOfStock}</p>
             </div>
             <div className="text-red-700">
-              <BanIcon className="w-10 h-10" />
+              {/* Icono eliminado porque BanIcon no existe en Heroicons */}
             </div>
           </div>
         </Card>
