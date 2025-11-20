@@ -18,6 +18,14 @@ class StoreService {
     // Normalizar respuesta para manejar distintos formatos que pueda devolver el backend
     const data: any = await httpClient.get(API_ENDPOINTS.STORE.INPUTS);
 
+    // Log raw response for debugging when running locally/deployed
+    try {
+      // Use console.debug to avoid noisy logs in production but keep info for troubleshooting
+      console.debug('[storeService] getInputs raw response:', data);
+    } catch (e) {
+      // ignore
+    }
+
     if (!data) return [];
 
     // Si ya es un array
@@ -76,7 +84,9 @@ function normalizeInput(raw: any): StoreInput {
 
   const name = raw.name || raw.inputName || raw.productName || raw.title || raw.nombre || '';
   const type = raw.type || raw.inputType || raw.category || raw.typeName || '';
-  const price = Number(raw.price ?? raw.unitPrice ?? raw.valor ?? 0) || 0;
+  // Normalizar y redondear precio a entero para evitar decimales en la UI
+  const rawPrice = Number(raw.price ?? raw.unitPrice ?? raw.valor ?? 0);
+  const price = Number.isFinite(rawPrice) ? Math.round(rawPrice) : 0;
   const stock = Number(raw.stock ?? raw.quantity ?? raw.cantidad ?? 0) || 0;
   const unit = raw.unit || raw.unidad || raw.measureUnit || 'unidad';
   const description = raw.description || raw.descripcion || raw.desc || '';

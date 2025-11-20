@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Loading } from '@/components/ui';
+import { formatCurrencyInteger, translateInputType, formatNumber } from '@/utils/format';
 import { ROUTES } from '@/utils/constants';
 import { marketplaceService, farmerService, storeService } from '@/api';
 import {
@@ -217,9 +218,9 @@ export const FarmerOverview: React.FC = () => {
                 {inputs.map((inp) => (
                   <tr key={inp.id} className="border-t border-gray-100">
                     <td className="py-3 px-3 text-sm text-gray-800">{inp.name}</td>
-                    <td className="py-3 px-3 text-sm text-gray-600">{inp.type || '-'}</td>
-                    <td className="py-3 px-3 text-sm text-gray-800">{typeof inp.price === 'number' ? `$${inp.price.toLocaleString()}` : inp.price}</td>
-                    <td className="py-3 px-3 text-sm text-gray-800">{inp.stock ?? '-'}</td>
+                    <td className="py-3 px-3 text-sm text-gray-600">{translateInputType(inp.type)}</td>
+                    <td className="py-3 px-3 text-sm text-gray-800">{formatCurrencyInteger(Number(inp.price || 0))}</td>
+                    <td className="py-3 px-3 text-sm text-gray-800">{formatNumber(Number(inp.stock || 0), 0)}</td>
                   </tr>
                 ))}
               </tbody>

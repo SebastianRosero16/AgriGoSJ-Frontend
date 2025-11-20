@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Card, Button, Input, Loading } from '@/components/ui';
+import { formatCurrencyInteger, translateInputType } from '@/utils/format';
 import { ShoppingBagIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import StockModal from '@/components/ui/StockModal';
 import { storeService } from '@/api';
@@ -469,7 +470,7 @@ export const StoreInputs: React.FC = () => {
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{input.name}</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">{input.type}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">{translateInputType(input.type)}</p>
                 </div>
                 {(() => {
                   const stockNum = Number(input.stock) || 0;
@@ -490,7 +491,7 @@ export const StoreInputs: React.FC = () => {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <div className="text-sm text-gray-500 dark:text-gray-300">Precio</div>
-                  <div className="text-2xl font-extrabold text-primary-600 dark:text-primary-400">${ (Number(input.price) || 0).toFixed(0) }</div>
+                  <div className="text-2xl font-extrabold text-primary-600 dark:text-primary-400">{formatCurrencyInteger(Number(input.price) || 0)}</div>
                 </div>
                 <div className="text-right">
                   <div className="text-sm text-gray-500 dark:text-gray-300">Stock</div>

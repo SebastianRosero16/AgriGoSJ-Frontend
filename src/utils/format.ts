@@ -146,6 +146,47 @@ export function formatNumber(value: number, decimals: number = 0): string {
 }
 
 /**
+ * Format currency as integer (no decimales)
+ */
+export function formatCurrencyInteger(amount: number, currency: string = 'COP'): string {
+  const value = Number.isFinite(amount) ? Math.round(amount) : 0;
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+/**
+ * Translate input/store type enum or string to a Spanish label.
+ * Handles common backend enum values (FERTILIZER, PESTICIDE, SEED, etc.).
+ */
+export function translateInputType(type?: string | null): string {
+  if (!type) return '-';
+  const t = String(type).trim().toUpperCase();
+  const map: Record<string, string> = {
+    'FERTILIZER': 'Fertilizante',
+    'FERTILIZANTE': 'Fertilizante',
+    'PESTICIDE': 'Pesticida',
+    'PESTICIDA': 'Pesticida',
+    'SEED': 'Semilla',
+    'SEMILLA': 'Semilla',
+    'HERBICIDE': 'Herbicida',
+    'HERBICIDA': 'Herbicida',
+    'FUNGICIDE': 'Fungicida',
+    'FUNGICIDA': 'Fungicida',
+    'TOOL': 'Herramienta',
+    'HERRAMIENTA': 'Herramienta',
+    'OTHER': 'Otro',
+    'OTRO': 'Otro',
+  };
+
+  return map[t] || // if mapping not found, try a friendly capitalization
+    (type.charAt(0).toUpperCase() + type.slice(1).toLowerCase());
+}
+
+/**
  * Truncate text with ellipsis
  */
 export function truncateText(text: string, maxLength: number): string {
