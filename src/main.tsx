@@ -7,6 +7,21 @@ import './index.css';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
 
+// Suppress authentication error logs in console
+window.addEventListener('unhandledrejection', (event) => {
+  // Check if this is an authentication error
+  const error = event.reason;
+  if (
+    error?.message?.includes('Usuario o contraseña incorrectos') ||
+    error?.message?.includes('Unauthorized') ||
+    error?.status === 401 ||
+    (error?.config?.url && error.config.url.includes('/auth/login'))
+  ) {
+    // Prevent the error from being logged to console
+    event.preventDefault();
+  }
+});
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
