@@ -166,6 +166,17 @@ export const FarmerCrops: React.FC = () => {
     setShowForm(false);
   };
 
+  const getCropTypeLabel = (type: string): string => {
+    const types: Record<string, string> = {
+      'CEREAL': 'Cereal',
+      'VEGETABLE': 'Hortaliza',
+      'FRUIT': 'Frutal',
+      'LEGUME': 'Leguminosa',
+      'OTHER': 'Otro'
+    };
+    return types[type] || type;
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
@@ -329,7 +340,7 @@ export const FarmerCrops: React.FC = () => {
               <div className="flex justify-between items-start mb-3">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">{crop.cropName}</h3>
-                  <p className="text-sm text-gray-600">{crop.cropType}</p>
+                  <p className="text-sm text-gray-600">{getCropTypeLabel(crop.cropType)}</p>
                 </div>
                 <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                   crop.stage === 'HARVEST' ? 'bg-green-100 text-green-800' :
