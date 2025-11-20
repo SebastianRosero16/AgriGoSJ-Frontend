@@ -159,7 +159,7 @@ export const FarmerCrops: React.FC = () => {
       plantedDate: '',
       area: 0,
       location: '',
-      status: 'PLANTED',
+      status: 'SEEDLING',
       notes: '',
     });
     setEditingCrop(null);
@@ -168,10 +168,24 @@ export const FarmerCrops: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'area' ? parseFloat(value) || 0 : value,
-    }));
+    
+    if (name === 'area') {
+      // Permitir solo números y punto decimal
+      const numericValue = value.replace(/[^0-9.]/g, '');
+      // Evitar múltiples puntos decimales
+      const parts = numericValue.split('.');
+      const validValue = parts.length > 2 ? parts[0] + '.' + parts.slice(1).join('') : numericValue;
+      
+      setFormData(prev => ({
+        ...prev,
+        [name]: validValue === '' ? 0 : parseFloat(validValue) || 0,
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   if (isLoading) {
@@ -237,13 +251,11 @@ export const FarmerCrops: React.FC = () => {
               />
               <Input
                 label="Área (hectáreas) *"
-                type="number"
+                type="text"
                 name="area"
-                value={formData.area}
+                value={formData.area === 0 ? '' : formData.area}
                 onChange={handleChange}
-                placeholder="0.0"
-                step="0.1"
-                min="0"
+                placeholder="Ej: 2.5"
                 required
               />
               <Input
