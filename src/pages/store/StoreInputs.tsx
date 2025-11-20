@@ -228,13 +228,18 @@ export const StoreInputs: React.FC = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Filter inputs
+  // Filter inputs (defensive: normaliza campos que pueden venir undefined del backend)
+  const normalizedSearch = (searchTerm || '').toLowerCase();
   const filteredInputs = inputs.filter(input => {
-    const matchesSearch = input.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         input.type.toLowerCase().includes(searchTerm.toLowerCase());
+    const name = (input.name ?? '').toString();
+    const typeField = (input.type ?? '').toString();
+    const matchesSearch = name.toLowerCase().includes(normalizedSearch) ||
+                         typeField.toLowerCase().includes(normalizedSearch);
+
+    const stockNum = Number(input.stock) || 0;
     const matchesFilter = filterType === 'all' ||
-                         (filterType === 'low-stock' && input.stock < 10 && input.stock > 0) ||
-                         (filterType === 'out-of-stock' && input.stock === 0);
+                         (filterType === 'low-stock' && stockNum < 10 && stockNum > 0) ||
+                         (filterType === 'out-of-stock' && stockNum === 0);
     return matchesSearch && matchesFilter;
   });
 
