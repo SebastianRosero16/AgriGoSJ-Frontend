@@ -86,7 +86,9 @@ export const FarmerCrops: React.FC = () => {
       await loadCrops();
       resetForm();
     } catch (error: any) {
-      toast.error(error?.message || 'Error al guardar cultivo');
+      console.error('❌ Error al guardar cultivo:', error);
+      const backendMsg = error?.response?.data?.message || error?.response?.data || error?.message || 'Error al guardar cultivo';
+      toast.error(String(backendMsg));
     }
   };
 
@@ -206,14 +208,23 @@ export const FarmerCrops: React.FC = () => {
                 placeholder="Ej: Maíz"
                 required
               />
-              <Input
-                label="Tipo de Cultivo *"
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-                placeholder="Ej: Cereal"
-                required
-              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Cultivo *</label>
+                <select
+                  name="type"
+                  value={formData.type}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  required
+                >
+                  <option value="">Selecciona tipo...</option>
+                  <option value="CEREAL">Cereal</option>
+                  <option value="VEGETABLE">Hortaliza</option>
+                  <option value="FRUIT">Frutal</option>
+                  <option value="LEGUME">Leguminosa</option>
+                  <option value="OTHER">Otro</option>
+                </select>
+              </div>
               <Input
                 label="Fecha de Siembra *"
                 type="date"
