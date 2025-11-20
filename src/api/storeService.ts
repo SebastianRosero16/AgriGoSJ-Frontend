@@ -21,19 +21,22 @@ class StoreService {
     if (!data) return [];
 
     // Si ya es un array
-    if (Array.isArray(data)) return data as StoreInput[];
+    if (Array.isArray(data)) {
+      // Normalize each item to expected shape
+      return data.map(normalizeInput) as StoreInput[];
+    }
 
     // Formato común: { data: [...] }
-    if (Array.isArray(data.data)) return data.data as StoreInput[];
+    if (Array.isArray(data.data)) return data.data.map(normalizeInput) as StoreInput[];
 
     // Otro formato común: { items: [...] }
-    if (Array.isArray(data.items)) return data.items as StoreInput[];
+    if (Array.isArray(data.items)) return data.items.map(normalizeInput) as StoreInput[];
 
     // Si la respuesta contiene la propiedad 'inputs'
-    if (Array.isArray(data.inputs)) return data.inputs as StoreInput[];
+    if (Array.isArray(data.inputs)) return data.inputs.map(normalizeInput) as StoreInput[];
 
     // Si la respuesta es un objeto con una sola entidad, devolverlo dentro de un array
-    if (typeof data === 'object') return [data as StoreInput];
+    if (typeof data === 'object') return [normalizeInput(data as any) as StoreInput];
 
     return [];
   }
@@ -65,6 +68,32 @@ class StoreService {
   async deleteInput(id: number): Promise<void> {
     return await httpClient.delete(API_ENDPOINTS.STORE.INPUT_BY_ID(id));
   }
+
+}
+// Helper: normalize different backend shapes into the StoreInput interface
+function normalizeInput(raw: any): StoreInput {
+  if (!raw || typeof raw !== 'object') return raw as StoreInput;
+
+  const name = raw.name || raw.inputName || raw.productName || raw.title || raw.nombre || '';
+  const type = raw.type || raw.inputType || raw.category || raw.typeName || '';
+  const price = Number(raw.price ?? raw.unitPrice ?? raw.valor ?? 0) || 0;
+  const stock = Number(raw.stock ?? raw.quantity ?? raw.cantidad ?? 0) || 0;
+  const unit = raw.unit || raw.unidad || raw.measureUnit || 'unidad';
+  const description = raw.description || raw.descripcion || raw.desc || '';
+
+  return {
+    id: Number(raw.id ?? raw.inputId ?? raw._id ?? 0),
+    name: String(name),
+    type: String(type),
+    description: String(description),
+    price,
+    stock,
+    unit: String(unit),
+    storeId: Number(raw.storeId ?? raw.tiendaId ?? 0),
+    storeName: raw.storeName || raw.tienda || undefined,
+    createdAt: raw.createdAt || raw.created_at || new Date().toISOString(),
+    updatedAt: raw.updatedAt || raw.updated_at || undefined,
+  } as StoreInput;
 }
 
 export const storeService = new StoreService();
