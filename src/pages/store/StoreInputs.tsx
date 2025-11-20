@@ -95,14 +95,35 @@ export const StoreInputs: React.FC = () => {
     }
 
     try {
+      // Mapear el campo `type` desde etiquetas en español a los valores Enum que espera el backend
+      const mapType = (input: string | number | undefined) => {
+        if (!input) return 'OTHER';
+        const s = String(input).trim().toLowerCase();
+        const map: Record<string, string> = {
+          'fertilizante': 'FERTILIZER',
+          'fertilizantes': 'FERTILIZER',
+          'pesticida': 'PESTICIDE',
+          'pesticidas': 'PESTICIDE',
+          'semilla': 'SEED',
+          'semillas': 'SEED',
+          'herbicida': 'HERBICIDE',
+          'fungicida': 'FUNGICIDE',
+          'herramienta': 'TOOL',
+          'otro': 'OTHER',
+          'other': 'OTHER',
+        };
+        return map[s] || s.toUpperCase().replace(/\s+/g, '_');
+      };
+
       // Convertir strings a números antes de enviar
       const payload: any = {
         ...formData,
         price: typeof formData.price === 'string' ? parseFloat(String(formData.price).replace(',', '.')) : formData.price,
         stock: typeof formData.stock === 'string' ? parseInt(String(formData.stock).replace(/[^0-9]/g, ''), 10) : formData.stock,
+        type: mapType(formData.type),
       };
 
-      console.log('📤 Enviando datos del insumo:', payload);
+      console.log('📤 Enviando datos del insumo (payload):', payload);
 
       if (editingInput) {
         await storeService.updateInput(editingInput.id, payload);
