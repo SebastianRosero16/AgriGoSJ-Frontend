@@ -54,7 +54,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser(JSON.parse(storedUser));
         }
       } catch (error) {
-        console.error('Failed to initialize auth:', error);
+        // Silently clear invalid auth data
         localStorage.removeItem(STORAGE_KEYS.USER_DATA);
         localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
       } finally {
@@ -104,10 +104,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       else if ((response as any).role) {
         userData = response as any as User;
       }
-      // Case 3: Try to get token and find user data
+      // Case 3: Invalid structure
       else {
-        console.error('Estructura de respuesta inválida:', response);
-        throw new Error('Error de autenticación. El servidor respondió con un formato inválido.');
+        throw new Error('Error de autenticación. Por favor, intenta nuevamente.');
       }
       
       // Extract token
@@ -146,8 +145,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
       // Case 3: Invalid structure
       else {
-        console.error('Estructura de respuesta inválida:', response);
-        throw new Error('Error de autenticación. El servidor respondió con un formato inválido.');
+        throw new Error('Error de registro. Por favor, intenta nuevamente.');
       }
       
       // Extract token
