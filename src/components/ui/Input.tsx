@@ -32,6 +32,29 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ${className}
           `}
           {...props}
+          // allow typing decimals with comma on locales where comma is decimal separator
+          onKeyDown={(e) => {
+            // allow navigation keys, digits, one comma or dot for decimals, backspace, delete
+            const allowedKeys = ['Backspace','Tab','ArrowLeft','ArrowRight','Delete','Home','End'];
+            if (allowedKeys.includes(e.key)) return;
+            // allow ctrl/meta combinations
+            if (e.ctrlKey || e.metaKey) return;
+            const isNumberInput = (e.currentTarget as HTMLInputElement).type === 'number';
+            if (!isNumberInput) return;
+            const char = e.key;
+            const isDigit = /^[0-9]$/.test(char);
+            const isDecimal = char === '.' || char === ',';
+            if (!isDigit && !isDecimal) {
+              e.preventDefault();
+            }
+            // prevent multiple decimals
+            if (isDecimal) {
+              const value = (e.currentTarget as HTMLInputElement).value;
+              if (value.includes('.') || value.includes(',')) {
+                e.preventDefault();
+              }
+            }
+          }}
         />
         {error && (
           <p className="mt-1 text-sm text-red-600">{error}</p>

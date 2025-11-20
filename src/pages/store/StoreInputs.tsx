@@ -164,7 +164,7 @@ export const StoreInputs: React.FC = () => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'price' || name === 'stock' ? parseFloat(value) || 0 : value,
+      [name]: name === 'price' ? parseFloat(value) || 0 : name === 'stock' ? parseInt(value.replace(/[^0-9]/g, ''), 10) || 0 : value,
     }));
   };
 
@@ -198,7 +198,7 @@ export const StoreInputs: React.FC = () => {
 
       {/* Formulario */}
       {showForm && (
-        <Card>
+        <Card className="relative z-20">
           <h3 className="text-lg font-semibold mb-4">
             {editingInput ? 'Editar Insumo' : 'Nuevo Insumo'}
           </h3>
@@ -256,6 +256,8 @@ export const StoreInputs: React.FC = () => {
                   onChange={handleChange}
                   step="0.01"
                   min="0"
+                  inputMode="decimal"
+                  pattern="[0-9]*[.,]?[0-9]*"
                   required
                 />
               </div>
@@ -264,12 +266,13 @@ export const StoreInputs: React.FC = () => {
                   Stock *
                 </label>
                 <Input
-                  type="number"
+                  type="text"
                   name="stock"
                   value={formData.stock}
                   onChange={handleChange}
-                  step="1"
-                  min="0"
+                  placeholder="0"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   required
                 />
               </div>

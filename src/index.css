@@ -100,3 +100,23 @@ select:disabled,
 textarea:disabled {
   @apply cursor-not-allowed opacity-50;
 }
+
+/* Remove number input spinners to allow easier typing */
+/* Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Ensure numeric inputs still show numeric keyboard on mobile */
+input[type=number],
+input[inputmode='decimal'],
+input[inputmode='numeric'] {
+  caret-color: auto;
+}

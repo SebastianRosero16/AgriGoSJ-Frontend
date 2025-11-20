@@ -404,7 +404,7 @@ export const FarmerProducts: React.FC = () => {
 
       {/* Formulario */}
       {showForm && (
-        <Card>
+        <Card className="relative z-20">
           <h3 className="text-lg font-semibold mb-4">
             {editingProduct ? 'Editar Producto' : 'Publicar Nuevo Producto'}
           </h3>
@@ -456,12 +456,13 @@ export const FarmerProducts: React.FC = () => {
               </div>
               <Input
                 label="Stock Disponible *"
-                type="number"
+                type="text"
                 name="stock"
                 value={formData.stock}
                 onChange={handleChange}
                 placeholder="0"
-                min="0"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 required
               />
             </div>

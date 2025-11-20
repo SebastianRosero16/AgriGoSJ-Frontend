@@ -192,7 +192,7 @@ export const FarmerCrops: React.FC = () => {
 
       {/* Formulario */}
       {showForm && (
-        <Card>
+        <Card className="relative z-20">
           <h3 className="text-lg font-semibold mb-4">
             {editingCrop ? 'Editar Cultivo' : 'Nuevo Cultivo'}
           </h3>
