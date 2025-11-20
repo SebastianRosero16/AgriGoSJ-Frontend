@@ -5,13 +5,48 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Card, Button } from '@/components/ui';
+import { Card, Button, Loading } from '@/components/ui';
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 import { ROUTES, APP_INFO } from '@/utils/constants';
 import { useAuth } from '@/hooks';
+import { useEffect, useState } from 'react';
+import { marketplaceService, storeService, orderService } from '@/api';
+import { formatCurrencyInteger } from '@/utils/format';
+import { useNavigate } from 'react-router-dom';
 
 export const MarketplacePage: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
+  const [query, setQuery] = useState('');
+  const [category, setCategory] = useState('');
+  const [items, setItems] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // If user is farmer, default to 'inputs' and load public inputs
+    const load = async () => {
+      setIsLoading(true);
+      try {
+        if (user?.role === 'FARMER') {
+          setCategory('inputs');
+          const ins = await storeService.getInputsPublic();
+          setItems(Array.isArray(ins) ? ins : []);
+        } else {
+          // Default to marketplace products
+          setCategory('products');
+          const prods = await marketplaceService.getProducts();
+          setItems(Array.isArray(prods) ? prods : []);
+        }
+      } catch (err) {
+        console.warn('Error loading marketplace items:', err);
+        setItems([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -54,16 +89,37 @@ export const MarketplacePage: React.FC = () => {
         <Card className="mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
               type="text"
               placeholder="Buscar productos..."
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
-            <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
               <option value="">Todas las categorías</option>
               <option value="crops">Cultivos</option>
               <option value="inputs">Insumos</option>
             </select>
-            <Button variant="primary" fullWidth>
+            <Button variant="primary" fullWidth onClick={async () => {
+              setIsLoading(true);
+              try {
+                if (category === 'inputs') {
+                  const ins = await storeService.getInputsPublic();
+                  setItems(Array.isArray(ins) ? ins : []);
+                } else {
+                  const prods = await marketplaceService.getProducts();
+                  setItems(Array.isArray(prods) ? prods : []);
+                }
+              } catch (err) {
+                console.warn('Error fetching items:', err);
+                setItems([]);
+              } finally {
+                setIsLoading(false);
+              }
+            }}>
               Buscar
             </Button>
           </div>
@@ -71,22 +127,78 @@ export const MarketplacePage: React.FC = () => {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Empty State */}
-          <div className="col-span-full">
-            <Card>
-              <div className="text-center py-12">
-                <div className="text-primary-600 mb-4">
-                  <ShoppingCartIcon className="w-16 h-16 mx-auto" />
+          {isLoading ? (
+            <div className="col-span-full"><Loading /></div>
+          ) : items.length === 0 ? (
+            <div className="col-span-full">
+              <Card>
+                <div className="text-center py-12">
+                  <div className="text-primary-600 mb-4">
+                    <ShoppingCartIcon className="w-16 h-16 mx-auto" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    No hay productos disponibles
+                  </h3>
+                  <p className="text-gray-600">
+                    Los productos aparecerán aquí cuando estén disponibles
+                  </p>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  No hay productos disponibles
-                </h3>
-                <p className="text-gray-600">
-                  Los productos aparecerán aquí cuando estén disponibles
-                </p>
-              </div>
-            </Card>
-          </div>
+              </Card>
+            </div>
+          ) : (
+            items.map((it: any) => (
+              <Card key={it.id}>
+                <div className="p-4">
+                  <h4 className="text-lg font-semibold text-gray-900">{it.name || it.title}</h4>
+                  <p className="text-sm text-gray-600 mt-1">{it.storeName || it.vendorName || ''}</p>
+                  <div className="mt-4 flex items-center justify-between">
+                    <div className="text-lg font-bold text-gray-900">{formatCurrencyInteger(Number(it.price || it.unitPrice || 0))}</div>
+                    <div>
+                      <Button size="sm" onClick={async () => {
+                        // If farmer, allow quick buy for inputs
+                        try {
+                          if (user?.role === 'FARMER') {
+                            if (category !== 'inputs') {
+                              alert('Selecciona la categoría Insumos para comprar.');
+                              return;
+                            }
+                            const qtyStr = window.prompt('Cantidad a comprar (enteros):', '1') || '0';
+                            const qty = Math.max(1, parseInt(qtyStr || '0', 10));
+                            const phone = window.prompt('Teléfono de contacto para envío:', '') || '';
+                            const address = window.prompt('Dirección de envío:', '') || '';
+                            if (!address || !phone) {
+                              alert('Se requieren teléfono y dirección para crear la orden.');
+                              return;
+                            }
+                            const payload = {
+                              items: [{ productId: Number(it.id), quantity: qty }],
+                              shippingAddress: address,
+                              shippingCity: '',
+                              shippingState: '',
+                              shippingZipCode: '',
+                              shippingPhone: phone,
+                              notes: `Compra rápida desde Marketplace - producto ${it.name || it.title}`,
+                            };
+                            const order = await orderService.createOrder(payload as any);
+                            alert('Orden creada: ' + (order?.orderNumber || 'OK'));
+                            // Optionally navigate to buyer orders
+                          } else {
+                            // Non-farmers (stores or buyers) behaviour: go to product detail or cart
+                            alert('Funcionalidad de compra disponible solo para agricultores por ahora.');
+                          }
+                        } catch (err) {
+                          console.error('Error creando orden:', err);
+                          alert('Error al crear la orden. Revisa la consola.');
+                        }
+                      }} disabled={user?.role === 'FARMER' ? (category !== 'inputs') : false}>
+                        Comprar
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            ))
+          )}
         </div>
       </div>
     </div>
