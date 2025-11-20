@@ -67,6 +67,21 @@ class StoreService {
   }
 
   /**
+   * Get public inputs (new backend endpoint)
+   */
+  async getInputsPublic(): Promise<StoreInput[]> {
+    const data: any = await httpClient.get(API_ENDPOINTS.STORE.INPUTS_PUBLIC);
+    try { console.debug('[storeService] getInputsPublic raw response:', data); } catch {}
+    if (!data) return [];
+    if (Array.isArray(data)) return data.map(normalizeInput) as StoreInput[];
+    if (Array.isArray(data.data)) return data.data.map(normalizeInput) as StoreInput[];
+    if (Array.isArray(data.items)) return data.items.map(normalizeInput) as StoreInput[];
+    if (Array.isArray(data.inputs)) return data.inputs.map(normalizeInput) as StoreInput[];
+    if (typeof data === 'object') return [normalizeInput(data as any) as StoreInput];
+    return [];
+  }
+
+  /**
    * Create new input
    */
   async createInput(input: CreateStoreInputRequest): Promise<StoreInput> {
@@ -92,27 +107,61 @@ class StoreService {
 function normalizeInput(raw: any): StoreInput {
   if (!raw || typeof raw !== 'object') return raw as StoreInput;
 
-  const name = raw.name || raw.inputName || raw.productName || raw.title || raw.nombre || '';
-  const type = raw.type || raw.inputType || raw.category || raw.typeName || '';
-  // Normalizar y redondear precio a entero para evitar decimales en la UI
-  const rawPrice = Number(raw.price ?? raw.unitPrice ?? raw.valor ?? 0);
+  const getString = (...candidates: any[]) => {
+    for (const c of candidates) {
+      if (c === undefined || c === null) continue;
+      if (typeof c === 'string' && c.trim() !== '') return c.trim();
+      if (typeof c === 'number') return String(c);
+    }
+    return '';
+  };
+
+  const parseNumber = (val: any) => {
+    if (val === undefined || val === null || val === '') return 0;
+    if (typeof val === 'number') return val;
+    if (typeof val === 'string') {
+      // Remove currency symbols and spaces, handle thousand separators and comma decimals
+      const cleaned = val.replace(/[₹$€¥£\s]/g, '').replace(/\.(?=\d{3,})/g, '').replace(/,/g, '.');
+      const n = Number(cleaned.replace(/[^0-9.\-]/g, ''));
+      return Number.isFinite(n) ? n : 0;
+    }
+    // Try nested shapes
+    if (typeof val === 'object') {
+      return parseNumber(val.price ?? val.amount ?? val.value ?? val.unitPrice ?? 0);
+    }
+    return 0;
+  };
+
+  const name = getString(raw.name, raw.inputName, raw.productName, raw.title, raw.nombre, raw.label);
+  const type = getString(raw.type, raw.inputType, raw.category, raw.typeName, raw.tipo);
+  const description = getString(raw.description, raw.descripcion, raw.desc, raw.summary);
+
+  const rawPrice = parseNumber(raw.price ?? raw.unitPrice ?? raw.valor ?? raw.cost ?? raw.amount ?? raw.pricing ?? raw.priceInfo);
   const price = Number.isFinite(rawPrice) ? Math.round(rawPrice) : 0;
-  const stock = Number(raw.stock ?? raw.quantity ?? raw.cantidad ?? 0) || 0;
-  const unit = raw.unit || raw.unidad || raw.measureUnit || 'unidad';
-  const description = raw.description || raw.descripcion || raw.desc || '';
+
+  const rawStock = parseNumber(raw.stock ?? raw.quantity ?? raw.cantidad ?? raw.available ?? raw.stockLevel ?? raw.inventory);
+  const stock = Math.max(0, Math.floor(Number.isFinite(rawStock) ? rawStock : 0));
+
+  const unit = getString(raw.unit, raw.unidad, raw.measureUnit, raw.uom) || 'unidad';
+
+  const storeId = Number(raw.storeId ?? raw.tiendaId ?? raw.vendorId ?? raw.sellerId ?? raw.seller?.id ?? raw.store?.id ?? 0) || 0;
+  const storeName = getString(raw.storeName, raw.tienda, raw.sellerName, raw.vendorName, raw.farmerName, raw.store?.name, raw.seller?.name) || undefined;
+
+  const createdAt = getString(raw.createdAt, raw.created_at, raw.timestamp, raw.created) || new Date().toISOString();
+  const updatedAt = getString(raw.updatedAt, raw.updated_at, raw.modifiedAt, raw.modified) || undefined;
 
   return {
-    id: Number(raw.id ?? raw.inputId ?? raw._id ?? 0),
+    id: Number(raw.id ?? raw.inputId ?? raw._id ?? raw.productId ?? 0),
     name: String(name),
     type: String(type),
     description: String(description),
     price,
     stock,
     unit: String(unit),
-    storeId: Number(raw.storeId ?? raw.tiendaId ?? 0),
-    storeName: raw.storeName || raw.tienda || undefined,
-    createdAt: raw.createdAt || raw.created_at || new Date().toISOString(),
-    updatedAt: raw.updatedAt || raw.updated_at || undefined,
+    storeId,
+    storeName,
+    createdAt,
+    updatedAt,
   } as StoreInput;
 }
 

@@ -26,6 +26,7 @@ export const FarmerOverview: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [inputs, setInputs] = useState<any[]>([]);
+  const [usingPublicInputs, setUsingPublicInputs] = useState(false);
   const [showRawInputs, setShowRawInputs] = useState(false);
 
   useEffect(() => {
@@ -62,35 +63,50 @@ export const FarmerOverview: React.FC = () => {
       // Cargar insumos recientes (para mostrar al agricultor opciones de compra)
       try {
         const isFarmer = user?.role === USER_ROLES.FARMER;
-        try {
-          const inputsResp = await storeService.getInputs(isFarmer ? { public: true } : undefined);
-          setInputs(Array.isArray(inputsResp) ? inputsResp.slice(0, 6) : []);
-          console.debug('[FarmerOverview] inputs loaded:', inputsResp);
-        } catch (err: any) {
-          console.warn('storeService.getInputs failed, attempting marketplace fallback:', err);
-          // If backend forbids farmers from listing store inputs (403), fallback to marketplace products
-          if (err?.status === 403 || err?.response?.status === 403) {
-            try {
-              const prods = await marketplaceService.getProducts();
-              // Map products to a lightweight input-like shape
-              const mapped = (Array.isArray(prods) ? prods : []).map(p => ({
-                id: p.id,
-                name: p.name,
-                type: p.category || 'Otro',
-                price: p.price || 0,
-                stock: p.stock || 0,
-                unit: p.unit || 'unidad',
-                storeId: p.farmerId || 0,
-                storeName: p.farmerName || undefined,
-              }));
-              setInputs(mapped.slice(0, 6));
-              console.debug('[FarmerOverview] marketplace fallback loaded:', mapped);
-            } catch (mpErr) {
-              console.warn('Marketplace fallback also failed:', mpErr);
+        if (isFarmer) {
+          // Preferir el endpoint público nuevo para agricultores
+          try {
+            setUsingPublicInputs(true);
+            const inputsResp = await storeService.getInputsPublic();
+            setInputs(Array.isArray(inputsResp) ? inputsResp.slice(0, 6) : []);
+            console.debug('[FarmerOverview] public inputs loaded:', inputsResp);
+          } catch (err: any) {
+            console.warn('storeService.getInputsPublic failed, attempting marketplace fallback:', err);
+            setUsingPublicInputs(false);
+            // If backend forbids or public endpoint fails, fallback to marketplace products
+            if (err?.status === 403 || err?.response?.status === 403) {
+              try {
+                const prods = await marketplaceService.getProducts();
+                // Map products to a lightweight input-like shape
+                const mapped = (Array.isArray(prods) ? prods : []).map(p => ({
+                  id: p.id,
+                  name: p.name,
+                  type: p.category || 'Otro',
+                  price: p.price || 0,
+                  stock: p.stock || 0,
+                  unit: p.unit || 'unidad',
+                  storeId: p.farmerId || 0,
+                  storeName: p.farmerName || undefined,
+                }));
+                setInputs(mapped.slice(0, 6));
+                console.debug('[FarmerOverview] marketplace fallback loaded:', mapped);
+              } catch (mpErr) {
+                console.warn('Marketplace fallback also failed:', mpErr);
+                setInputs([]);
+              }
+            } else {
+              // Other errors: clear inputs
               setInputs([]);
             }
-          } else {
-            // Other errors: clear inputs
+          }
+        } else {
+          // No farmer: cargar inputs usando el endpoint protegido habitual
+          try {
+            const inputsResp = await storeService.getInputs();
+            setInputs(Array.isArray(inputsResp) ? inputsResp.slice(0, 6) : []);
+            console.debug('[FarmerOverview] inputs loaded:', inputsResp);
+          } catch (err) {
+            console.warn('No se pudieron obtener insumos para el usuario no-farmer:', err);
             setInputs([]);
           }
         }
@@ -108,6 +124,19 @@ export const FarmerOverview: React.FC = () => {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Debug helper: trigger public inputs fetch manually
+  const debugFetchPublicInputs = async () => {
+    console.info('[FarmerOverview] debug: fetching public inputs...');
+    try {
+      const resp = await storeService.getInputsPublic();
+      console.info('[FarmerOverview] debug public inputs response:', resp);
+      alert(`Debug: recibidos ${Array.isArray(resp) ? resp.length : 0} items (ver consola)`);
+    } catch (err) {
+      console.error('[FarmerOverview] debug public inputs error:', err);
+      alert('Debug: error al intentar obtener insumos públicos (ver consola)');
     }
   };
 
@@ -230,7 +259,19 @@ export const FarmerOverview: React.FC = () => {
           >
             {showRawInputs ? 'Ocultar datos' : 'Mostrar datos crudos'}
           </button>
+          <button
+            className="ml-3 text-sm text-gray-500 underline"
+            onClick={debugFetchPublicInputs}
+            title="Forzar petición pública de insumos"
+          >
+            Probar petición pública
+          </button>
         </div>
+        {usingPublicInputs && (
+          <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded">
+            Mostrando insumos públicos de agrotiendas (solo lectura).
+          </div>
+        )}
         {inputs.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-gray-600">No hay insumos para mostrar. Ve al <Link to={ROUTES.MARKETPLACE} className="text-primary-600">marketplace</Link> para ver opciones.</p>

@@ -37,6 +37,7 @@ export const StoreOverview: React.FC = () => {
       setIsLoading(true);
       const data = await storeService.getInputs();
       setInputs(data);
+      console.debug('[StoreOverview] inputs loaded:', data);
       calculateStats(data);
     } catch (error: any) {
       toast.error(error?.message || 'Error al cargar datos');
