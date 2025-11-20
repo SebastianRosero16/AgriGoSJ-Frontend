@@ -137,7 +137,9 @@ export const StoreInputs: React.FC = () => {
       resetForm();
     } catch (error: any) {
       console.error('❌ Error al guardar insumo:', error);
-      toast.error(error?.message || 'Error al guardar insumo');
+      // Mostrar mensaje del backend si está disponible
+      const backendMsg = error?.response?.data?.message || error?.response?.data || error?.message || 'Error al guardar insumo';
+      toast.error(String(backendMsg));
     }
   };
 
@@ -267,13 +269,22 @@ export const StoreInputs: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Tipo *
                 </label>
-                <Input
+                <select
                   name="type"
                   value={formData.type}
                   onChange={handleChange}
-                  placeholder="Ej: Fertilizante, Pesticida, Semilla"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   required
-                />
+                >
+                  <option value="">Selecciona tipo...</option>
+                  <option value="FERTILIZER">Fertilizante</option>
+                  <option value="PESTICIDE">Pesticida</option>
+                  <option value="SEED">Semilla</option>
+                  <option value="HERBICIDE">Herbicida</option>
+                  <option value="FUNGICIDE">Fungicida</option>
+                  <option value="TOOL">Herramienta</option>
+                  <option value="OTHER">Otro</option>
+                </select>
               </div>
             </div>
 
