@@ -19,6 +19,7 @@ interface CropFormData {
   area: number;
   location: string;
   status: string;
+  climate: string;
   notes: string;
 }
 
@@ -36,6 +37,7 @@ export const FarmerCrops: React.FC = () => {
     area: 0,
     location: '',
     status: 'SEEDLING',
+    climate: '',
     notes: '',
   });
 
@@ -60,7 +62,7 @@ export const FarmerCrops: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name.trim() || !formData.type.trim() || !formData.location.trim()) {
+    if (!formData.name.trim() || !formData.type.trim() || !formData.location.trim() || !formData.climate.trim()) {
       toast.error('Por favor completa todos los campos requeridos');
       return;
     }
@@ -75,7 +77,7 @@ export const FarmerCrops: React.FC = () => {
         location: formData.location,
         stage: formData.status, // Backend usa stage
         soilType: 'Fértil', // Valor por defecto
-        climate: 'Templado', // Valor por defecto
+        climate: formData.climate,
         notes: formData.notes,
       };
 
@@ -128,6 +130,7 @@ export const FarmerCrops: React.FC = () => {
       area: crop.area || 0,
       location: crop.location || '',
       status: crop.stage || 'SEEDLING',
+      climate: crop.climate || '',
       notes: crop.notes || '',
     });
     setShowForm(true);
@@ -170,6 +173,7 @@ export const FarmerCrops: React.FC = () => {
       area: 0,
       location: '',
       status: 'SEEDLING',
+      climate: '',
       notes: '',
     });
     setEditingCrop(null);
@@ -320,6 +324,27 @@ export const FarmerCrops: React.FC = () => {
                   <option value="FLOWERING">Floreciendo</option>
                   <option value="FRUITING">Fructificando</option>
                   <option value="HARVEST">Listo para Cosechar</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Clima *
+                </label>
+                <select
+                  name="climate"
+                  value={formData.climate}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg relative z-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  required
+                >
+                  <option value="">Selecciona clima...</option>
+                  <option value="Tropical">Tropical</option>
+                  <option value="Subtropical">Subtropical</option>
+                  <option value="Templado">Templado</option>
+                  <option value="Frío">Frío</option>
+                  <option value="Árido">Árido</option>
+                  <option value="Semiárido">Semiárido</option>
+                  <option value="Húmedo">Húmedo</option>
                 </select>
               </div>
             </div>
