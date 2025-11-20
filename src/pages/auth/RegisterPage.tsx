@@ -171,8 +171,6 @@ export const RegisterPage: React.FC = () => {
         setShowVerification(true);
         setIsLoading(false);
       } catch (error: any) {
-        console.error('Error al validar email:', error);
-        
         // Distinguish between network errors and validation errors
         let errorMessage = 'Error al validar email';
         
@@ -216,8 +214,6 @@ export const RegisterPage: React.FC = () => {
       const dashboardRoute = getDashboardByRole(user.role);
       navigate(dashboardRoute, { replace: true });
     } catch (error: any) {
-      console.error('Error de registro:', error);
-      
       let errorMessage = 'Error al registrar usuario. Por favor, intenta nuevamente.';
       
       // Handle specific error cases
@@ -229,7 +225,7 @@ export const RegisterPage: React.FC = () => {
           errorMessage = 'El usuario o correo electrónico ya están registrados. Por favor, usa otros datos.';
         } else if (status === 400) {
           if (data?.message?.toLowerCase().includes('username')) {
-            errorMessage = 'El nombre de usuario no es válido o ya está en uso.';
+            errorMessage = 'El nombre de usuario ya está en uso. Por favor, elige otro.';
           } else if (data?.message?.toLowerCase().includes('email')) {
             errorMessage = 'El correo electrónico no es válido o ya está registrado.';
           } else if (data?.message?.toLowerCase().includes('password')) {
