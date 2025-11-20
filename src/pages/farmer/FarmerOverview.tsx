@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Loading } from '@/components/ui';
 import { ROUTES } from '@/utils/constants';
-import { marketplaceService, farmerService } from '@/api';
+import { marketplaceService, farmerService, storeService } from '@/api';
 import {
   ShoppingBagIcon,
   SparklesIcon,
@@ -22,6 +22,7 @@ export const FarmerOverview: React.FC = () => {
     aiRecommendations: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [inputs, setInputs] = useState<any[]>([]);
 
   useEffect(() => {
     loadStats();
@@ -53,6 +54,15 @@ export const FarmerOverview: React.FC = () => {
         publishedProducts: productsCount,
         aiRecommendations: 0,
       });
+
+      // Cargar insumos recientes (para mostrar al agricultor opciones de compra)
+      try {
+        const inputsResp = await storeService.getInputs();
+        setInputs(Array.isArray(inputsResp) ? inputsResp.slice(0, 6) : []);
+      } catch (err) {
+        console.warn('No se pudieron obtener insumos:', err);
+        setInputs([]);
+      }
     } catch (error) {
       console.error('Error al cargar estadísticas:', error);
       // Si hay error, mantener en 0
@@ -172,6 +182,39 @@ export const FarmerOverview: React.FC = () => {
             </div>
           </Link>
         </div>
+      </Card>
+
+      {/* Insumos Recientes */}
+      <Card>
+        <h3 className="text-lg font-semibold mb-4">Insumos Recientes</h3>
+        {inputs.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-gray-600">No hay insumos para mostrar. Ve al <Link to={ROUTES.MARKETPLACE} className="text-primary-600">marketplace</Link> para ver opciones.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr>
+                  <th className="py-2 px-3 text-sm font-medium text-gray-700">Insumo</th>
+                  <th className="py-2 px-3 text-sm font-medium text-gray-700">Tipo</th>
+                  <th className="py-2 px-3 text-sm font-medium text-gray-700">Precio</th>
+                  <th className="py-2 px-3 text-sm font-medium text-gray-700">Stock</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inputs.map((inp) => (
+                  <tr key={inp.id} className="border-t border-gray-100">
+                    <td className="py-3 px-3 text-sm text-gray-800">{inp.name}</td>
+                    <td className="py-3 px-3 text-sm text-gray-600">{inp.type || '-'}</td>
+                    <td className="py-3 px-3 text-sm text-gray-800">{typeof inp.price === 'number' ? `$${inp.price.toLocaleString()}` : inp.price}</td>
+                    <td className="py-3 px-3 text-sm text-gray-800">{inp.stock ?? '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Card>
     </div>
   );
