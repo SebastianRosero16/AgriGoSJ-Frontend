@@ -31,6 +31,40 @@ export function formatDate(date: Date | string, format: 'short' | 'long' | 'full
 }
 
 /**
+ * Safely format a date string (YYYY-MM-DD or ISO) without timezone shifts.
+ * If input is 'YYYY-MM-DD' it constructs a local Date using year, month, day
+ * to avoid UTC offset causing previous-day display.
+ */
+export function formatDateSafe(dateStr?: string | null): string {
+  if (!dateStr) return '';
+
+  // If ISO with time, use existing formatter (will consider timezone)
+  if (dateStr.includes('T')) {
+    try {
+      return formatDate(new Date(dateStr), 'short');
+    } catch {
+      return dateStr.split('T')[0];
+    }
+  }
+
+  // If plain YYYY-MM-DD, parse parts and create local Date
+  const parts = dateStr.split('-');
+  if (parts.length >= 3) {
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+    const d = new Date(year, month, day);
+    try {
+      return formatDate(d, 'short');
+    } catch {
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+  }
+
+  return dateStr;
+}
+
+/**
  * Format date time
  */
 export function formatDateTime(date: Date | string): string {

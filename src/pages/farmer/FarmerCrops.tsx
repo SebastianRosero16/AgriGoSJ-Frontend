@@ -10,6 +10,7 @@ import { SparklesIcon, MapPinIcon, SunIcon, CalendarDaysIcon, DocumentTextIcon }
 import { farmerService } from '@/api';
 import { LinkedList } from '@/data-structures';
 import type { Crop } from '@/types';
+import { formatDateSafe } from '@/utils/format';
 
 interface CropFormData {
   name: string;
@@ -332,7 +333,7 @@ export const FarmerCrops: React.FC = () => {
                 </span>
               </div>
               <div className="space-y-2 text-sm text-gray-600 mb-4">
-                <p className="inline-flex items-center gap-2"><CalendarDaysIcon className="w-4 h-4 text-gray-500" /> Siembra: {crop.plantingDate ? new Date(crop.plantingDate).toLocaleDateString() : 'Sin fecha'}</p>
+                <p className="inline-flex items-center gap-2"><CalendarDaysIcon className="w-4 h-4 text-gray-500" /> Siembra: {crop.plantingDate ? formatDateSafe(crop.plantingDate) : 'Sin fecha'}</p>
                 <p className="inline-flex items-center gap-2"><SparklesIcon className="w-4 h-4 text-gray-500" /> Área: {crop.area} ha</p>
                 <p className="inline-flex items-center gap-2"><MapPinIcon className="w-4 h-4 text-gray-500" /> Ubicación: {crop.location}</p>
                 {crop.soilType && <p className="inline-flex items-center gap-2"><SparklesIcon className="w-4 h-4 text-gray-500" /> Suelo: {crop.soilType}</p>}
