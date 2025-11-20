@@ -7,7 +7,15 @@ import React from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks';
-import { Button, Card } from '@/components/ui';
+import { Button, Card, ThemeToggle } from '@/components/ui';
+import {
+  ChartBarIcon,
+  SparklesIcon,
+  ShoppingBagIcon,
+  Cog6ToothIcon,
+  ShoppingCartIcon,
+  CurrencyDollarIcon,
+} from '@heroicons/react/24/outline';
 import { ROUTES, APP_INFO } from '@/utils/constants';
 
 export const FarmerDashboard: React.FC = () => {
@@ -32,7 +40,7 @@ export const FarmerDashboard: React.FC = () => {
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold text-primary-600">
                 {APP_INFO.NAME}
@@ -41,9 +49,12 @@ export const FarmerDashboard: React.FC = () => {
                 Panel de Agricultor - Bienvenido, {user?.fullName}
               </p>
             </div>
-            <Button variant="danger" onClick={handleLogout}>
-              Cerrar Sesión
-            </Button>
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              <Button variant="danger" onClick={handleLogout}>
+                Cerrar Sesión
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -62,7 +73,10 @@ export const FarmerDashboard: React.FC = () => {
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
-                  📊 Resumen
+                  <span className="inline-flex items-center gap-2">
+                    <ChartBarIcon className="w-5 h-5 text-primary-600" />
+                    <span>Resumen</span>
+                  </span>
                 </Link>
                 <Link
                   to={ROUTES.FARMER.CROPS}
@@ -72,7 +86,10 @@ export const FarmerDashboard: React.FC = () => {
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
-                  🌾 Mis Cultivos
+                  <span className="inline-flex items-center gap-2">
+                    <SparklesIcon className="w-5 h-5 text-primary-600" />
+                    <span>Mis Cultivos</span>
+                  </span>
                 </Link>
                 <Link
                   to={ROUTES.FARMER.PRODUCTS}
@@ -82,7 +99,10 @@ export const FarmerDashboard: React.FC = () => {
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
-                  📦 Mis Productos
+                  <span className="inline-flex items-center gap-2">
+                    <ShoppingBagIcon className="w-5 h-5 text-primary-600" />
+                    <span>Mis Productos</span>
+                  </span>
                 </Link>
                 <Link
                   to={ROUTES.FARMER.AI_RECOMMENDATIONS}
@@ -92,19 +112,28 @@ export const FarmerDashboard: React.FC = () => {
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
-                  🤖 Recomendaciones IA
+                  <span className="inline-flex items-center gap-2">
+                    <Cog6ToothIcon className="w-5 h-5 text-primary-600" />
+                    <span>Recomendaciones IA</span>
+                  </span>
                 </Link>
                 <Link
                   to={ROUTES.MARKETPLACE}
                   className="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
                 >
-                  🛒 Marketplace
+                  <span className="inline-flex items-center gap-2">
+                    <ShoppingCartIcon className="w-5 h-5 text-primary-600" />
+                    <span>Marketplace</span>
+                  </span>
                 </Link>
                 <Link
                   to={ROUTES.PRICE_COMPARATOR}
                   className="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
                 >
-                  💰 Comparar Precios
+                  <span className="inline-flex items-center gap-2">
+                    <CurrencyDollarIcon className="w-5 h-5 text-primary-600" />
+                    <span>Comparar Precios</span>
+                  </span>
                 </Link>
               </nav>
             </Card>

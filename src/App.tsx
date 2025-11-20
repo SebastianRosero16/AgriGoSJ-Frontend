@@ -1,4 +1,5 @@
 import React from 'react';
+import ErrorBoundary from './components/ui/ErrorBoundary';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './hooks';
 import { ROUTES, USER_ROLES } from './utils/constants';
@@ -80,7 +81,8 @@ const App: React.FC = () => {
         {/* Lazy load to avoid circular deps */}
         {React.createElement(React.lazy(() => import('./components/ui/ThemeToggle')))}
       </React.Suspense>
-      <Routes>
+      <ErrorBoundary>
+        <Routes>
         {/* Public Routes */}
         <Route
           path={ROUTES.LOGIN}
@@ -169,7 +171,8 @@ const App: React.FC = () => {
 
         {/* 404 Route */}
         <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
-      </Routes>
+        </Routes>
+      </ErrorBoundary>
     </React.Suspense>
   );
 };

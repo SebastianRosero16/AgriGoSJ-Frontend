@@ -1,6 +1,6 @@
 # Funcionalidades Implementadas - AgriGoSJ Frontend
 
-## 📋 Resumen
+## Resumen
 
 Este documento describe las funcionalidades completas implementadas para el módulo de Agricultor (Farmer) en la plataforma AgriGoSJ, incluyendo:
 
@@ -10,17 +10,17 @@ Este documento describe las funcionalidades completas implementadas para el mód
 
 ---
 
-## 🌾 1. Mis Cultivos (FarmerCrops)
+## 1. Mis Cultivos (FarmerCrops)
 
 ### Características Implementadas
 
-#### ✅ CRUD Completo
+#### CRUD Completo
 - **Crear Cultivo**: Formulario con validaciones completas
 - **Leer Cultivos**: Lista de cultivos con LinkedList para gestión eficiente
 - **Actualizar Cultivo**: Edición en línea con formulario pre-llenado
 - **Eliminar Cultivo**: Confirmación antes de eliminar
 
-#### 📊 Campos del Cultivo
+#### Campos del Cultivo
 ```typescript
 interface Crop {
   id: number;
@@ -34,27 +34,27 @@ interface Crop {
 }
 ```
 
-#### 🎨 Interfaz de Usuario
+#### Interfaz de Usuario
 - **Estado vacío**: Mensaje motivacional para crear primer cultivo
 - **Vista de tarjetas**: Grid responsivo con información completa
 - **Estados visuales**: 
-  - 🟢 Verde: Cosechado
-  - 🟡 Amarillo: Listo para cosechar
-  - 🔵 Azul: Creciendo
-  - ⚪ Gris: Plantado
+  - Verde: Cosechado
+  - Amarillo: Listo para cosechar
+  - Azul: Creciendo
+  - Gris: Plantado
 - **Validaciones en tiempo real**:
   - Campos requeridos
   - Área debe ser > 0
   - Fecha de siembra válida
 
-#### 🔧 Estructura de Datos
+#### Estructura de Datos
 - **LinkedList**: Gestión eficiente de la lista de cultivos
   - Inserción O(1) al final
   - Búsqueda O(n)
   - Eliminación O(n)
   - Conversión a array para renderizado
 
-#### 📡 Integración con API
+#### Integración con API
 ```typescript
 // Endpoints utilizados
 GET    /farmers/crops              // Obtener todos los cultivos
@@ -65,17 +65,17 @@ DELETE /farmers/crops/{id}         // Eliminar cultivo
 
 ---
 
-## 🛒 2. Mis Productos (FarmerProducts)
+## 2. Mis Productos (FarmerProducts)
 
 ### Características Implementadas
 
-#### ✅ CRUD Completo
+#### CRUD Completo
 - **Publicar Producto**: Formulario completo con todas las opciones
 - **Listar Productos**: Grid con imágenes y detalles
 - **Editar Producto**: Actualización de stock, precio, descripción
 - **Eliminar Producto**: Confirmación y eliminación del marketplace
 
-#### 📊 Campos del Producto
+#### Campos del Producto
 ```typescript
 interface Product {
   id: number;
@@ -89,16 +89,16 @@ interface Product {
 }
 ```
 
-#### 🎨 Interfaz de Usuario
+#### Interfaz de Usuario
 - **Tarjetas con imágenes**: Placeholder si no hay imagen
 - **Indicadores de stock**:
-  - 🟢 Verde: Stock > 10
-  - 🟡 Amarillo: Stock 1-10
-  - 🔴 Rojo: Agotado
+  - Verde: Stock > 10
+  - Amarillo: Stock 1-10
+  - Rojo: Agotado
 - **Vista de precios**: Formato profesional con unidad
 - **Botón de historial**: Ver últimas acciones realizadas
 
-#### 📚 Historial de Acciones (Stack)
+#### Historial de Acciones (Stack)
 - **Estructura LIFO**: Última acción primero
 - **Acciones registradas**:
   - Cargar productos
@@ -111,7 +111,7 @@ interface Product {
   - Timestamp preciso
 - **Visualización**: Panel expandible con scroll
 
-#### 🔧 Estructura de Datos
+#### Estructura de Datos
 - **Array**: Lista principal de productos
 - **Stack**: Historial de acciones (LIFO - Last In First Out)
   - Push O(1) - Agregar acción
@@ -119,7 +119,7 @@ interface Product {
   - Peek O(1) - Ver última acción
   - toArray() - Convertir para renderizado
 
-#### 📡 Integración con API
+#### Integración con API
 ```typescript
 // Endpoints utilizados
 GET    /farmers/products           // Obtener mis productos
@@ -128,7 +128,7 @@ PUT    /farmers/products/{id}      // Actualizar producto
 DELETE /farmers/products/{id}      // Eliminar producto
 ```
 
-#### ✅ Validaciones
+#### Validaciones
 - Nombre, descripción y categoría requeridos
 - Precio debe ser > 0
 - Stock debe ser >= 0
@@ -136,39 +136,39 @@ DELETE /farmers/products/{id}      // Eliminar producto
 
 ---
 
-## 🤖 3. Recomendaciones IA (FarmerAI)
+## 3. Recomendaciones IA (FarmerAI)
 
 ### Características Implementadas
 
-#### ✅ Tipos de Recomendaciones
-1. **🌱 Recomendaciones de Siembra**
+#### Tipos de Recomendaciones
+1. **Recomendaciones de Siembra**
    - Mejor época para sembrar
    - Técnicas de siembra recomendadas
    - Rotación de cultivos
 
-2. **💧 Gestión de Riego**
+2. **Gestión de Riego**
    - Optimización de uso de agua
    - Frecuencia de riego según clima
    - Técnicas de riego eficiente
 
-3. **🐛 Control de Plagas**
+3. **Control de Plagas**
    - Identificación de plagas comunes
    - Métodos de control natural
    - Prevención de enfermedades
 
-4. **🌾 Momento de Cosecha**
+4. **Momento de Cosecha**
    - Indicadores de madurez
    - Mejor momento para cosechar
    - Técnicas de cosecha óptimas
 
-#### 🎯 Sistema Anti-Spam (Queue)
+#### Sistema Anti-Spam (Queue)
 - **Cola de peticiones**: Gestión FIFO (First In First Out)
 - **Cooldown de 3 segundos**: Previene spam de solicitudes
 - **Validación en cliente**: Mensaje amigable si intenta spam
 - **Procesamiento secuencial**: Una recomendación a la vez
 - **Indicador visual**: Muestra cuántas solicitudes hay en cola
 
-#### 📚 Historial de Recomendaciones (Stack)
+#### Historial de Recomendaciones (Stack)
 - **Estructura LIFO**: Más recientes primero
 - **Información guardada**:
   ```typescript
@@ -182,12 +182,12 @@ DELETE /farmers/products/{id}      // Eliminar producto
   }
   ```
 - **Prioridades visuales**:
-  - 🔴 Alta: Fondo rojo
-  - 🟡 Media: Fondo amarillo
-  - 🟢 Baja: Fondo verde
+  - Alta: Fondo rojo
+  - Media: Fondo amarillo
+  - Baja: Fondo verde
 - **Opción de limpieza**: Botón para limpiar historial completo
 
-#### 🎨 Interfaz de Usuario
+#### Interfaz de Usuario
 - **Tarjetas por tipo**: 4 categorías principales
 - **Estados de carga**: 
   - Spinner animado durante generación
@@ -253,7 +253,7 @@ const getCurrentSeason = (): string => {
 
 ---
 
-## 🏗️ Arquitectura Técnica
+## Arquitectura Técnica
 
 ### Componentes React
 ```
@@ -325,7 +325,7 @@ const useQueue = <T>() => {
 
 ---
 
-## 🎯 Características Destacadas
+## Características Destacadas
 
 ### 1. **Validaciones Robustas**
 - Validación en cliente antes de enviar
@@ -359,7 +359,7 @@ const useQueue = <T>() => {
 
 ---
 
-## 🚀 Despliegue
+## Despliegue
 
 ### Producción
 - **URL**: https://pf-rontend.vercel.app
@@ -376,7 +376,7 @@ VITE_APP_NAME=AgriGoSJ
 
 ---
 
-## 📦 Dependencias Principales
+## Dependencias Principales
 
 ```json
 {
@@ -392,9 +392,9 @@ VITE_APP_NAME=AgriGoSJ
 
 ---
 
-## ✅ Estado Actual
+## Estado Actual
 
-### Completado ✅
+### Completado
 - [x] CRUD completo de Cultivos con LinkedList
 - [x] CRUD completo de Productos con Stack para historial
 - [x] Sistema de Recomendaciones IA con Queue anti-spam
@@ -405,7 +405,7 @@ VITE_APP_NAME=AgriGoSJ
 - [x] Responsive design
 - [x] Despliegue en producción
 
-### Pendiente 🔄
+### Pendiente
 - [ ] Tests unitarios para componentes
 - [ ] Tests de integración para API
 - [ ] Caché de recomendaciones IA
@@ -416,7 +416,7 @@ VITE_APP_NAME=AgriGoSJ
 
 ---
 
-## 📝 Notas Técnicas
+## Notas Técnicas
 
 ### Decisiones de Diseño
 
@@ -435,7 +435,7 @@ VITE_APP_NAME=AgriGoSJ
 
 ---
 
-## 📧 Contacto
+## Contacto
 
 **Desarrollador**: Sebastian Rosero  
 **Proyecto**: AgriGoSJ Frontend  
@@ -444,7 +444,7 @@ VITE_APP_NAME=AgriGoSJ
 
 ---
 
-## 🎓 Estructuras de Datos Aplicadas
+## Estructuras de Datos Aplicadas
 
 Este proyecto demuestra el uso práctico de estructuras de datos en una aplicación real:
 

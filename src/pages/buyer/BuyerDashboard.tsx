@@ -7,7 +7,8 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks';
-import { Button, Card } from '@/components/ui';
+import { Button, Card, ThemeToggle } from '@/components/ui';
+import { ShoppingCartIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import { ROUTES, APP_INFO } from '@/utils/constants';
 
 export const BuyerDashboard: React.FC = () => {
@@ -29,7 +30,7 @@ export const BuyerDashboard: React.FC = () => {
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold text-primary-600">
                 {APP_INFO.NAME}
@@ -38,9 +39,12 @@ export const BuyerDashboard: React.FC = () => {
                 Panel de Comprador - Bienvenido, {user?.fullName}
               </p>
             </div>
-            <Button variant="danger" onClick={handleLogout}>
-              Cerrar Sesión
-            </Button>
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              <Button variant="danger" onClick={handleLogout}>
+                Cerrar Sesión
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -57,7 +61,9 @@ export const BuyerDashboard: React.FC = () => {
             <Link to={ROUTES.MARKETPLACE}>
               <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="text-center py-8">
-                  <div className="text-6xl mb-4">🛒</div>
+                  <div className="text-primary-600 mb-4">
+                    <ShoppingCartIcon className="w-16 h-16 mx-auto" />
+                  </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
                     Explorar Marketplace
                   </h3>
@@ -71,7 +77,9 @@ export const BuyerDashboard: React.FC = () => {
             <Link to={ROUTES.PRICE_COMPARATOR}>
               <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="text-center py-8">
-                  <div className="text-6xl mb-4">💰</div>
+                  <div className="text-green-700 mb-4">
+                    <CurrencyDollarIcon className="w-16 h-16 mx-auto" />
+                  </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
                     Comparar Precios
                   </h3>

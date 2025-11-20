@@ -27,7 +27,7 @@ VITE_REQUEST_TIMEOUT=30000
 
 ### Importante:
 
-⚠️ **Nota**: Las variables de entorno con prefijo `VITE_` son las únicas que Vite expone al cliente. Asegúrate de que todas tus variables de entorno tengan este prefijo.
+**Nota**: Las variables de entorno con prefijo `VITE_` son las únicas que Vite expone al cliente. Asegúrate de que todas tus variables de entorno tengan este prefijo.
 
 ## Re-desplegar después de Cambios
 

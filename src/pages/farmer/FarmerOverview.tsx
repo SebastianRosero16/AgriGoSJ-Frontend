@@ -8,6 +8,12 @@ import { Link } from 'react-router-dom';
 import { Card, Loading } from '@/components/ui';
 import { ROUTES } from '@/utils/constants';
 import { marketplaceService } from '@/api';
+import {
+  ShoppingBagIcon,
+  SparklesIcon,
+  Cog6ToothIcon,
+  ShoppingCartIcon,
+} from '@heroicons/react/24/outline';
 
 export const FarmerOverview: React.FC = () => {
   const [stats, setStats] = useState({
@@ -70,7 +76,9 @@ export const FarmerOverview: React.FC = () => {
               <p className="text-sm font-medium text-gray-600">Cultivos Activos</p>
               <p className="text-3xl font-bold text-primary-600 mt-2">{stats.activeCrops}</p>
             </div>
-            <div className="text-4xl">🌾</div>
+            <div className="text-primary-600">
+              <SparklesIcon className="w-10 h-10" />
+            </div>
           </div>
         </Card>
 
@@ -80,7 +88,9 @@ export const FarmerOverview: React.FC = () => {
               <p className="text-sm font-medium text-gray-600">Productos Publicados</p>
               <p className="text-3xl font-bold text-primary-600 mt-2">{stats.publishedProducts}</p>
             </div>
-            <div className="text-4xl">📦</div>
+            <div className="text-primary-600">
+              <ShoppingBagIcon className="w-10 h-10" />
+            </div>
           </div>
         </Card>
 
@@ -90,7 +100,9 @@ export const FarmerOverview: React.FC = () => {
               <p className="text-sm font-medium text-gray-600">Recomendaciones IA</p>
               <p className="text-3xl font-bold text-primary-600 mt-2">{stats.aiRecommendations}</p>
             </div>
-            <div className="text-4xl">🤖</div>
+            <div className="text-primary-600">
+              <Cog6ToothIcon className="w-10 h-10" />
+            </div>
           </div>
         </Card>
       </div>
@@ -103,7 +115,9 @@ export const FarmerOverview: React.FC = () => {
             to={ROUTES.FARMER.CROPS}
             className="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 transition-colors"
           >
-            <span className="text-3xl mr-4">🌱</span>
+            <span className="mr-4 text-primary-600">
+              <SparklesIcon className="w-8 h-8" />
+            </span>
             <div>
               <p className="font-medium text-gray-900">Agregar Cultivo</p>
               <p className="text-sm text-gray-600">Registra un nuevo cultivo</p>
@@ -114,7 +128,9 @@ export const FarmerOverview: React.FC = () => {
             to={ROUTES.FARMER.PRODUCTS}
             className="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 transition-colors"
           >
-            <span className="text-3xl mr-4">📦</span>
+            <span className="mr-4 text-primary-600">
+              <ShoppingBagIcon className="w-8 h-8" />
+            </span>
             <div>
               <p className="font-medium text-gray-900">Publicar Producto</p>
               <p className="text-sm text-gray-600">Vende tus productos</p>
@@ -125,7 +141,9 @@ export const FarmerOverview: React.FC = () => {
             to={ROUTES.FARMER.AI_RECOMMENDATIONS}
             className="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 transition-colors"
           >
-            <span className="text-3xl mr-4">🤖</span>
+            <span className="mr-4 text-primary-600">
+              <Cog6ToothIcon className="w-8 h-8" />
+            </span>
             <div>
               <p className="font-medium text-gray-900">Pedir Recomendación</p>
               <p className="text-sm text-gray-600">Asistencia de IA</p>
@@ -136,7 +154,9 @@ export const FarmerOverview: React.FC = () => {
             to={ROUTES.MARKETPLACE}
             className="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 transition-colors"
           >
-            <span className="text-3xl mr-4">🛒</span>
+            <span className="mr-4 text-primary-600">
+              <ShoppingCartIcon className="w-8 h-8" />
+            </span>
             <div>
               <p className="font-medium text-gray-900">Ver Marketplace</p>
               <p className="text-sm text-gray-600">Comprar insumos</p>

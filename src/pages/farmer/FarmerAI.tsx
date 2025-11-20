@@ -6,6 +6,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { Card, Button, Loading } from '@/components/ui';
+import {
+  Cog6ToothIcon,
+  MapPinIcon,
+  SparklesIcon,
+  PhotoIcon,
+  ArrowUpTrayIcon,
+  ClockIcon,
+  XMarkIcon,
+  LightBulbIcon,
+  ChartBarIcon,
+} from '@heroicons/react/24/outline';
 import { aiService, farmerService } from '@/api';
 import { useQueue } from '@/hooks';
 import type { Crop } from '@/types';
@@ -72,7 +83,7 @@ export const FarmerAI: React.FC = () => {
       {
         id: `welcome-${Date.now()}`,
         sender: 'ai',
-        content: `¡Hola! 👋 He seleccionado tu cultivo de **${crop.cropName}** (${crop.cropType}).\n\nPuedo ayudarte con preguntas específicas sobre este cultivo:\n\n🌱 **Ejemplos de preguntas:**\n• "¿Cuándo debo regar mi ${crop.cropName}?"\n• "¿Qué fertilizante necesita en etapa de ${crop.stage}?"\n• "¿Cómo controlar plagas en mi ${crop.cropName}?"\n• "¿Cuál es el mejor momento para cosechar?"\n\n💡 **Nota:** Solo puedo responder preguntas relacionadas con tu cultivo de ${crop.cropName}. Para otros temas, por favor selecciona otro cultivo.`,
+        content: `¡Hola! He seleccionado tu cultivo de **${crop.cropName}** (${crop.cropType}).\n\nPuedo ayudarte con preguntas específicas sobre este cultivo.\n\nEjemplos de preguntas:\n• "¿Cuándo debo regar mi ${crop.cropName}?"\n• "¿Qué fertilizante necesita en etapa de ${crop.stage}?"\n• "¿Cómo controlar plagas en mi ${crop.cropName}?"\n• "¿Cuál es el mejor momento para cosechar?"\n\nNota: Solo puedo responder preguntas relacionadas con tu cultivo de ${crop.cropName}. Para otros temas, por favor selecciona otro cultivo.`,
         timestamp: new Date(),
       },
     ]);
@@ -134,7 +145,7 @@ export const FarmerAI: React.FC = () => {
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
       sender: 'user',
-      content: messageInput || '📷 Imagen adjunta',
+      content: messageInput || 'Imagen adjunta',
       timestamp: new Date(),
       imageUrl: imagePreview || undefined,
     };
@@ -219,11 +230,11 @@ NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimiza
       });
 
       // Debug: Log the response to see what backend returns
-      console.log('🤖 Backend Response:', response);
-      console.log('🤖 Response Type:', typeof response);
-      console.log('🤖 Response Keys:', response ? Object.keys(response) : 'null/undefined');
-      console.log('🤖 Explanation field:', response?.explanation);
-      console.log('🤖 Full Response JSON:', JSON.stringify(response, null, 2));
+      console.log('Backend Response:', response);
+      console.log('Response Type:', typeof response);
+      console.log('Response Keys:', response ? Object.keys(response) : 'null/undefined');
+      console.log('Explanation field:', response?.explanation);
+      console.log('Full Response JSON:', JSON.stringify(response, null, 2));
 
       // Add AI response - handle multiple response formats
       let aiContent = '';
@@ -248,7 +259,7 @@ NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimiza
         
         // If explanation contains error, show user-friendly message
         if (aiContent && (aiContent.includes('Error generating AI recommendation') || aiContent.includes('400 Bad Request'))) {
-          aiContent = '⚠️ La IA está teniendo problemas para generar la recomendación. Por favor, intenta reformular tu pregunta de manera más específica.\n\nEjemplos:\n• "¿Cuándo debo regar mi cultivo de cebolla?"\n• "¿Qué fertilizante necesita mi cebolla en etapa de floración?"\n• "Mi planta de cebolla tiene hojas amarillas, ¿qué hago?"';
+          aiContent = 'Nota: La IA está teniendo problemas para generar la recomendación. Por favor, intenta reformular tu pregunta de manera más específica.\n\nEjemplos:\n• "¿Cuándo debo regar mi cultivo de cebolla?"\n• "¿Qué fertilizante necesita mi cebolla en etapa de floración?"\n• "Mi planta de cebolla tiene hojas amarillas, ¿qué hago?"';
         }
       }
       
@@ -277,7 +288,7 @@ NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimiza
         // If response is still mostly in English, add a warning
         const englishWordCount = (aiContent.match(/\b(the|and|for|with|this|that|from|by|at|in|on|is|are|was|were|be|been|being|have|has|had|do|does|did|will|would|should|could|may|might)\b/gi) || []).length;
         if (englishWordCount > 20) {
-          aiContent = `⚠️ **Nota:** La IA del backend respondió en inglés. Estamos trabajando para mejorar esto. Aquí está la respuesta traducida parcialmente:\n\n${aiContent}\n\n---\n💡 **Sugerencia:** Contacta al desarrollador del backend para configurar respuestas en español.`;
+          aiContent = `Nota: La IA del backend respondió en inglés. Estamos trabajando para mejorar esto. Aquí está la respuesta traducida parcialmente:\n\n${aiContent}\n\n---\nSugerencia: Contacta al desarrollador del backend para configurar respuestas en español.`;
         }
       }
       
@@ -320,7 +331,10 @@ NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimiza
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900">Recomendaciones IA 🤖</h2>
+          <h2 className="text-2xl font-bold text-gray-900 inline-flex items-center gap-2">
+            <Cog6ToothIcon className="w-6 h-6 text-primary-600" />
+            <span>Recomendaciones IA</span>
+          </h2>
         <p className="text-gray-600">
           Chat interactivo con IA para recomendaciones personalizadas
         </p>
@@ -332,7 +346,9 @@ NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimiza
           <h3 className="text-lg font-semibold mb-4">Selecciona un cultivo para comenzar</h3>
           {crops.length === 0 ? (
             <div className="text-center py-8">
-              <div className="text-6xl mb-4">🌾</div>
+                <div className="text-gray-400 mb-4">
+                  <SparklesIcon className="w-16 h-16 mx-auto" />
+                </div>
               <p className="text-gray-500 mb-4">No tienes cultivos registrados</p>
               <Button variant="primary" onClick={() => window.location.href = '/farmer/crops'}>
                 Crear Primer Cultivo
@@ -364,7 +380,10 @@ NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimiza
                        crop.stage === 'FRUITING' ? 'Fructificando' : 'Cosecha'}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600">📏 {crop.area || 0} ha • 📍 {crop.location || 'Sin ubicación'}</p>
+                  <p className="text-sm text-gray-600 inline-flex items-center gap-3">
+                    <span className="inline-flex items-center gap-1"><ChartBarIcon className="w-4 h-4 text-gray-500" /> {crop.area || 0} ha</span>
+                    <span className="inline-flex items-center gap-1"><MapPinIcon className="w-4 h-4 text-gray-500" /> {crop.location || 'Sin ubicación'}</span>
+                  </p>
                 </div>
               ))}
             </div>
@@ -376,10 +395,14 @@ NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimiza
           <Card className="bg-gradient-to-r from-green-50 to-blue-50">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="text-3xl">🌱</div>
+                <div className="text-3xl"><SparklesIcon className="w-8 h-8 text-green-600" /></div>
                 <div>
                   <h3 className="font-semibold text-gray-900">{selectedCrop.cropName}</h3>
-                  <p className="text-sm text-gray-600">{selectedCrop.cropType} • {selectedCrop.area} ha</p>
+                    <p className="text-sm text-gray-600">{selectedCrop.cropType} • {selectedCrop.area} ha</p>
+                  <p className="text-sm text-gray-600 inline-flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1"><SparklesIcon className="w-4 h-4 text-gray-500" /> {selectedCrop.area || 0} ha</span>
+                    <span className="inline-flex items-center gap-1"><MapPinIcon className="w-4 h-4 text-gray-500" /> {selectedCrop.location || 'Sin ubicación'}</span>
+                  </p>
                 </div>
               </div>
               <Button variant="secondary" onClick={() => {
@@ -425,12 +448,12 @@ NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimiza
               ))}
               {isSending && (
                 <div className="flex justify-start">
-                  <div className="bg-gray-100 rounded-lg p-3">
-                    <div className="flex items-center gap-2">
-                      <div className="animate-bounce">🤖</div>
-                      <span className="text-sm text-gray-600">Generando recomendación...</span>
+                    <div className="bg-gray-100 rounded-lg p-3">
+                      <div className="flex items-center gap-2">
+                        <Cog6ToothIcon className="w-6 h-6 animate-spin text-gray-600" />
+                        <span className="text-sm text-gray-600">Generando recomendación...</span>
+                      </div>
                     </div>
-                  </div>
                 </div>
               )}
               <div ref={chatEndRef} />
@@ -448,8 +471,9 @@ NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimiza
                   <button
                     onClick={handleRemoveImage}
                     className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                    aria-label="Eliminar imagen previa"
                   >
-                    ✕
+                    <XMarkIcon className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -471,9 +495,8 @@ NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimiza
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isSending}
                   className="flex-shrink-0"
-                >
-                  📷
-                </Button>
+                  icon={<PhotoIcon className="w-5 h-5" />}
+                />
                 <input
                   type="text"
                   value={messageInput}
@@ -487,8 +510,9 @@ NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimiza
                   variant="primary"
                   disabled={isSending || (!messageInput.trim() && !selectedImage)}
                   className="flex-shrink-0"
+                  icon={isSending ? <ClockIcon className="w-5 h-5" /> : <ArrowUpTrayIcon className="w-5 h-5" />}
                 >
-                  {isSending ? '⏳' : '📤'} Enviar
+                  Enviar
                 </Button>
               </div>
             </form>
@@ -497,7 +521,7 @@ NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimiza
           {/* Info Card */}
           <Card className="bg-gradient-to-r from-primary-50 to-primary-100 border-primary-200">
             <div className="flex items-start gap-3">
-              <div className="text-2xl">💡</div>
+              <div className="text-2xl"><LightBulbIcon className="w-6 h-6 text-primary-600" /></div>
               <div>
                 <h4 className="font-semibold text-gray-900 mb-1">
                   Consejos para mejores recomendaciones

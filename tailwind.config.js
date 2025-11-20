@@ -7,6 +7,9 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+      },
       colors: {
         primary: {
           50: '#f0fdf4',
@@ -52,6 +55,7 @@ export default {
           '100%': { transform: 'scale(1)', opacity: '1' },
         },
       },
+      plugins: [require('@tailwindcss/forms')],
     },
   },
   plugins: [],

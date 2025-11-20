@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input } from '@/components/ui';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 
 interface StockModalProps {
   isOpen: boolean;
@@ -57,7 +58,7 @@ export const StockModal: React.FC<StockModalProps> = ({ isOpen, onClose, title =
 
           <div className="flex gap-2">
             <Button variant="secondary" onClick={onClose} className="flex-1">Cancelar</Button>
-            <Button variant="primary" onClick={handleConfirm} className="flex-1" disabled={isSaving}>{isSaving ? 'Guardando...' : 'Actualizar'}</Button>
+            <Button variant="primary" onClick={handleConfirm} className="flex-1" disabled={isSaving} icon={isSaving ? <ArrowPathIcon className="h-4 w-4" /> : undefined} iconPosition="right">{isSaving ? 'Guardando...' : 'Actualizar'}</Button>
           </div>
         </div>
     </div>

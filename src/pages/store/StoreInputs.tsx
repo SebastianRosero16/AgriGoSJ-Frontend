@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Card, Button, Input, Loading } from '@/components/ui';
+import { BeakerIcon, ShoppingBagIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import StockModal from '@/components/ui/StockModal';
 import { storeService } from '@/api';
 import type { StoreInput } from '@/types';
@@ -135,7 +136,7 @@ export const StoreInputs: React.FC = () => {
         type: mapType(formData.type),
       };
 
-      console.log('📤 Enviando datos del insumo (payload):', payload);
+      console.log('Enviando datos del insumo (payload):', payload);
 
       if (editingInput) {
         await storeService.updateInput(editingInput.id, payload);
@@ -148,7 +149,7 @@ export const StoreInputs: React.FC = () => {
       await loadInputs();
       resetForm();
     } catch (error: any) {
-      console.error('❌ Error al guardar insumo:', error);
+      console.error('Error al guardar insumo:', error);
       // Mostrar mensaje del backend si está disponible
       const backendMsg = error?.response?.data?.message || error?.response?.data || error?.message || 'Error al guardar insumo';
       toast.error(String(backendMsg));
@@ -202,7 +203,7 @@ export const StoreInputs: React.FC = () => {
     };
 
     try {
-      console.log('📤 PUT payload (update stock):', payload);
+      console.log('PUT payload (update stock):', payload);
       await storeService.updateInput(editingInput.id, payload);
       toast.success('Stock actualizado exitosamente');
       await loadInputs();
@@ -411,7 +412,7 @@ export const StoreInputs: React.FC = () => {
           <div className="flex-1">
             <Input
               type="text"
-              placeholder="🔍 Buscar por nombre o tipo..."
+              placeholder="Buscar por nombre o tipo..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="bg-gray-50 dark:bg-gray-800"
@@ -444,7 +445,9 @@ export const StoreInputs: React.FC = () => {
       {filteredInputs.length === 0 ? (
         <Card>
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">🧪</div>
+            <div className="text-gray-400 mb-4">
+              <BeakerIcon className="w-16 h-16 mx-auto" />
+            </div>
             <h3 className="text-xl font-semibold text-gray-700 mb-2">
               {searchTerm || filterType !== 'all' 
                 ? 'No se encontraron insumos' 
@@ -456,7 +459,7 @@ export const StoreInputs: React.FC = () => {
                 : 'Comienza agregando tu primer insumo para empezar a vender'}
             </p>
             {!searchTerm && filterType === 'all' && (
-              <Button variant="primary" onClick={() => setShowForm(true)}>
+              <Button variant="primary" onClick={() => setShowForm(true)} icon={<ShoppingBagIcon className="w-5 h-5" />}>
                 Crear Primer Insumo
               </Button>
             )}
@@ -499,9 +502,9 @@ export const StoreInputs: React.FC = () => {
               </div>
 
               <div className="flex gap-3">
-                <Button variant="secondary" onClick={() => handleUpdateStock(input)} className="flex-1">📦 Stock</Button>
-                <Button variant="secondary" onClick={() => handleEdit(input)} className="flex-1">✏️ Editar</Button>
-                <Button variant="danger" onClick={() => handleDelete(input.id)} className="flex-1">🗑️ Eliminar</Button>
+                <Button variant="secondary" onClick={() => handleUpdateStock(input)} className="flex-1" icon={<ShoppingBagIcon className="w-5 h-5" />}>Stock</Button>
+                <Button variant="secondary" onClick={() => handleEdit(input)} className="flex-1" icon={<PencilIcon className="w-5 h-5" />}>Editar</Button>
+                <Button variant="danger" onClick={() => handleDelete(input.id)} className="flex-1" icon={<TrashIcon className="w-5 h-5 text-white" />}>Eliminar</Button>
               </div>
             </div>
           ))}

@@ -156,7 +156,7 @@ export const RegisterPage: React.FC = () => {
         // Step 1: Validate email with backend
         const validation = await authService.validateEmail(formData.email);
         
-        console.log('✅ Respuesta de validación:', validation);
+        console.log('Respuesta de validación:', validation);
         
         if (!validation.valid) {
           const errorMsg = validation.reason || 'Email inválido';
@@ -171,7 +171,7 @@ export const RegisterPage: React.FC = () => {
         setShowVerification(true);
         setIsLoading(false);
       } catch (error: any) {
-        console.error('❌ Error al validar email:', error);
+        console.error('Error al validar email:', error);
         
         // Distinguish between network errors and validation errors
         let errorMessage = 'Error al validar email';

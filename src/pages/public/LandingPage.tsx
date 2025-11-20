@@ -6,6 +6,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card } from '@/components/ui';
+import {
+  SparklesIcon,
+  ShoppingBagIcon,
+  ShoppingCartIcon,
+  Cog6ToothIcon,
+  ChartBarIcon,
+  CurrencyDollarIcon,
+  GlobeAltIcon,
+  HeartIcon,
+  CheckIcon,
+} from '@heroicons/react/24/outline';
 import { ROUTES, APP_INFO } from '@/utils/constants';
 
 export const LandingPage: React.FC = () => {
@@ -13,7 +24,7 @@ export const LandingPage: React.FC = () => {
 
   const features = [
     {
-      icon: '🌾',
+      icon: <SparklesIcon className="w-12 h-12 text-primary-600 mx-auto" />,
       title: 'Para Agricultores',
       description: 'Gestiona tus cultivos, recibe recomendaciones de IA personalizadas y publica tus productos en el marketplace.',
       benefits: [
@@ -24,7 +35,7 @@ export const LandingPage: React.FC = () => {
       ]
     },
     {
-      icon: '🏪',
+      icon: <ShoppingBagIcon className="w-12 h-12 text-primary-600 mx-auto" />,
       title: 'Para Agrotiendas',
       description: 'Administra tu inventario de insumos agrícolas, actualiza precios y stocks fácilmente.',
       benefits: [
@@ -35,7 +46,7 @@ export const LandingPage: React.FC = () => {
       ]
     },
     {
-      icon: '🛒',
+      icon: <ShoppingCartIcon className="w-12 h-12 text-primary-600 mx-auto" />,
       title: 'Para Compradores',
       description: 'Explora productos frescos de agricultores locales y compara precios de insumos agrícolas.',
       benefits: [
@@ -72,7 +83,7 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
-              <span className="text-3xl">🌱</span>
+              <SparklesIcon className="w-8 h-8 text-primary-600" />
               <div>
                 <h1 className="text-2xl font-bold text-primary-600">{APP_INFO.NAME}</h1>
                 <p className="text-xs text-gray-600">{APP_INFO.DESCRIPTION}</p>
@@ -121,7 +132,11 @@ export const LandingPage: React.FC = () => {
         {/* Hero Image/Illustration */}
         <div className="mt-16 text-center">
           <div className="inline-block bg-gradient-to-r from-green-100 to-blue-100 rounded-2xl p-12 shadow-xl">
-            <div className="text-9xl">🌾🏪🛒</div>
+            <div className="flex items-center justify-center gap-6">
+              <SparklesIcon className="w-20 h-20 text-primary-600" />
+              <ShoppingBagIcon className="w-20 h-20 text-primary-600" />
+              <ShoppingCartIcon className="w-20 h-20 text-primary-600" />
+            </div>
           </div>
         </div>
       </section>
@@ -148,10 +163,10 @@ export const LandingPage: React.FC = () => {
                 </div>
                 <ul className="space-y-3">
                   {feature.benefits.map((benefit, i) => (
-                    <li key={i} className="flex items-start">
-                      <span className="text-green-500 mr-2 text-xl">✓</span>
-                      <span className="text-gray-700">{benefit}</span>
-                    </li>
+                      <li key={i} className="flex items-start">
+                        <CheckIcon className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" />
+                        <span className="text-gray-700">{benefit}</span>
+                      </li>
                   ))}
                 </ul>
               </Card>
@@ -195,22 +210,22 @@ export const LandingPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="text-5xl mb-4">🤖</div>
+              <div className="text-5xl mb-4"><Cog6ToothIcon className="w-12 h-12 mx-auto text-white" /></div>
               <h4 className="text-xl font-bold mb-2">IA Agrícola</h4>
               <p className="text-primary-100">Recomendaciones inteligentes para tus cultivos</p>
             </div>
             <div className="text-center">
-              <div className="text-5xl mb-4">📊</div>
+              <div className="text-5xl mb-4"><ChartBarIcon className="w-12 h-12 mx-auto text-white" /></div>
               <h4 className="text-xl font-bold mb-2">Estadísticas</h4>
               <p className="text-primary-100">Análisis detallado de tu producción</p>
             </div>
             <div className="text-center">
-              <div className="text-5xl mb-4">💰</div>
+              <div className="text-5xl mb-4"><CurrencyDollarIcon className="w-12 h-12 mx-auto text-white" /></div>
               <h4 className="text-xl font-bold mb-2">Comparador</h4>
               <p className="text-primary-100">Compara precios de insumos</p>
             </div>
             <div className="text-center">
-              <div className="text-5xl mb-4">🌐</div>
+              <div className="text-5xl mb-4"><GlobeAltIcon className="w-12 h-12 mx-auto text-white" /></div>
               <h4 className="text-xl font-bold mb-2">Marketplace</h4>
               <p className="text-primary-100">Vende y compra productos</p>
             </div>
@@ -295,10 +310,12 @@ export const LandingPage: React.FC = () => {
             <div>
               <h5 className="text-xl font-bold mb-4">Contacto</h5>
               <p className="text-gray-400">
-                Construido con ❤️ para el sector agrícola
+                Construido con <HeartIcon className="w-4 h-4 inline-block text-red-500 mx-1" /> para el sector agrícola
               </p>
-              <div className="mt-4 text-3xl space-x-3">
-                🌱 🚜 🌾
+              <div className="mt-4 text-3xl space-x-3 flex items-center">
+                <SparklesIcon className="w-6 h-6 text-white" />
+                <ShoppingBagIcon className="w-6 h-6 text-white" />
+                <ShoppingCartIcon className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>

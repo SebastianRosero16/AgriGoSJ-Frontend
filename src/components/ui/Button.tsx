@@ -10,6 +10,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   fullWidth?: boolean;
+  icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -68,7 +70,13 @@ export const Button: React.FC<ButtonProps> = ({
           ></path>
         </svg>
       )}
+      {!isLoading && props.icon && props.iconPosition !== 'right' && (
+        <span className="mr-2 flex items-center">{props.icon}</span>
+      )}
       {children}
+      {!isLoading && props.icon && props.iconPosition === 'right' && (
+        <span className="ml-2 flex items-center">{props.icon}</span>
+      )}
     </button>
   );
 };

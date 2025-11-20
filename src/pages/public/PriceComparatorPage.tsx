@@ -6,6 +6,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Button } from '@/components/ui';
+import { CurrencyDollarIcon, ChartBarIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { ROUTES, APP_INFO } from '@/utils/constants';
 import { useAuth } from '@/hooks';
 
@@ -68,7 +69,9 @@ export const PriceComparatorPage: React.FC = () => {
           {/* Empty State */}
           <Card>
             <div className="text-center py-12">
-              <div className="text-6xl mb-4">💰</div>
+              <div className="text-green-700 mb-4">
+                <CurrencyDollarIcon className="w-16 h-16 mx-auto" />
+              </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 Busca un producto para comparar
               </h3>
@@ -83,7 +86,9 @@ export const PriceComparatorPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           <Card>
             <div className="text-center">
-              <div className="text-4xl mb-3">📊</div>
+              <div className="text-primary-600 mb-3">
+                <ChartBarIcon className="w-12 h-12 mx-auto" />
+              </div>
               <h4 className="font-semibold text-gray-900 mb-2">
                 Comparación Inteligente
               </h4>
@@ -95,7 +100,9 @@ export const PriceComparatorPage: React.FC = () => {
 
           <Card>
             <div className="text-center">
-              <div className="text-4xl mb-3">💵</div>
+              <div className="text-green-700 mb-3">
+                <CurrencyDollarIcon className="w-12 h-12 mx-auto" />
+              </div>
               <h4 className="font-semibold text-gray-900 mb-2">Ahorra Dinero</h4>
               <p className="text-sm text-gray-600">
                 Compara precios de múltiples vendedores
@@ -105,7 +112,9 @@ export const PriceComparatorPage: React.FC = () => {
 
           <Card>
             <div className="text-center">
-              <div className="text-4xl mb-3">⚡</div>
+              <div className="text-yellow-500 mb-3">
+                <SparklesIcon className="w-12 h-12 mx-auto" />
+              </div>
               <h4 className="font-semibold text-gray-900 mb-2">Rápido y Fácil</h4>
               <p className="text-sm text-gray-600">
                 Resultados instantáneos con un solo clic

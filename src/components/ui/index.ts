@@ -8,3 +8,4 @@ export * from './Card';
 export * from './Loading';
 export * from './Modal';
 export * from './ImageUpload';
+export * from './ThemeToggle';

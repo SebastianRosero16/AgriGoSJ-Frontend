@@ -55,7 +55,7 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
       if (response.success) {
         toast.success(`Código enviado a ${email}`);
         if (response.note) {
-          console.log('📧 MODO DESARROLLO:', response.note);
+          console.log('MODO DESARROLLO (nota):', response.note);
         }
         // Reset countdown
         setCountdown(60);
@@ -129,7 +129,7 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
   return (
     <Card>
       <div className="text-center mb-6">
-        <div className="text-5xl mb-4">📧</div>
+        <div className="w-12 h-12 rounded-full bg-primary-100 mx-auto mb-4" />
         <h3 className="text-xl font-semibold text-gray-900 mb-2">
           Verifica tu email
         </h3>

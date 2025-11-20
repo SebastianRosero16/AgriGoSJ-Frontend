@@ -57,8 +57,8 @@ export const ForgotPassword: React.FC<ForgotPasswordProps> = ({
         
         // In development, show token in console
         if (response.token && response.note) {
-          console.log('🔑 MODO DESARROLLO - Token:', response.token);
-          console.log('📧', response.note);
+          console.log('MODO DESARROLLO - Token:', response.token);
+          console.log('MODO DESARROLLO (nota):', response.note);
           setToken(response.token); // Auto-fill in development
         }
         
@@ -139,7 +139,7 @@ export const ForgotPassword: React.FC<ForgotPasswordProps> = ({
       {step === 1 && (
         <>
           <div className="text-center mb-6">
-            <div className="text-5xl mb-4">🔐</div>
+            <div className="w-12 h-12 rounded-full bg-primary-100 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               Recuperar Contraseña
             </h3>
@@ -195,7 +195,7 @@ export const ForgotPassword: React.FC<ForgotPasswordProps> = ({
       {step === 2 && (
         <>
           <div className="text-center mb-6">
-            <div className="text-5xl mb-4">🔑</div>
+            <div className="w-12 h-12 rounded-full bg-primary-100 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               Ingresa el Token
             </h3>
@@ -248,7 +248,7 @@ export const ForgotPassword: React.FC<ForgotPasswordProps> = ({
             </div>
 
             <div className="text-xs text-gray-500 text-center">
-              <p>💡 En modo desarrollo, el token se muestra en la consola del navegador</p>
+              <p>En modo desarrollo, el token se muestra en la consola del navegador</p>
             </div>
           </form>
         </>
@@ -258,7 +258,7 @@ export const ForgotPassword: React.FC<ForgotPasswordProps> = ({
       {step === 3 && (
         <>
           <div className="text-center mb-6">
-            <div className="text-5xl mb-4">🔒</div>
+            <div className="w-12 h-12 rounded-full bg-primary-100 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               Nueva Contraseña
             </h3>

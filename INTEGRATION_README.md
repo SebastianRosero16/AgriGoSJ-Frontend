@@ -1,14 +1,14 @@
-# 🔐 Nuevas Funcionalidades de Autenticación
+# Nuevas Funcionalidades de Autenticación
 
-## ✨ Resumen de Cambios
+## Resumen de Cambios
 
 Se han integrado exitosamente todas las nuevas funcionalidades del backend para mejorar la seguridad y experiencia de usuario en el proceso de autenticación.
 
 ---
 
-## 📋 Funcionalidades Implementadas
+## Funcionalidades Implementadas
 
-### 1. ✅ Verificación de Email con Código
+### 1. Verificación de Email con Código
 
 **Flujo de Registro Mejorado:**
 
@@ -29,7 +29,7 @@ Se han integrado exitosamente todas las nuevas funcionalidades del backend para 
 
 ---
 
-### 2. 🔑 Recuperación de Contraseña
+### 2. Recuperación de Contraseña
 
 **Flujo de Recuperación:**
 
@@ -52,7 +52,7 @@ Se han integrado exitosamente todas las nuevas funcionalidades del backend para 
 
 ---
 
-## 🎯 Componentes Creados
+## Componentes Creados
 
 ### `EmailVerification.tsx`
 Componente para verificar email con código de 6 dígitos.
@@ -94,7 +94,7 @@ Componente para recuperación de contraseña en 3 pasos.
 
 ---
 
-## 🔧 Servicios Actualizados
+## Servicios Actualizados
 
 ### `authService.ts`
 
@@ -125,7 +125,7 @@ checkVerification(email: string): Promise<CheckVerificationResponse>
 
 ---
 
-## 📚 Validaciones Agregadas
+## Validaciones Agregadas
 
 ### `validation.ts`
 
@@ -147,7 +147,7 @@ isNumericCode(code: string): boolean
 
 ---
 
-## 🎨 Páginas Actualizadas
+## Páginas Actualizadas
 
 ### `RegisterPage.tsx`
 
@@ -182,7 +182,7 @@ isNumericCode(code: string): boolean
 
 ---
 
-## 🛠️ Constantes Actualizadas
+## Constantes Actualizadas
 
 ### `constants.ts`
 
@@ -216,7 +216,7 @@ VERIFICATION_CODE: {
 
 ---
 
-## 🎯 Checklist de Integración
+## Checklist de Integración
 
 ### ✅ Completado
 
@@ -276,7 +276,7 @@ VERIFICATION_CODE: {
 
 ---
 
-## 💡 Modo Desarrollo vs Producción
+## Modo Desarrollo vs Producción
 
 ### Desarrollo (`EMAIL_ENABLED=false` en backend)
 
@@ -296,7 +296,7 @@ VERIFICATION_CODE: {
 
 ---
 
-## 🔒 Seguridad
+## Seguridad
 
 ### Implementado
 
@@ -371,7 +371,7 @@ feat: Integrar verificación de email y recuperación de contraseña
 
 ---
 
-## 📦 Archivos Modificados
+## Archivos Modificados
 
 ### Nuevos Archivos
 - `src/components/auth/EmailVerification.tsx`
@@ -386,7 +386,7 @@ feat: Integrar verificación de email y recuperación de contraseña
 
 ---
 
-## 🔗 Enlaces
+## Enlaces
 
 - **Repositorio:** https://github.com/SebastianRosero16/AgriGoSJ-Frontend
 - **Deployment:** https://web-wnermbtbdsne.up-de-fra1-k8s-1.apps.run-on-seenode.com/

@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Card, Button, Input, Loading, Modal, ImageUpload } from '@/components/ui';
+import { TrashIcon, DocumentTextIcon, PlusIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
 import { marketplaceService } from '@/api';
 import { Stack } from '@/data-structures';
 import type { Product } from '@/types';
@@ -219,8 +220,8 @@ export const FarmerProducts: React.FC = () => {
       cleanedData.imageUrl = formData.imageUrl.trim();
     }
 
-    console.log('📦 Datos a enviar al backend:', cleanedData);
-    console.log('📦 Valores del formulario:', formData);
+    console.log('Datos a enviar al backend:', cleanedData);
+    console.log('Valores del formulario:', formData);
 
     try {
       if (editingProduct) {
@@ -361,7 +362,7 @@ export const FarmerProducts: React.FC = () => {
         confirmText="Sí, eliminar"
         cancelText="Cancelar"
         type="danger"
-        icon="🗑️"
+        icon={<TrashIcon className="w-6 h-6 text-red-600" />}
       />
 
       <div className="space-y-6">
@@ -373,11 +374,11 @@ export const FarmerProducts: React.FC = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => setShowHistory(!showHistory)}>
-            📜 Historial
+          <Button variant="secondary" onClick={() => setShowHistory(!showHistory)} icon={<DocumentTextIcon className="w-5 h-5" />}>
+            Historial
           </Button>
-          <Button variant="primary" onClick={() => setShowForm(!showForm)}>
-            {showForm ? 'Cancelar' : '+ Publicar Producto'}
+          <Button variant="primary" onClick={() => setShowForm(!showForm)} icon={<PlusIcon className="w-5 h-5" />}>
+            {showForm ? 'Cancelar' : 'Publicar Producto'}
           </Button>
         </div>
       </div>
@@ -399,8 +400,10 @@ export const FarmerProducts: React.FC = () => {
             ))}
           </div>
         </Card>
-      )}
-
+        <Card>
+          <div className="text-center py-12">
+            <div className="text-primary-600 mb-4">
+              <ShoppingBagIcon className="w-16 h-16 mx-auto" />
       {/* Formulario */}
       {showForm && (
         <Card className="relative z-20">
@@ -501,14 +504,16 @@ export const FarmerProducts: React.FC = () => {
       {products.length === 0 ? (
         <Card>
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">📦</div>
+            <div className="text-primary-600 mb-4">
+              <ShoppingBagIcon className="w-24 h-24 mx-auto" />
+            </div>
             <h3 className="text-xl font-semibold text-gray-700 mb-2">
               No tienes productos publicados
             </h3>
             <p className="text-gray-500 mb-4">
               Publica tus productos para que los compradores puedan encontrarlos
             </p>
-            <Button variant="primary" onClick={() => setShowForm(true)}>
+            <Button variant="primary" onClick={() => setShowForm(true)} icon={<PlusIcon className="w-4 h-4" />}>
               Publicar Primer Producto
             </Button>
           </div>
@@ -567,6 +572,7 @@ export const FarmerProducts: React.FC = () => {
           ))}
         </div>
       )}
+        </Card>
       </div>
     </>
   );

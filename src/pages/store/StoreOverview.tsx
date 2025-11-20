@@ -7,6 +7,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Card, Button, Loading } from '@/components/ui';
+import {
+  ShoppingBagIcon,
+  ExclamationTriangleIcon,
+  BanIcon,
+  CurrencyDollarIcon,
+  PlusIcon,
+  ClipboardDocumentListIcon,
+  BeakerIcon,
+} from '@heroicons/react/24/outline';
 import { storeService } from '@/api';
 import { ROUTES } from '@/utils/constants';
 import type { StoreInput } from '@/types';
@@ -77,7 +86,9 @@ export const StoreOverview: React.FC = () => {
               <p className="text-sm text-gray-600 font-medium">Total Insumos</p>
               <p className="text-3xl font-bold text-blue-700">{stats.totalInputs}</p>
             </div>
-            <div className="text-4xl">📦</div>
+            <div className="text-blue-700">
+              <ShoppingBagIcon className="w-10 h-10" />
+            </div>
           </div>
         </Card>
 
@@ -87,7 +98,9 @@ export const StoreOverview: React.FC = () => {
               <p className="text-sm text-gray-600 font-medium">Stock Bajo</p>
               <p className="text-3xl font-bold text-yellow-700">{stats.lowStock}</p>
             </div>
-            <div className="text-4xl">⚠️</div>
+            <div className="text-yellow-700">
+              <ExclamationTriangleIcon className="w-10 h-10" />
+            </div>
           </div>
         </Card>
 
@@ -97,7 +110,9 @@ export const StoreOverview: React.FC = () => {
               <p className="text-sm text-gray-600 font-medium">Sin Stock</p>
               <p className="text-3xl font-bold text-red-700">{stats.outOfStock}</p>
             </div>
-            <div className="text-4xl">🚫</div>
+            <div className="text-red-700">
+              <BanIcon className="w-10 h-10" />
+            </div>
           </div>
         </Card>
 
@@ -109,7 +124,9 @@ export const StoreOverview: React.FC = () => {
                 ${stats.totalValue.toLocaleString()}
               </p>
             </div>
-            <div className="text-4xl">💰</div>
+            <div className="text-green-700">
+              <CurrencyDollarIcon className="w-10 h-10" />
+            </div>
           </div>
         </Card>
       </div>
@@ -122,15 +139,17 @@ export const StoreOverview: React.FC = () => {
             variant="primary"
             onClick={() => navigate(ROUTES.STORE.INPUTS)}
             className="h-20 text-lg"
+            icon={<PlusIcon className="w-5 h-5" />}
           >
-            <span className="mr-2">➕</span> Agregar Nuevo Insumo
+            Agregar Nuevo Insumo
           </Button>
           <Button
             variant="secondary"
             onClick={() => navigate(ROUTES.STORE.INPUTS)}
             className="h-20 text-lg"
+            icon={<ClipboardDocumentListIcon className="w-5 h-5" />}
           >
-            <span className="mr-2">📋</span> Gestionar Inventario
+            Gestionar Inventario
           </Button>
         </div>
       </Card>
@@ -140,7 +159,9 @@ export const StoreOverview: React.FC = () => {
         <h3 className="text-lg font-semibold mb-4">Insumos Recientes</h3>
         {inputs.length === 0 ? (
           <div className="text-center py-8">
-            <div className="text-6xl mb-4">🧪</div>
+            <div className="text-6xl mb-4 text-gray-400">
+              <BeakerIcon className="w-16 h-16 mx-auto" />
+            </div>
             <h3 className="text-xl font-semibold text-gray-700 mb-2">
               No tienes insumos registrados
             </h3>

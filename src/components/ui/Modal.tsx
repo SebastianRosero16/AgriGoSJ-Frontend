@@ -15,7 +15,7 @@ interface ModalProps {
   confirmText?: string;
   cancelText?: string;
   type?: 'danger' | 'warning' | 'info' | 'success';
-  icon?: string;
+  icon?: React.ReactNode;
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -55,25 +55,21 @@ export const Modal: React.FC<ModalProps> = ({
         return {
           bg: 'bg-red-100',
           text: 'text-red-600',
-          icon: icon || '⚠️',
         };
       case 'warning':
         return {
           bg: 'bg-yellow-100',
           text: 'text-yellow-600',
-          icon: icon || '⚡',
         };
       case 'success':
         return {
           bg: 'bg-green-100',
           text: 'text-green-600',
-          icon: icon || '✅',
         };
       default:
         return {
           bg: 'bg-blue-100',
           text: 'text-blue-600',
-          icon: icon || 'ℹ️',
         };
     }
   };

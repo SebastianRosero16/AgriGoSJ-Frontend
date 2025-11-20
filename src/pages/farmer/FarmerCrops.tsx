@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Card, Button, Input, Loading } from '@/components/ui';
+import { SparklesIcon, MapPinIcon, SunIcon, CalendarDaysIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { farmerService } from '@/api';
 import { LinkedList } from '@/data-structures';
 import type { Crop } from '@/types';
@@ -86,7 +87,7 @@ export const FarmerCrops: React.FC = () => {
       await loadCrops();
       resetForm();
     } catch (error: any) {
-      console.error('❌ Error al guardar cultivo:', error);
+      console.error('Error al guardar cultivo:', error);
       const backendMsg = error?.response?.data?.message || error?.response?.data || error?.message || 'Error al guardar cultivo';
       toast.error(String(backendMsg));
     }
@@ -300,16 +301,12 @@ export const FarmerCrops: React.FC = () => {
       {cropsArray.length === 0 ? (
         <Card>
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">🌾</div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">
-              No tienes cultivos registrados
-            </h3>
-            <p className="text-gray-500 mb-4">
-              Comienza agregando tu primer cultivo para gestionar tu producción
-            </p>
-            <Button variant="primary" onClick={() => setShowForm(true)}>
-              Crear Primer Cultivo
-            </Button>
+            <div className="text-gray-400 mb-4">
+              <SparklesIcon className="w-16 h-16 mx-auto" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">No tienes cultivos registrados</h3>
+            <p className="text-gray-500 mb-4">Comienza agregando tu primer cultivo para gestionar tu producción</p>
+            <Button variant="primary" onClick={() => setShowForm(true)}>Crear Primer Cultivo</Button>
           </div>
         </Card>
       ) : (
@@ -335,12 +332,12 @@ export const FarmerCrops: React.FC = () => {
                 </span>
               </div>
               <div className="space-y-2 text-sm text-gray-600 mb-4">
-                <p>📅 Siembra: {crop.plantingDate ? new Date(crop.plantingDate).toLocaleDateString() : 'Sin fecha'}</p>
-                <p>📏 Área: {crop.area} ha</p>
-                <p>📍 Ubicación: {crop.location}</p>
-                {crop.soilType && <p>🌱 Suelo: {crop.soilType}</p>}
-                {crop.climate && <p>🌤️ Clima: {crop.climate}</p>}
-                {crop.notes && <p className="text-xs">📝 {crop.notes}</p>}
+                <p className="inline-flex items-center gap-2"><CalendarDaysIcon className="w-4 h-4 text-gray-500" /> Siembra: {crop.plantingDate ? new Date(crop.plantingDate).toLocaleDateString() : 'Sin fecha'}</p>
+                <p className="inline-flex items-center gap-2"><SparklesIcon className="w-4 h-4 text-gray-500" /> Área: {crop.area} ha</p>
+                <p className="inline-flex items-center gap-2"><MapPinIcon className="w-4 h-4 text-gray-500" /> Ubicación: {crop.location}</p>
+                {crop.soilType && <p className="inline-flex items-center gap-2"><SparklesIcon className="w-4 h-4 text-gray-500" /> Suelo: {crop.soilType}</p>}
+                {crop.climate && <p className="inline-flex items-center gap-2"><SunIcon className="w-4 h-4 text-gray-500" /> Clima: {crop.climate}</p>}
+                {crop.notes && <p className="text-xs inline-flex items-center gap-2"><DocumentTextIcon className="w-4 h-4 text-gray-500" /> {crop.notes}</p>}
               </div>
               <div className="flex gap-2">
                 <Button

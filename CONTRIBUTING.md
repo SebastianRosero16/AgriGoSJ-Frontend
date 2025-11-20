@@ -1,19 +1,19 @@
 # Contribuir a AgriGoSJ Frontend
 
-¡Gracias por tu interés en contribuir! 🎉
+¡Gracias por tu interés en contribuir!
 
-## 📋 Tabla de Contenidos
+## Tabla de Contenidos
 - [Código de Conducta](#código-de-conducta)
 - [¿Cómo Contribuir?](#cómo-contribuir)
 - [Guía de Estilo](#guía-de-estilo)
 - [Commits](#commits)
 - [Pull Requests](#pull-requests)
 
-## 📜 Código de Conducta
+## Código de Conducta
 
 Este proyecto sigue principios de respeto y colaboración profesional.
 
-## 🤝 ¿Cómo Contribuir?
+## ¿Cómo Contribuir?
 
 ### Reportar Bugs
 1. Verifica que el bug no haya sido reportado
@@ -35,7 +35,7 @@ Este proyecto sigue principios de respeto y colaboración profesional.
 4. Push a tu fork: `git push origin feature/nueva-caracteristica`
 5. Abre un Pull Request
 
-## 🎨 Guía de Estilo
+## Guía de Estilo
 
 ### Código
 - **Idioma**: Código en inglés, comentarios y UI en español
@@ -64,7 +64,7 @@ Este proyecto sigue principios de respeto y colaboración profesional.
 - Mobile-first approach
 - Evitar CSS inline
 
-## 📝 Commits
+## Commits
 
 ### Formato
 ```
@@ -91,14 +91,14 @@ docs: Actualizar README con nuevas instrucciones
 refactor: Simplificar lógica de autenticación
 ```
 
-## 🔍 Pull Requests
+## Pull Requests
 
 ### Antes de Enviar
-- ✅ El código compila sin errores
-- ✅ No hay warnings en consola
-- ✅ Las validaciones funcionan correctamente
-- ✅ El código sigue las convenciones
-- ✅ Commits descriptivos y en español
+- El código compila sin errores
+- No hay warnings en consola
+- Las validaciones funcionan correctamente
+- El código sigue las convenciones
+- Commits descriptivos y en español
 
 ### Template de PR
 ```markdown
@@ -118,17 +118,17 @@ refactor: Simplificar lógica de autenticación
 - [ ] README actualizado si es necesario
 ```
 
-## 🧪 Testing
+## Testing
 
 Antes de enviar un PR:
 1. Ejecuta `npm run dev` y verifica que no hay errores
 2. Prueba la funcionalidad manualmente
 3. Verifica la consola del navegador (F12)
 
-## 📞 Contacto
+## Contacto
 
 Para preguntas o dudas:
 - **Email**: sebastian.manchabajo@campusucc.edu.co
 - **GitHub**: [@SebastianRosero16](https://github.com/SebastianRosero16)
 
-¡Gracias por contribuir! 🚀
+¡Gracias por contribuir!
