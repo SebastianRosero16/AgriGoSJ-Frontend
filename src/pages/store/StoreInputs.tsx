@@ -493,7 +493,7 @@ export const StoreInputs: React.FC = () => {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <div className="text-sm text-gray-500 dark:text-gray-300">Precio</div>
-                  <div className="text-2xl font-extrabold text-primary-600 dark:text-primary-400">${ (Number(input.price) || 0).toFixed(2) }</div>
+                  <div className="text-2xl font-extrabold text-primary-600 dark:text-primary-400">${ (Number(input.price) || 0).toFixed(0) }</div>
                 </div>
                 <div className="text-right">
                   <div className="text-sm text-gray-500 dark:text-gray-300">Stock</div>
@@ -501,10 +501,10 @@ export const StoreInputs: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex gap-3">
-                <Button variant="secondary" onClick={() => handleUpdateStock(input)} className="flex-1" icon={<ShoppingBagIcon className="w-5 h-5" />}>Stock</Button>
-                <Button variant="secondary" onClick={() => handleEdit(input)} className="flex-1" icon={<PencilIcon className="w-5 h-5" />}>Editar</Button>
-                <Button variant="danger" onClick={() => handleDelete(input.id)} className="flex-1" icon={<TrashIcon className="w-5 h-5 text-white" />}>Eliminar</Button>
+              <div className="flex gap-2">
+                <Button variant="secondary" onClick={() => handleUpdateStock(input)} icon={<ShoppingBagIcon className="w-4 h-4" />}>Stock</Button>
+                <Button variant="secondary" onClick={() => handleEdit(input)} icon={<PencilIcon className="w-4 h-4" />}>Editar</Button>
+                <Button variant="danger" onClick={() => handleDelete(input.id)} icon={<TrashIcon className="w-4 h-4 text-white" />}>Eliminar</Button>
               </div>
             </div>
           ))}
