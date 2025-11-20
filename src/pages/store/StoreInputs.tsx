@@ -13,8 +13,8 @@ interface InputFormData {
   name: string;
   type: string;
   description: string;
-  price: number;
-  stock: number;
+  price: string | number;
+  stock: string | number;
   unit: string;
 }
 
@@ -29,8 +29,8 @@ export const StoreInputs: React.FC = () => {
     name: '',
     type: '',
     description: '',
-    price: 0,
-    stock: 0,
+    price: '',
+    stock: '',
     unit: 'kg',
   });
 
@@ -59,12 +59,25 @@ export const StoreInputs: React.FC = () => {
       toast.error('El tipo debe tener al menos 2 caracteres');
       return false;
     }
-    if (formData.price <= 0) {
-      toast.error('El precio debe ser mayor a 0');
+    const priceNum = typeof formData.price === 'string' && formData.price.trim() !== ''
+      ? parseFloat(String(formData.price).replace(',', '.'))
+      : typeof formData.price === 'number'
+      ? formData.price
+      : NaN;
+
+    if (isNaN(priceNum) || priceNum <= 0) {
+      toast.error('El precio debe ser un número mayor a 0');
       return false;
     }
-    if (formData.stock < 0) {
-      toast.error('El stock no puede ser negativo');
+
+    const stockNum = typeof formData.stock === 'string'
+      ? parseInt(formData.stock.replace(/[^0-9]/g, ''), 10)
+      : typeof formData.stock === 'number'
+      ? formData.stock
+      : NaN;
+
+    if (isNaN(stockNum) || stockNum < 0) {
+      toast.error('El stock debe ser un número entero mayor o igual a 0');
       return false;
     }
     if (formData.unit.trim().length < 1) {
@@ -82,14 +95,20 @@ export const StoreInputs: React.FC = () => {
     }
 
     try {
-      // Log para debug
-      console.log('📤 Enviando datos del insumo:', formData);
-      
+      // Convertir strings a números antes de enviar
+      const payload: any = {
+        ...formData,
+        price: typeof formData.price === 'string' ? parseFloat(String(formData.price).replace(',', '.')) : formData.price,
+        stock: typeof formData.stock === 'string' ? parseInt(String(formData.stock).replace(/[^0-9]/g, ''), 10) : formData.stock,
+      };
+
+      console.log('📤 Enviando datos del insumo:', payload);
+
       if (editingInput) {
-        await storeService.updateInput(editingInput.id, formData);
+        await storeService.updateInput(editingInput.id, payload);
         toast.success('Insumo actualizado exitosamente');
       } else {
-        await storeService.createInput(formData);
+        await storeService.createInput(payload);
         toast.success('Insumo creado exitosamente');
       }
 
@@ -107,8 +126,8 @@ export const StoreInputs: React.FC = () => {
       name: input.name,
       type: input.type,
       description: input.description || '',
-      price: input.price,
-      stock: input.stock,
+      price: input.price.toString(),
+      stock: input.stock.toString(),
       unit: input.unit,
     });
     setShowForm(true);
@@ -152,8 +171,8 @@ export const StoreInputs: React.FC = () => {
       name: '',
       type: '',
       description: '',
-      price: 0,
-      stock: 0,
+      price: '',
+      stock: '',
       unit: 'kg',
     });
     setEditingInput(null);
@@ -162,10 +181,17 @@ export const StoreInputs: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'price' ? parseFloat(value) || 0 : name === 'stock' ? parseInt(value.replace(/[^0-9]/g, ''), 10) || 0 : value,
-    }));
+    if (name === 'price') {
+      const cleaned = value.replace(/,/g, '.').replace(/[^0-9.]/g, '');
+      setFormData(prev => ({ ...prev, [name]: cleaned }));
+      return;
+    }
+    if (name === 'stock') {
+      const cleaned = value.replace(/[^0-9]/g, '');
+      setFormData(prev => ({ ...prev, [name]: cleaned }));
+      return;
+    }
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   // Filter inputs

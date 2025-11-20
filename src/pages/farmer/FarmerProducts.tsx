@@ -15,7 +15,7 @@ interface ProductFormData {
   description: string;
   price: string;
   unit: string;
-  stock: number;
+  stock: string;
   category: string;
   imageUrl: string;
 }
@@ -40,7 +40,7 @@ export const FarmerProducts: React.FC = () => {
     description: '',
     price: '',
     unit: 'kg',
-    stock: 0,
+    stock: '',
     category: '',
     imageUrl: '',
   });
@@ -156,11 +156,12 @@ export const FarmerProducts: React.FC = () => {
     }
 
     // Validar stock
-    if (isNaN(formData.stock) || formData.stock < 0) {
-      toast.error('El stock debe ser un número mayor o igual a 0');
+    const stockNum = formData.stock === '' ? NaN : parseInt(formData.stock.replace(/[^0-9]/g, ''), 10);
+    if (isNaN(stockNum) || stockNum < 0) {
+      toast.error('El stock debe ser un número entero mayor o igual a 0');
       return false;
     }
-    if (formData.stock > 999999) {
+    if (stockNum > 999999) {
       toast.error('El stock no puede exceder 999,999 unidades');
       return false;
     }
@@ -248,7 +249,7 @@ export const FarmerProducts: React.FC = () => {
       description: product.description,
       price: product.price.toString(),
       unit: product.unit,
-      stock: product.stock,
+      stock: product.stock.toString(),
       category: product.category,
       imageUrl: product.imageUrl || '',
     });
@@ -281,7 +282,7 @@ export const FarmerProducts: React.FC = () => {
       description: '',
       price: '',
       unit: 'kg',
-      stock: 0,
+      stock: '',
       category: '',
       imageUrl: '',
     });
@@ -311,11 +312,9 @@ export const FarmerProducts: React.FC = () => {
       
       setFormData(prev => ({ ...prev, [name]: cleanedValue }));
     } else if (name === 'stock') {
-      const numValue = parseFloat(value);
-      if (value && (isNaN(numValue) || numValue < 0 || !Number.isInteger(numValue))) {
-        return; // No actualizar si el valor no es válido
-      }
-      setFormData(prev => ({ ...prev, [name]: Math.floor(numValue) || 0 }));
+      // Allow only integer digits, keep as string so empty = ''
+      const cleaned = value.replace(/[^0-9]/g, '');
+      setFormData(prev => ({ ...prev, [name]: cleaned }));
     } else if (name === 'name') {
       // Limitar longitud del nombre
       if (value.length > 100) {
