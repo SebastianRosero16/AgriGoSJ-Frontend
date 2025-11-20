@@ -501,10 +501,28 @@ export const StoreInputs: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex gap-2">
-                <Button variant="secondary" onClick={() => handleUpdateStock(input)} icon={<ShoppingBagIcon className="w-4 h-4" />}>Stock</Button>
-                <Button variant="secondary" onClick={() => handleEdit(input)} icon={<PencilIcon className="w-4 h-4" />}>Editar</Button>
-                <Button variant="danger" onClick={() => handleDelete(input.id)} icon={<TrashIcon className="w-4 h-4 text-white" />}>Eliminar</Button>
+              <div className="flex gap-2 flex-wrap">
+                <button
+                  onClick={() => handleUpdateStock(input)}
+                  className="flex items-center gap-1 px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+                >
+                  <ShoppingBagIcon className="w-4 h-4" />
+                  Stock
+                </button>
+                <button
+                  onClick={() => handleEdit(input)}
+                  className="flex items-center gap-1 px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+                >
+                  <PencilIcon className="w-4 h-4" />
+                  Editar
+                </button>
+                <button
+                  onClick={() => handleDelete(input.id)}
+                  className="flex items-center gap-1 px-3 py-1.5 text-sm bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                >
+                  <TrashIcon className="w-4 h-4" />
+                  Eliminar
+                </button>
               </div>
             </div>
           ))}
