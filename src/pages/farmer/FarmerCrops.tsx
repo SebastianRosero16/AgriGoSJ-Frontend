@@ -5,8 +5,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { Card, Button, Input, Loading } from '@/components/ui';
-import { SparklesIcon, MapPinIcon, SunIcon, CalendarDaysIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import { Card, Button, Input, Loading, Modal } from '@/components/ui';
+import { SparklesIcon, MapPinIcon, SunIcon, CalendarDaysIcon, DocumentTextIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { farmerService } from '@/api';
 import { LinkedList } from '@/data-structures';
 import type { Crop } from '@/types';
@@ -27,6 +27,8 @@ export const FarmerCrops: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingCrop, setEditingCrop] = useState<Crop | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [cropToDelete, setCropToDelete] = useState<{ id: number; name: string } | null>(null);
   const [formData, setFormData] = useState<CropFormData>({
     name: '',
     type: '',
@@ -131,11 +133,16 @@ export const FarmerCrops: React.FC = () => {
     setShowForm(true);
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('¿Estás seguro de eliminar este cultivo? Se eliminarán también todas las recomendaciones de IA asociadas.')) return;
+  const handleDelete = (id: number, name: string) => {
+    setCropToDelete({ id, name });
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!cropToDelete) return;
 
     try {
-      await farmerService.deleteCrop(id);
+      await farmerService.deleteCrop(cropToDelete.id);
       toast.success('Cultivo eliminado exitosamente');
       await loadCrops();
     } catch (error: any) {
@@ -149,6 +156,9 @@ export const FarmerCrops: React.FC = () => {
         toast.error(errorMsg || 'Error al eliminar cultivo');
       }
       console.error('Delete error:', error);
+    } finally {
+      setCropToDelete(null);
+      setShowDeleteModal(false);
     }
   };
 
@@ -206,7 +216,24 @@ export const FarmerCrops: React.FC = () => {
   const cropsArray = crops.toArray();
 
   return (
-    <div className="space-y-6">
+    <>
+      {/* Modal de confirmación de eliminación */}
+      <Modal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setCropToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="¿Eliminar cultivo?"
+        message={`¿Estás seguro de que deseas eliminar "${cropToDelete?.name}"? Se eliminarán también todas las recomendaciones de IA asociadas.`}
+        confirmText="Aceptar"
+        cancelText="Cancelar"
+        type="danger"
+        icon={<TrashIcon className="w-6 h-6 text-red-600" />}
+      />
+
+      <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Mis Cultivos</h2>
@@ -373,7 +400,7 @@ export const FarmerCrops: React.FC = () => {
                 </Button>
                 <Button
                   variant="danger"
-                  onClick={() => handleDelete(crop.id)}
+                  onClick={() => handleDelete(crop.id, crop.cropName)}
                   className="flex-1"
                 >
                   Eliminar
@@ -383,7 +410,8 @@ export const FarmerCrops: React.FC = () => {
           ))}
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 };
 
