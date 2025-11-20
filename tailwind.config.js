@@ -35,6 +35,13 @@ export default {
           800: '#78350f',
           900: '#451a03',
         },
+        whatsapp: {
+          DEFAULT: '#128C7E',
+          light: '#25D366',
+          dark: '#052014',
+          bg: '#061717',
+          header: '#0f1b17'
+        }
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-in-out',
@@ -55,8 +62,7 @@ export default {
           '100%': { transform: 'scale(1)', opacity: '1' },
         },
       },
-      plugins: [require('@tailwindcss/forms')],
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/forms')],
 }

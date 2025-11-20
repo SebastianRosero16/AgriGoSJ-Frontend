@@ -79,7 +79,7 @@ export const StoreOverview: React.FC = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-[#072022] dark:to-[#061917] dark:text-gray-200">
+        <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100 dark:from-whatsapp-dark dark:to-whatsapp-bg dark:text-gray-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">Total Insumos</p>
@@ -91,7 +91,7 @@ export const StoreOverview: React.FC = () => {
           </div>
         </Card>
 
-        <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-[#3b2a12] dark:to-[#2a1f0f] dark:text-gray-200">
+        <Card className="relative overflow-hidden bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-[#3b2a12] dark:to-[#2a1f0f] dark:text-gray-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">Stock Bajo</p>
@@ -103,7 +103,7 @@ export const StoreOverview: React.FC = () => {
           </div>
         </Card>
 
-        <Card className="bg-gradient-to-br from-red-50 to-red-100 dark:from-[#3b1616] dark:to-[#2a1010] dark:text-gray-200">
+        <Card className="relative overflow-hidden bg-gradient-to-br from-red-50 to-red-100 dark:from-[#3b1616] dark:to-[#2a1010] dark:text-gray-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">Sin Stock</p>
@@ -115,11 +115,11 @@ export const StoreOverview: React.FC = () => {
           </div>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-[#052214] dark:to-[#041712] dark:text-gray-200">
+        <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-green-100 dark:from-whatsapp-dark dark:to-whatsapp-bg dark:text-gray-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">Valor Total</p>
-              <p className="text-3xl font-bold text-green-700 dark:text-[#25D366]">
+              <p className="text-3xl font-bold text-green-700 dark:text-whatsapp-light">
                 ${stats.totalValue.toLocaleString()}
               </p>
             </div>
@@ -133,8 +133,8 @@ export const StoreOverview: React.FC = () => {
       </div>
 
       {/* Quick Actions */}
-      <Card className="dark:bg-[#071614]">
-        <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Acciones Rápidas</h3>
+      <Card className="dark:bg-whatsapp-dark">
+      <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Acciones Rápidas</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Button
             variant="primary"
@@ -156,7 +156,7 @@ export const StoreOverview: React.FC = () => {
       </Card>
 
       {/* Recent Activity */}
-      <Card className="dark:bg-[#071614]">
+      <Card className="dark:bg-whatsapp-dark">
         <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Insumos Recientes</h3>
         {inputs.length === 0 ? (
           <div className="text-center py-8">
