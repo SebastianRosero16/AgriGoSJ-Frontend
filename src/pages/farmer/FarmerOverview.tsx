@@ -4,10 +4,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks';
 import { Link } from 'react-router-dom';
 import { Card, Loading } from '@/components/ui';
 import { formatCurrencyInteger, translateInputType, formatNumber } from '@/utils/format';
-import { ROUTES } from '@/utils/constants';
+import { ROUTES, USER_ROLES } from '@/utils/constants';
 import { marketplaceService, farmerService, storeService } from '@/api';
 import {
   ShoppingBagIcon,
@@ -17,6 +18,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 export const FarmerOverview: React.FC = () => {
+  const { user } = useAuth();
   const [stats, setStats] = useState({
     activeCrops: 0,
     publishedProducts: 0,
@@ -59,9 +61,39 @@ export const FarmerOverview: React.FC = () => {
 
       // Cargar insumos recientes (para mostrar al agricultor opciones de compra)
       try {
-        const inputsResp = await storeService.getInputs();
-        setInputs(Array.isArray(inputsResp) ? inputsResp.slice(0, 6) : []);
-        console.debug('[FarmerOverview] inputs loaded:', inputsResp);
+        const isFarmer = user?.role === USER_ROLES.FARMER;
+        try {
+          const inputsResp = await storeService.getInputs(isFarmer ? { public: true } : undefined);
+          setInputs(Array.isArray(inputsResp) ? inputsResp.slice(0, 6) : []);
+          console.debug('[FarmerOverview] inputs loaded:', inputsResp);
+        } catch (err: any) {
+          console.warn('storeService.getInputs failed, attempting marketplace fallback:', err);
+          // If backend forbids farmers from listing store inputs (403), fallback to marketplace products
+          if (err?.status === 403 || err?.response?.status === 403) {
+            try {
+              const prods = await marketplaceService.getProducts();
+              // Map products to a lightweight input-like shape
+              const mapped = (Array.isArray(prods) ? prods : []).map(p => ({
+                id: p.id,
+                name: p.name,
+                type: p.category || 'Otro',
+                price: p.price || 0,
+                stock: p.stock || 0,
+                unit: p.unit || 'unidad',
+                storeId: p.farmerId || 0,
+                storeName: p.farmerName || undefined,
+              }));
+              setInputs(mapped.slice(0, 6));
+              console.debug('[FarmerOverview] marketplace fallback loaded:', mapped);
+            } catch (mpErr) {
+              console.warn('Marketplace fallback also failed:', mpErr);
+              setInputs([]);
+            }
+          } else {
+            // Other errors: clear inputs
+            setInputs([]);
+          }
+        }
       } catch (err) {
         console.warn('No se pudieron obtener insumos:', err);
         setInputs([]);
