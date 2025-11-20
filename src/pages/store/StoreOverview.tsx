@@ -10,7 +10,6 @@ import { Card, Button, Loading } from '@/components/ui';
 import {
   ShoppingBagIcon,
   ExclamationTriangleIcon,
-  CurrencyDollarIcon,
   PlusIcon,
   ClipboardDocumentListIcon,
   BeakerIcon,
@@ -69,8 +68,8 @@ export const StoreOverview: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Panel de Control</h2>
-          <p className="text-gray-600">Resumen de tu agrotienda</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Panel de Control</h2>
+          <p className="text-gray-600 dark:text-gray-300">Resumen de tu agrotienda</p>
         </div>
         <Button variant="primary" onClick={() => navigate(ROUTES.STORE.INPUTS)}>
           Ver Mis Insumos
@@ -122,11 +121,6 @@ export const StoreOverview: React.FC = () => {
               <p className="text-3xl font-bold text-green-700 dark:text-whatsapp-light">
                 ${stats.totalValue.toLocaleString()}
               </p>
-            </div>
-            <div className="ml-4">
-              <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-[#052014] flex items-center justify-center">
-                <CurrencyDollarIcon className="w-6 h-6 text-green-700 dark:text-[#25D366]" />
-              </div>
             </div>
           </div>
         </Card>
