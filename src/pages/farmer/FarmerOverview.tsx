@@ -8,8 +8,8 @@ import { useAuth } from '@/hooks';
 import { Link } from 'react-router-dom';
 import { Card, Loading } from '@/components/ui';
 import { formatCurrencyInteger, translateInputType, formatNumber } from '@/utils/format';
-import { ROUTES, USER_ROLES } from '@/utils/constants';
-import { marketplaceService, farmerService, storeService } from '@/api';
+import { ROUTES } from '@/utils/constants';
+import { marketplaceService, farmerService } from '@/api';
 import {
   ShoppingBagIcon,
   SparklesIcon,
@@ -18,7 +18,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 export const FarmerOverview: React.FC = () => {
-  const { user } = useAuth();
+  useAuth();
   const [stats, setStats] = useState({
     activeCrops: 0,
     publishedProducts: 0,
@@ -197,13 +197,7 @@ export const FarmerOverview: React.FC = () => {
           >
             {showRawInputs ? 'Ocultar datos' : 'Mostrar datos crudos'}
           </button>
-          <button
-            className="ml-3 text-sm text-gray-500 underline"
-            onClick={debugFetchPublicInputs}
-            title="Forzar petición pública de insumos"
-          >
-            Probar petición pública
-          </button>
+          {/* botón de debug eliminado */}
         </div>
         <div className="mb-4 p-3 bg-green-50 dark:bg-gray-900 text-green-800 dark:text-green-200 rounded">
           <p>Para comprar insumos, usa el <a className="text-primary-600 underline" href={ROUTES.MARKETPLACE}>Marketplace</a>.</p>

@@ -10,9 +10,9 @@ import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 import { ROUTES, APP_INFO } from '@/utils/constants';
 import { useAuth } from '@/hooks';
 import { useEffect, useState } from 'react';
-import { marketplaceService, storeService, orderService } from '@/api';
+import { marketplaceService, storeService } from '@/api';
 import { formatCurrencyInteger } from '@/utils/format';
-import { useNavigate } from 'react-router-dom';
+import CheckoutModal from '@/components/payments/CheckoutModal';
 
 export const MarketplacePage: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
@@ -20,6 +20,8 @@ export const MarketplacePage: React.FC = () => {
   const [category, setCategory] = useState('');
   const [items, setItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [checkoutItem, setCheckoutItem] = useState<any | null>(null);
 
   useEffect(() => {
     // If user is farmer, default to 'inputs' and load public inputs
@@ -154,41 +156,12 @@ export const MarketplacePage: React.FC = () => {
                   <div className="mt-4 flex items-center justify-between">
                     <div className="text-lg font-bold text-gray-900">{formatCurrencyInteger(Number(it.price || it.unitPrice || 0))}</div>
                     <div>
-                      <Button size="sm" onClick={async () => {
-                        // If farmer, allow quick buy for inputs
-                        try {
-                          if (user?.role === 'FARMER') {
-                            if (category !== 'inputs') {
-                              alert('Selecciona la categoría Insumos para comprar.');
-                              return;
-                            }
-                            const qtyStr = window.prompt('Cantidad a comprar (enteros):', '1') || '0';
-                            const qty = Math.max(1, parseInt(qtyStr || '0', 10));
-                            const phone = window.prompt('Teléfono de contacto para envío:', '') || '';
-                            const address = window.prompt('Dirección de envío:', '') || '';
-                            if (!address || !phone) {
-                              alert('Se requieren teléfono y dirección para crear la orden.');
-                              return;
-                            }
-                            const payload = {
-                              items: [{ productId: Number(it.id), quantity: qty }],
-                              shippingAddress: address,
-                              shippingCity: '',
-                              shippingState: '',
-                              shippingZipCode: '',
-                              shippingPhone: phone,
-                              notes: `Compra rápida desde Marketplace - producto ${it.name || it.title}`,
-                            };
-                            const order = await orderService.createOrder(payload as any);
-                            alert('Orden creada: ' + (order?.orderNumber || 'OK'));
-                            // Optionally navigate to buyer orders
-                          } else {
-                            // Non-farmers (stores or buyers) behaviour: go to product detail or cart
-                            alert('Funcionalidad de compra disponible solo para agricultores por ahora.');
-                          }
-                        } catch (err) {
-                          console.error('Error creando orden:', err);
-                          alert('Error al crear la orden. Revisa la consola.');
+                      <Button size="sm" onClick={() => {
+                        if (user?.role === 'FARMER') {
+                          setCheckoutItem(it);
+                          setCheckoutOpen(true);
+                        } else {
+                          alert('Funcionalidad de compra disponible solo para agricultores.');
                         }
                       }} disabled={user?.role === 'FARMER' ? (category !== 'inputs') : false}>
                         Comprar
@@ -200,6 +173,9 @@ export const MarketplacePage: React.FC = () => {
             ))
           )}
         </div>
+        {checkoutItem && (
+          <CheckoutModal open={checkoutOpen} onClose={() => setCheckoutOpen(false)} item={checkoutItem} />
+        )}
       </div>
     </div>
   );
