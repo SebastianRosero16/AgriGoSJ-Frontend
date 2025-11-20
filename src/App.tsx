@@ -75,6 +75,11 @@ const App: React.FC = () => {
 
   return (
     <React.Suspense fallback={<LoadingFallback />}>
+      {/* Theme toggle fijo */}
+      <React.Suspense fallback={null}>
+        {/* Lazy load to avoid circular deps */}
+        {React.createElement(React.lazy(() => import('./components/ui/ThemeToggle')))}
+      </React.Suspense>
       <Routes>
         {/* Public Routes */}
         <Route

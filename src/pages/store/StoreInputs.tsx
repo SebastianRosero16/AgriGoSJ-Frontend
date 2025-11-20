@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Card, Button, Input, Loading } from '@/components/ui';
+import StockModal from '@/components/ui/StockModal';
 import { storeService } from '@/api';
 import type { StoreInput } from '@/types';
 
@@ -180,22 +181,33 @@ export const StoreInputs: React.FC = () => {
   };
 
   const handleUpdateStock = async (input: StoreInput) => {
-    const newStock = prompt(`Actualizar stock de ${input.name}\nStock actual: ${input.stock} ${input.unit}\n\nIngresa el nuevo stock:`, String(input.stock ?? ''));
-    
-    if (newStock === null) return;
-    
-    const stockValue = parseFloat(newStock);
-    
-    if (isNaN(stockValue) || stockValue < 0) {
-      toast.error('Stock inválido. Debe ser un número mayor o igual a 0');
-      return;
-    }
+    // Abrir modal con el insumo a actualizar
+    setEditingInput(input);
+    setShowStockModal(true);
+  };
+
+  const [showStockModal, setShowStockModal] = useState(false);
+
+  const handleConfirmStock = async (newStock: number) => {
+    if (!editingInput) return;
+
+    // Construir payload completo para cumplir la validación actual del backend
+    const payload: any = {
+      name: editingInput.name,
+      type: editingInput.type,
+      description: editingInput.description ?? '',
+      price: typeof editingInput.price === 'number' ? editingInput.price : parseFloat(String(editingInput.price).replace(',', '.')) || 0,
+      stock: newStock,
+      unit: editingInput.unit ?? 'kg',
+    };
 
     try {
-      await storeService.updateInput(input.id, { stock: stockValue });
+      console.log('📤 PUT payload (update stock):', payload);
+      await storeService.updateInput(editingInput.id, payload);
       toast.success('Stock actualizado exitosamente');
       await loadInputs();
     } catch (error: any) {
+      console.error('Error updating stock:', error);
       toast.error(error?.message || 'Error al actualizar stock');
     }
   };
@@ -383,6 +395,14 @@ export const StoreInputs: React.FC = () => {
           </form>
         </Card>
       )}
+
+      {/* Stock Modal */}
+      <StockModal
+        isOpen={showStockModal}
+        onClose={() => setShowStockModal(false)}
+        currentStock={editingInput?.stock}
+        onSave={handleConfirmStock}
+      />
 
       {/* Filtros y búsqueda */}
       <Card>
