@@ -258,31 +258,32 @@ export const StoreInputs: React.FC = () => {
   if (isLoading) {
     return <Loading />;
   }
-
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Mis Insumos</h2>
-          <p className="text-gray-600">
-            Gestiona tu inventario de insumos agrícolas ({inputs.length} {inputs.length === 1 ? 'insumo' : 'insumos'})
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">Mis Insumos</h2>
+          <p className="text-gray-600 dark:text-gray-300 mt-1">
+            Gestiona tu inventario de insumos agrícolas — <span className="font-medium">{inputs.length}</span> {inputs.length === 1 ? 'insumo' : 'insumos'}
           </p>
         </div>
-        <Button variant="primary" onClick={() => setShowForm(!showForm)}>
-          {showForm ? 'Cancelar' : '+ Agregar Insumo'}
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button variant="secondary" onClick={() => setShowForm(!showForm)}>
+            {showForm ? 'Cancelar' : '+ Agregar Insumo'}
+          </Button>
+        </div>
       </div>
 
       {/* Formulario */}
       {showForm && (
-        <Card className="relative z-20">
-          <h3 className="text-lg font-semibold mb-4">
+        <Card className="relative z-20 p-6 bg-white dark:bg-gray-900">
+          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             {editingInput ? 'Editar Insumo' : 'Nuevo Insumo'}
           </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Nombre del Insumo *
                 </label>
                 <Input
@@ -294,14 +295,14 @@ export const StoreInputs: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Tipo *
                 </label>
                 <select
                   name="type"
                   value={formData.type}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                   required
                 >
                   <option value="">Selecciona tipo...</option>
@@ -317,7 +318,7 @@ export const StoreInputs: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Descripción
               </label>
               <textarea
@@ -325,14 +326,14 @@ export const StoreInputs: React.FC = () => {
                 value={formData.description}
                 onChange={handleChange}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg relative z-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg relative z-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                 placeholder="Descripción del insumo..."
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Precio ($) *
                 </label>
                 <Input
@@ -348,7 +349,7 @@ export const StoreInputs: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Stock *
                 </label>
                 <Input
@@ -363,14 +364,14 @@ export const StoreInputs: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Unidad *
                 </label>
                 <select
                   name="unit"
                   value={formData.unit}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg relative z-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg relative z-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                   required
                 >
                   <option value="kg">Kilogramo (kg)</option>
@@ -405,14 +406,15 @@ export const StoreInputs: React.FC = () => {
       />
 
       {/* Filtros y búsqueda */}
-      <Card>
-        <div className="flex flex-col md:flex-row gap-4">
+      <div className="bg-white dark:bg-gray-900 p-4 rounded-lg shadow-sm">
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-4 items-center">
           <div className="flex-1">
             <Input
               type="text"
               placeholder="🔍 Buscar por nombre o tipo..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              className="bg-gray-50 dark:bg-gray-800"
             />
           </div>
           <div className="flex gap-2">
@@ -436,7 +438,7 @@ export const StoreInputs: React.FC = () => {
             </Button>
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Lista de insumos */}
       {filteredInputs.length === 0 ? (
@@ -461,20 +463,20 @@ export const StoreInputs: React.FC = () => {
           </div>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredInputs.map((input) => (
-            <Card key={input.id} className="hover:shadow-lg transition-shadow">
-              <div className="flex justify-between items-start mb-3">
+            <div key={input.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900">{input.name}</h3>
-                  <p className="text-sm text-gray-600">{input.type}</p>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{input.name}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">{input.type}</p>
                 </div>
                 {(() => {
                   const stockNum = Number(input.stock) || 0;
                   const badgeClass = stockNum === 0 ? 'bg-red-100 text-red-800' : stockNum < 10 ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800';
                   const badgeText = stockNum === 0 ? 'Sin Stock' : stockNum < 10 ? 'Stock Bajo' : 'Disponible';
                   return (
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${badgeClass}`}>
+                    <span className={`px-3 py-1 text-sm font-medium rounded-full ${badgeClass}`}>
                       {badgeText}
                     </span>
                   );
@@ -482,57 +484,26 @@ export const StoreInputs: React.FC = () => {
               </div>
 
               {input.description && (
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">{input.description}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">{input.description}</p>
               )}
 
-              <div className="space-y-2 mb-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Precio:</span>
-                  <span className="font-semibold text-lg text-primary-600">
-                    ${ (Number(input.price) || 0).toFixed(2) } / {input.unit}
-                  </span>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <div className="text-sm text-gray-500 dark:text-gray-300">Precio</div>
+                  <div className="text-2xl font-extrabold text-primary-600 dark:text-primary-400">${ (Number(input.price) || 0).toFixed(2) }</div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Stock:</span>
-                  {(() => {
-                    const stockNum = Number(input.stock) || 0;
-                    const stockClass = stockNum === 0 ? 'text-red-600' : stockNum < 10 ? 'text-yellow-600' : 'text-green-600';
-                    return (
-                      <span className={`font-semibold ${stockClass}`}>
-                        {stockNum} {input.unit}
-                      </span>
-                    );
-                  })()}
+                <div className="text-right">
+                  <div className="text-sm text-gray-500 dark:text-gray-300">Stock</div>
+                  <div className={`text-lg font-semibold ${Number(input.stock) === 0 ? 'text-red-600' : Number(input.stock) < 10 ? 'text-yellow-600' : 'text-green-600'}`}>{Number(input.stock) || 0} {input.unit}</div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
-                <Button
-                  variant="secondary"
-                  onClick={() => handleUpdateStock(input)}
-                  className="text-xs"
-                  title="Actualizar Stock"
-                >
-                  📦 Stock
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => handleEdit(input)}
-                  className="text-xs"
-                  title="Editar"
-                >
-                  ✏️ Editar
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => handleDelete(input.id)}
-                  className="text-xs"
-                  title="Eliminar"
-                >
-                  🗑️
-                </Button>
+              <div className="flex gap-3">
+                <Button variant="secondary" onClick={() => handleUpdateStock(input)} className="flex-1">📦 Stock</Button>
+                <Button variant="secondary" onClick={() => handleEdit(input)} className="flex-1">✏️ Editar</Button>
+                <Button variant="danger" onClick={() => handleDelete(input.id)} className="flex-1">🗑️ Eliminar</Button>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       )}
