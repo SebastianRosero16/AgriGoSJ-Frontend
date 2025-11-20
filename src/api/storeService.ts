@@ -14,9 +14,19 @@ class StoreService {
   /**
    * Get all inputs for current store
    */
-  async getInputs(): Promise<StoreInput[]> {
+  async getInputs(options?: { public?: boolean; storeId?: number }): Promise<StoreInput[]> {
+    // Choose the correct endpoint according to backend public endpoints
+    let url: string;
+    if (options?.public) {
+      url = API_ENDPOINTS.STORE.INPUTS_PUBLIC;
+    } else if (options?.storeId) {
+      url = API_ENDPOINTS.STORE.INPUTS_BY_STORE(options.storeId);
+    } else {
+      url = API_ENDPOINTS.STORE.INPUTS;
+    }
+
     // Normalizar respuesta para manejar distintos formatos que pueda devolver el backend
-    const data: any = await httpClient.get(API_ENDPOINTS.STORE.INPUTS);
+    const data: any = await httpClient.get(url);
 
     // Log raw response for debugging when running locally/deployed
     try {

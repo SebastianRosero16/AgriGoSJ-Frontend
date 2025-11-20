@@ -128,6 +128,8 @@ export const API_ENDPOINTS = {
   // Store
   STORE: {
     INPUTS: '/stores/inputs',
+    INPUTS_PUBLIC: '/stores/inputs/public',
+    INPUTS_BY_STORE: (storeId: number) => `/stores/inputs/store/${storeId}`,
     INPUT_BY_ID: (id: number) => `/stores/inputs/${id}`,
   },
   
