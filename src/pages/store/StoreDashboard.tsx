@@ -7,7 +7,7 @@ import React from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks';
-import { Button, Card, ThemeToggle } from '@/components/ui';
+import { Button, Card } from '@/components/ui';
 import { ChartBarIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { ROUTES, APP_INFO } from '@/utils/constants';
 
@@ -43,7 +43,6 @@ export const StoreDashboard: React.FC = () => {
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <ThemeToggle />
               <Button variant="danger" onClick={handleLogout}>
                 Cerrar Sesión
               </Button>

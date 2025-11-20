@@ -7,7 +7,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks';
-import { Button, Card, ThemeToggle } from '@/components/ui';
+import { Button, Card } from '@/components/ui';
 import { ShoppingCartIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import { ROUTES, APP_INFO } from '@/utils/constants';
 
@@ -26,7 +26,7 @@ export const BuyerDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-whatsapp-bg dark:text-gray-100">
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -40,7 +40,6 @@ export const BuyerDashboard: React.FC = () => {
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <ThemeToggle />
               <Button variant="danger" onClick={handleLogout}>
                 Cerrar Sesión
               </Button>
