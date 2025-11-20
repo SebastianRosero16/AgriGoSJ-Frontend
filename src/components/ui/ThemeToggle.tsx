@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
 
 const THEME_KEY = 'agritheme';
 
@@ -34,7 +33,8 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className = '' }) => {
       title="Alternar modo oscuro"
       aria-label="Alternar modo claro/oscuro"
     >
-      {isDark ? <MoonIcon className="w-5 h-5" /> : <SunIcon className="w-5 h-5" />}
+      {/* Iconos removidos por petición del usuario; mostrar control discreto */}
+      <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Tema</span>
     </button>
   );
 };
