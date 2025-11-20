@@ -23,6 +23,7 @@ export const FarmerOverview: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [inputs, setInputs] = useState<any[]>([]);
+  const [showRawInputs, setShowRawInputs] = useState(false);
 
   useEffect(() => {
     loadStats();
@@ -59,6 +60,7 @@ export const FarmerOverview: React.FC = () => {
       try {
         const inputsResp = await storeService.getInputs();
         setInputs(Array.isArray(inputsResp) ? inputsResp.slice(0, 6) : []);
+        console.debug('[FarmerOverview] inputs loaded:', inputsResp);
       } catch (err) {
         console.warn('No se pudieron obtener insumos:', err);
         setInputs([]);
@@ -186,7 +188,16 @@ export const FarmerOverview: React.FC = () => {
 
       {/* Insumos Recientes */}
       <Card>
-        <h3 className="text-lg font-semibold mb-4">Insumos Recientes</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold mb-4">Insumos Recientes</h3>
+          <button
+            className="text-sm text-primary-600 underline"
+            onClick={() => setShowRawInputs(s => !s)}
+            title="Mostrar datos crudos de inputs para depuración"
+          >
+            {showRawInputs ? 'Ocultar datos' : 'Mostrar datos crudos'}
+          </button>
+        </div>
         {inputs.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-gray-600">No hay insumos para mostrar. Ve al <Link to={ROUTES.MARKETPLACE} className="text-primary-600">marketplace</Link> para ver opciones.</p>
@@ -213,6 +224,11 @@ export const FarmerOverview: React.FC = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+        {showRawInputs && (
+          <div className="mt-4 bg-gray-50 dark:bg-gray-900 p-4 rounded">
+            <pre className="text-xs text-gray-700 dark:text-gray-200 overflow-auto max-h-64">{JSON.stringify(inputs, null, 2)}</pre>
           </div>
         )}
       </Card>
