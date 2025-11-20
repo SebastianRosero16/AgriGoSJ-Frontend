@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Loading } from '@/components/ui';
 import { ROUTES } from '@/utils/constants';
-import { marketplaceService } from '@/api';
+import { marketplaceService, farmerService } from '@/api';
 import {
   ShoppingBagIcon,
   SparklesIcon,
@@ -35,14 +35,23 @@ export const FarmerOverview: React.FC = () => {
       const products = await marketplaceService.getMyProducts();
       const productsCount = Array.isArray(products) ? products.length : 0;
 
-      // TODO: Cuando el backend tenga endpoints para cultivos y recomendaciones IA, agregar aquí
-      // const crops = await cropsService.getMyCrops();
-      // const recommendations = await aiService.getMyRecommendations();
+      // Obtener cultivos para contar activos
+      let activeCropsCount = 0;
+      try {
+        const crops = await farmerService.getCrops();
+        if (Array.isArray(crops)) {
+          // Consideramos "activo" cualquier cultivo que no esté en etapa HARVEST
+          activeCropsCount = crops.filter(c => c.stage !== 'HARVEST').length;
+        }
+      } catch (err) {
+        console.warn('No se pudieron obtener cultivos para estadísticas:', err);
+      }
 
+      // TODO: recommendations endpoint
       setStats({
-        activeCrops: 0, // TODO: Actualizar cuando exista el endpoint
+        activeCrops: activeCropsCount,
         publishedProducts: productsCount,
-        aiRecommendations: 0, // TODO: Actualizar cuando exista el endpoint
+        aiRecommendations: 0,
       });
     } catch (error) {
       console.error('Error al cargar estadísticas:', error);
