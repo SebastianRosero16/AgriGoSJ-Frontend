@@ -123,8 +123,15 @@ export const LoginPage: React.FC = () => {
       const dashboardRoute = getDashboardByRole(user.role);
       navigate(dashboardRoute, { replace: true });
     } catch (error: any) {
-      // Error already normalized by httpClient
-      const errorMessage = error?.message || 'Error al iniciar sesión. Por favor, intenta nuevamente.';
+      // Error normalized by httpClient -> inspect status to show correct message
+      const status = error?.status ?? error?.response?.status;
+      let errorMessage = error?.message || 'Error al iniciar sesión. Por favor, intenta nuevamente.';
+
+      if (status === 401) {
+        // Backend returns 401 with message field for bad credentials
+        errorMessage = error?.message || 'Usuario o contraseña incorrectos';
+      }
+
       toast.error(errorMessage, { autoClose: 5000 });
     } finally {
       setIsLoading(false);

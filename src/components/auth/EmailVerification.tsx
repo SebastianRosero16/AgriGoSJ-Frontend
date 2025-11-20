@@ -66,7 +66,19 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
         toast.error(response.message || 'Error al enviar código');
       }
     } catch (err: any) {
-      const errorMessage = err?.message || 'Error al enviar código de verificación';
+      const status = err?.status ?? err?.response?.status;
+      let errorMessage = err?.message || 'Error al enviar código de verificación';
+
+      // Map common backend validation messages to Spanish friendly messages
+      if (status === 400 && errorMessage) {
+        const lower = errorMessage.toLowerCase();
+        if (lower.includes('username')) {
+          errorMessage = 'Este nombre de usuario ya está registrado';
+        } else if (lower.includes('email')) {
+          errorMessage = 'Este correo electrónico ya está registrado';
+        }
+      }
+
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
