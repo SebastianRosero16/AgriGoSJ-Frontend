@@ -62,11 +62,11 @@ export const StoreInputs: React.FC = () => {
   };
 
   const validateForm = (): boolean => {
-    if (formData.name.trim().length < 3) {
+    if ((String(formData.name ?? '')).trim().length < 3) {
       toast.error('El nombre debe tener al menos 3 caracteres');
       return false;
     }
-    if (formData.type.trim().length < 2) {
+    if ((String(formData.type ?? '')).trim().length < 2) {
       toast.error('El tipo debe tener al menos 2 caracteres');
       return false;
     }
@@ -91,7 +91,7 @@ export const StoreInputs: React.FC = () => {
       toast.error('El stock debe ser un número entero mayor o igual a 0');
       return false;
     }
-    if (formData.unit.trim().length < 1) {
+    if ((String(formData.unit ?? '')).trim().length < 1) {
       toast.error('La unidad de medida es requerida');
       return false;
     }
@@ -157,12 +157,12 @@ export const StoreInputs: React.FC = () => {
   const handleEdit = (input: StoreInput) => {
     setEditingInput(input);
     setFormData({
-      name: input.name,
-      type: input.type,
-      description: input.description || '',
-      price: input.price.toString(),
-      stock: input.stock.toString(),
-      unit: input.unit,
+      name: String(input.name ?? ''),
+      type: String(input.type ?? ''),
+      description: String(input.description ?? ''),
+      price: String(input.price ?? ''),
+      stock: String(input.stock ?? ''),
+      unit: String(input.unit ?? 'kg'),
     });
     setShowForm(true);
   };
@@ -180,7 +180,7 @@ export const StoreInputs: React.FC = () => {
   };
 
   const handleUpdateStock = async (input: StoreInput) => {
-    const newStock = prompt(`Actualizar stock de ${input.name}\nStock actual: ${input.stock} ${input.unit}\n\nIngresa el nuevo stock:`, input.stock.toString());
+    const newStock = prompt(`Actualizar stock de ${input.name}\nStock actual: ${input.stock} ${input.unit}\n\nIngresa el nuevo stock:`, String(input.stock ?? ''));
     
     if (newStock === null) return;
     
