@@ -33,6 +33,11 @@ class HTTPClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      // Suppress default error logging
+      validateStatus: (status) => {
+        // Accept all status codes to handle them manually
+        return status >= 200 && status < 600;
+      },
     });
 
     this.requestQueue = new Queue<QueuedRequest>();
@@ -59,12 +64,36 @@ class HTTPClient {
 
     // Response Interceptor
     this.axiosInstance.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        // Check if response status indicates an error
+        if (response.status >= 400) {
+          // Convert error responses to rejected promises
+          const error: AxiosError = {
+            config: response.config,
+            request: response.request,
+            response: response,
+            isAxiosError: true,
+            toJSON: () => ({}),
+            name: 'AxiosError',
+            message: `Request failed with status code ${response.status}`,
+          };
+          return Promise.reject(error);
+        }
+        return response;
+      },
       async (error: AxiosError) => {
         const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
-        // Handle 401 Unauthorized
+        // Handle 401 Unauthorized (only for authenticated routes, not login)
         if (error.response?.status === 401 && !originalRequest._retry) {
+          // Check if this is a login request - don't retry login failures
+          const isLoginRequest = originalRequest.url?.includes('/auth/login');
+          
+          if (isLoginRequest) {
+            // For login failures, just normalize and reject
+            return Promise.reject(this.normalizeError(error));
+          }
+
           if (this.isRefreshing) {
             // Queue the request
             return new Promise((resolve, reject) => {
