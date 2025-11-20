@@ -67,7 +67,7 @@ class HTTPClient {
       (response) => {
         // Check if response status indicates an error
         if (response.status >= 400) {
-          // Convert error responses to rejected promises
+          // Convert error responses to rejected promises with normalized error
           const error: AxiosError = {
             config: response.config,
             request: response.request,
@@ -75,9 +75,10 @@ class HTTPClient {
             isAxiosError: true,
             toJSON: () => ({}),
             name: 'AxiosError',
-            message: `Request failed with status code ${response.status}`,
+            message: '', // Empty message to avoid console logs
           };
-          return Promise.reject(error);
+          // Immediately normalize and reject to avoid default error logging
+          return Promise.reject(this.normalizeError(error));
         }
         return response;
       },
