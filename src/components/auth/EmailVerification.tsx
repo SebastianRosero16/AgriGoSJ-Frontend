@@ -18,6 +18,7 @@ interface EmailVerificationProps {
 
 export const EmailVerification: React.FC<EmailVerificationProps> = ({
   email,
+  username,
   onVerified,
   onCancel,
 }) => {

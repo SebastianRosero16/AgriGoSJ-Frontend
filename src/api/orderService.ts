@@ -4,7 +4,6 @@
  */
 
 import { httpClient } from './httpClient';
-import { API_ENDPOINTS } from '@/utils/constants';
 import type { Order, CreateOrderRequest } from '@/types';
 
 class OrderService {
