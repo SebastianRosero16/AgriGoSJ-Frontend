@@ -3,6 +3,9 @@ import { Card, Loading, Button } from '@/components/ui';
 import { orderService } from '@/api';
 import type { Order } from '@/types';
 import { formatCurrencyInteger } from '@/utils/format';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/utils/constants';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 
 const statusBadge = (status: string) => {
@@ -37,6 +40,7 @@ const translateStatus = (status: string) => {
 };
 
 const MyOrders: React.FC = () => {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -97,6 +101,15 @@ const MyOrders: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => navigate(ROUTES.BUYER.DASHBOARD)}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+        >
+          <ArrowLeftIcon className="w-5 h-5" />
+          <span>Volver al Panel</span>
+        </button>
+      </div>
       <div>
         <h2 className="text-2xl font-bold text-gray-900">Mis Órdenes</h2>
         <p className="text-gray-600 mt-1">Historial y estado de tus pedidos</p>
