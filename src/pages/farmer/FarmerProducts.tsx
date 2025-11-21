@@ -68,9 +68,16 @@ export const FarmerProducts: React.FC = () => {
         return;
       }
       
-      setProducts(data);
-      if (data.length > 0) {
-        addToHistory('Cargar', `${data.length} productos cargados`);
+      // Filtrar productos activos (excluir los marcados como inactivos/eliminados)
+      const activeProducts = data.filter(product => {
+        // Si el producto tiene un campo 'active', solo mostrar los activos
+        // Si no tiene el campo, asumimos que está activo (compatibilidad con backend antiguo)
+        return product.active !== false && product.deleted !== true;
+      });
+      
+      setProducts(activeProducts);
+      if (activeProducts.length > 0) {
+        addToHistory('Cargar', `${activeProducts.length} productos cargados`);
       }
     } catch (error: any) {
       console.error('Error loading products:', error);
