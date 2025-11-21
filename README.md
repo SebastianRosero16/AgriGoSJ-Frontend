@@ -52,16 +52,23 @@ AgriGoSJ es una plataforma web moderna para conectar agricultores, agrotiendas y
 ### Características Principales
 - ✅ **Compra sin restricciones**: Cualquier usuario autenticado puede comprar cualquier producto
 - ✅ **Carrito de compras**: Sistema completo con persistencia en localStorage
+- ✅ **Marketplace del Comprador**: Sección dedicada para usuarios BUYER
 - ✅ **Dos formas de comprar**:
   - Compra rápida (un producto)
   - Compra múltiple (carrito con varios productos)
 - ✅ **Pago con Stripe**: Integración completa y segura
 - ✅ **Validaciones en tiempo real**: Dirección, teléfono, cantidad
 
+### Marketplaces Disponibles
+1. **Marketplace Público** (`/marketplace`) - Acceso para todos los usuarios
+2. **Marketplace del Comprador** (`/buyer/marketplace`) - Exclusivo para BUYER con carrito integrado
+
 ### Documentación del Sistema de Compras
 - 📖 [INICIO_RAPIDO.md](./INICIO_RAPIDO.md) - Guía de inicio en 5 minutos
 - 📖 [RESUMEN_EJECUTIVO.md](./RESUMEN_EJECUTIVO.md) - Visión general del sistema
 - 📖 [COMPRAS_README.md](./COMPRAS_README.md) - Documentación técnica completa
+- 📖 [BUYER_MARKETPLACE_README.md](./BUYER_MARKETPLACE_README.md) - Marketplace del comprador
+- 📖 [RESUMEN_IMPLEMENTACION_COMPRADOR.md](./RESUMEN_IMPLEMENTACION_COMPRADOR.md) - Resumen de implementación
 - 📖 [MEJORAS_IMPLEMENTADAS.md](./MEJORAS_IMPLEMENTADAS.md) - Detalle de cambios
 - 📖 [GUIA_PRUEBAS.md](./GUIA_PRUEBAS.md) - Checklist de pruebas
 
