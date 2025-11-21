@@ -157,6 +157,8 @@ export interface Product {
   farmerName?: string;
   active?: boolean; // Para soft delete
   deleted?: boolean; // Para soft delete
+  available?: boolean; // Para soft delete
+  status?: string; // Para soft delete (ACTIVE, INACTIVE, DELETED)
   createdAt?: string;
   updatedAt?: string;
 }

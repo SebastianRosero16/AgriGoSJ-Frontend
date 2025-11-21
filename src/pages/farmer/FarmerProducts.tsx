@@ -68,12 +68,24 @@ export const FarmerProducts: React.FC = () => {
         return;
       }
       
+      // Debug: ver qué datos envía el backend
+      console.log('Productos recibidos del backend:', data);
+      
       // Filtrar productos activos (excluir los marcados como inactivos/eliminados)
       const activeProducts = data.filter(product => {
-        // Si el producto tiene un campo 'active', solo mostrar los activos
-        // Si no tiene el campo, asumimos que está activo (compatibilidad con backend antiguo)
-        return product.active !== false && product.deleted !== true;
+        // Verificar múltiples campos que podrían indicar que el producto fue eliminado
+        const isActive = product.active !== false && 
+                        product.deleted !== true && 
+                        product.available !== false &&
+                        product.status !== 'DELETED' &&
+                        product.status !== 'INACTIVE';
+        
+        console.log(`Producto ${product.name}: active=${product.active}, deleted=${product.deleted}, available=${product.available}, status=${product.status}, isActive=${isActive}`);
+        
+        return isActive;
       });
+      
+      console.log(`Productos filtrados: ${activeProducts.length} de ${data.length}`);
       
       setProducts(activeProducts);
       if (activeProducts.length > 0) {
