@@ -15,6 +15,7 @@ import {
   Cog6ToothIcon,
   ShoppingCartIcon,
   CurrencyDollarIcon,
+  DocumentTextIcon,
 } from '@heroicons/react/24/outline';
 import { ROUTES, APP_INFO } from '@/utils/constants';
 
@@ -123,6 +124,19 @@ export const FarmerDashboard: React.FC = () => {
                   <span className="inline-flex items-center gap-2">
                     <ShoppingCartIcon className="w-5 h-5 text-primary-600" />
                     <span>Marketplace</span>
+                  </span>
+                </Link>
+                <Link
+                  to={ROUTES.FARMER.ORDERS}
+                  className={`block px-4 py-2 rounded-lg transition-colors ${
+                    isActive(ROUTES.FARMER.ORDERS)
+                      ? 'bg-primary-100 text-primary-700 font-medium'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <DocumentTextIcon className="w-5 h-5 text-primary-600" />
+                    <span>Mis Órdenes</span>
                   </span>
                 </Link>
                 <Link

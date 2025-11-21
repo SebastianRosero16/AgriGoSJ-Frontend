@@ -23,6 +23,19 @@ const statusBadge = (status: string) => {
   }
 };
 
+const translateStatus = (status: string) => {
+  const translations: { [key: string]: string } = {
+    'PENDING_PAYMENT': 'Pendiente de Pago',
+    'PAID': 'Pagado',
+    'PROCESSING': 'En Proceso',
+    'SHIPPED': 'Enviado',
+    'DELIVERED': 'Entregado',
+    'CANCELLED': 'Cancelado',
+    'REFUNDED': 'Reembolsado',
+  };
+  return translations[status] || status;
+};
+
 const MyOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -72,7 +85,7 @@ const MyOrders: React.FC = () => {
                   <div className="text-sm text-gray-500">Creada: {new Date(o.createdAt).toLocaleString()}</div>
                 </div>
                 <div className="text-right">
-                  <div className={`px-3 py-1 rounded-full text-sm font-medium ${statusBadge(o.status)}`}>{o.status.replace('_',' ')}</div>
+                  <div className={`px-3 py-1 rounded-full text-sm font-medium ${statusBadge(o.status)}`}>{translateStatus(o.status)}</div>
                   <div className="text-xl font-bold text-primary-600 mt-2">{formatCurrencyInteger(o.total)}</div>
                   <div className="mt-3 flex gap-2 justify-end">
                     <Button variant="secondary" onClick={() => navigate(`/orders/${o.orderNumber}`)}>Ver</Button>
