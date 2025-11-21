@@ -45,6 +45,20 @@ export const ShoppingAssistantPage: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
+  const isShoppingRelated = (query: string): boolean => {
+    const shoppingKeywords = [
+      'comprar', 'buscar', 'necesito', 'quiero', 'precio', 'costo', 'vender',
+      'producto', 'tomate', 'papa', 'maíz', 'arroz', 'fertilizante', 'semilla',
+      'agrícola', 'cultivo', 'cosecha', 'verdura', 'fruta', 'hortaliza',
+      'insumo', 'herramienta', 'equipo', 'pesticida', 'abono', 'tierra',
+      'disponible', 'stock', 'cantidad', 'kg', 'kilo', 'bulto', 'caja'
+    ];
+    
+    const lowerQuery = query.toLowerCase();
+    return shoppingKeywords.some(keyword => lowerQuery.includes(keyword)) || 
+           lowerQuery.length < 50; // Permitir consultas cortas
+  };
+
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading) return;
 
@@ -56,11 +70,25 @@ export const ShoppingAssistantPage: React.FC = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputValue;
     setInputValue('');
     setIsLoading(true);
 
+    // Validar si la consulta está relacionada con compras
+    if (!isShoppingRelated(currentInput)) {
+      const restrictionMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        type: 'assistant',
+        content: 'Lo siento, solo puedo ayudarte con consultas relacionadas a la compra de productos agrícolas. Por favor, pregúntame sobre productos como tomates, papas, fertilizantes, semillas, u otros insumos agrícolas que necesites.',
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, restrictionMessage]);
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const response = await aiService.shoppingAssistant(inputValue, 'es');
+      const response = await aiService.shoppingAssistant(currentInput, 'es');
       
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -204,7 +232,7 @@ export const ShoppingAssistantPage: React.FC = () => {
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                 placeholder="Ej: Quiero comprar tomates..."
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 disabled={isLoading}
