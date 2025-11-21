@@ -185,15 +185,29 @@ const MyOrders: React.FC = () => {
                 <div>
                   <p className="text-sm text-gray-500 mb-2">Productos</p>
                   <div className="space-y-2">
-                    {selectedOrder.items.map((item: any, index: number) => (
-                      <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                        <div>
-                          <p className="font-medium text-gray-900">{item.productName || `Producto ID: ${item.productId}`}</p>
-                          <p className="text-sm text-gray-600">Cantidad: {item.quantity}</p>
+                    {selectedOrder.items.map((item: any, index: number) => {
+                      // Intentar obtener el precio de diferentes campos posibles
+                      const itemPrice = item.price || item.unitPrice || item.pricePerUnit || 0;
+                      const itemTotal = itemPrice * (item.quantity || 1);
+                      
+                      // Si no hay precio en los items pero hay total en la orden, calcular proporcionalmente
+                      const calculatedTotal = itemTotal > 0 
+                        ? itemTotal 
+                        : (selectedOrder.items.length > 0 ? selectedOrder.total / selectedOrder.items.length : 0);
+                      
+                      return (
+                        <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                          <div>
+                            <p className="font-medium text-gray-900">{item.productName || `Producto ID: ${item.productId}`}</p>
+                            <p className="text-sm text-gray-600">Cantidad: {item.quantity}</p>
+                            {itemPrice > 0 && (
+                              <p className="text-xs text-gray-500">Precio unitario: {formatCurrencyInteger(itemPrice)}</p>
+                            )}
+                          </div>
+                          <p className="font-semibold text-gray-900">{formatCurrencyInteger(calculatedTotal)}</p>
                         </div>
-                        <p className="font-semibold text-gray-900">{formatCurrencyInteger(item.price * item.quantity)}</p>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
