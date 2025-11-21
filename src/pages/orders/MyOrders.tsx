@@ -41,6 +41,8 @@ const MyOrders: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     loadOrders();
@@ -66,19 +68,29 @@ const MyOrders: React.FC = () => {
     setShowDetails(true);
   };
 
-  const handleDeleteOrder = async (orderNumber: string) => {
-    if (!confirm('¿Estás seguro de que deseas eliminar esta orden?')) {
-      return;
-    }
+  const handleDeleteOrder = (orderNumber: string) => {
+    setOrderToDelete(orderNumber);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!orderToDelete) return;
     
     try {
-      await orderService.cancelOrder(orderNumber);
+      await orderService.cancelOrder(orderToDelete);
+      setShowDeleteConfirm(false);
+      setOrderToDelete(null);
       // Recargar órdenes después de eliminar
       await loadOrders();
     } catch (err) {
       console.error('Error al eliminar orden:', err);
       alert('No se pudo eliminar la orden');
     }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteConfirm(false);
+    setOrderToDelete(null);
   };
 
   if (isLoading) return <Loading />;
@@ -183,6 +195,33 @@ const MyOrders: React.FC = () => {
 
             <div className="mt-6 flex justify-end">
               <Button variant="secondary" onClick={() => setShowDetails(false)}>Cerrar</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmación de eliminación */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">¿Eliminar orden?</h3>
+              <p className="text-gray-600 mb-6">
+                ¿Estás seguro de que deseas eliminar esta orden? Esta acción no se puede deshacer.
+              </p>
+              <div className="flex gap-3 justify-center">
+                <Button variant="secondary" onClick={cancelDelete}>
+                  Cancelar
+                </Button>
+                <Button variant="danger" onClick={confirmDelete}>
+                  Eliminar
+                </Button>
+              </div>
             </div>
           </div>
         </div>
