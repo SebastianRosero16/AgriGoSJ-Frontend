@@ -3,11 +3,13 @@
  * Main dashboard for farmers with crops management and AI recommendations
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useAuth } from '@/hooks';
+import { useAuth, useCart } from '@/hooks';
 import { Button, Card } from '@/components/ui';
+import { CartDrawer } from '@/components/ui/CartDrawer';
+import CartCheckoutModal from '@/components/payments/CartCheckoutModal';
 import {
   ChartBarIcon,
   SparklesIcon,
@@ -21,8 +23,11 @@ import { ROUTES, APP_INFO } from '@/utils/constants';
 
 export const FarmerDashboard: React.FC = () => {
   const { user, logout } = useAuth();
+  const { getTotalItems } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
+  const [cartOpen, setCartOpen] = useState(false);
+  const [cartCheckoutOpen, setCartCheckoutOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -51,6 +56,17 @@ export const FarmerDashboard: React.FC = () => {
               </p>
             </div>
             <div className="flex items-center gap-3">
+              <button
+                onClick={() => setCartOpen(true)}
+                className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <ShoppingCartIcon className="w-6 h-6 text-gray-700" />
+                {getTotalItems() > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {getTotalItems()}
+                  </span>
+                )}
+              </button>
               <Button variant="danger" onClick={handleLogout}>
                 Cerrar Sesión
               </Button>
@@ -158,6 +174,22 @@ export const FarmerDashboard: React.FC = () => {
           </main>
         </div>
       </div>
+
+      {/* Cart Drawer */}
+      <CartDrawer 
+        open={cartOpen} 
+        onClose={() => setCartOpen(false)}
+        onCheckout={() => {
+          setCartOpen(false);
+          setCartCheckoutOpen(true);
+        }}
+      />
+      
+      {/* Cart Checkout Modal */}
+      <CartCheckoutModal 
+        open={cartCheckoutOpen}
+        onClose={() => setCartCheckoutOpen(false)}
+      />
     </div>
   );
 };

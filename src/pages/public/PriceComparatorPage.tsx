@@ -6,19 +6,28 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Button, Loading } from '@/components/ui';
-import { CurrencyDollarIcon, ChartBarIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { CartDrawer } from '@/components/ui/CartDrawer';
+import { CurrencyDollarIcon, ChartBarIcon, SparklesIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
 import { ROUTES, APP_INFO } from '@/utils/constants';
-import { useAuth } from '@/hooks';
+import { useAuth, useCart } from '@/hooks';
 import { storeService } from '@/api';
 import { formatCurrencyInteger } from '@/utils/format';
+import CheckoutModal from '@/components/payments/CheckoutModal';
+import CartCheckoutModal from '@/components/payments/CartCheckoutModal';
+import { toast } from 'react-toastify';
 
 export const PriceComparatorPage: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
+  const { addItem, getTotalItems } = useCart();
   const [searchQuery, setSearchQuery] = useState('');
   const [allInputs, setAllInputs] = useState<any[]>([]);
   const [filteredInputs, setFilteredInputs] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [checkoutItem, setCheckoutItem] = useState<any | null>(null);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [cartCheckoutOpen, setCartCheckoutOpen] = useState(false);
 
   useEffect(() => {
     loadInputs();
@@ -80,10 +89,23 @@ export const PriceComparatorPage: React.FC = () => {
                 {APP_INFO.NAME}
               </h1>
             </Link>
-            <div className="flex gap-4">
+            <div className="flex gap-4 items-center">
               <Link to={ROUTES.MARKETPLACE}>
                 <Button variant="outline">Marketplace</Button>
               </Link>
+              {isAuthenticated && (
+                <button
+                  onClick={() => setCartOpen(true)}
+                  className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <ShoppingCartIcon className="w-6 h-6 text-gray-700" />
+                  {getTotalItems() > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {getTotalItems()}
+                    </span>
+                  )}
+                </button>
+              )}
               {isAuthenticated && user ? (
                 <Link to={ROUTES.HOME}>
                   <Button variant="primary">Mi Panel</Button>
@@ -167,9 +189,40 @@ export const PriceComparatorPage: React.FC = () => {
                             <p className="text-xs text-gray-500">Stock: {item.stock} {item.unit || 'unidades'}</p>
                           )}
                         </div>
-                        <div className="text-right">
-                          <p className="text-2xl font-bold text-primary-600">{formatCurrencyInteger(item.price)}</p>
-                          <p className="text-sm text-gray-500">por {item.unit || 'unidad'}</p>
+                        <div className="text-right flex items-center gap-4">
+                          <div>
+                            <p className="text-2xl font-bold text-primary-600">{formatCurrencyInteger(item.price)}</p>
+                            <p className="text-sm text-gray-500">por {item.unit || 'unidad'}</p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => {
+                              if (!isAuthenticated) {
+                                toast.warning('Debes iniciar sesión para agregar productos');
+                                return;
+                              }
+                              addItem({
+                                id: item.id,
+                                name: item.name,
+                                price: Number(item.price || 0),
+                                stock: item.stock || 100,
+                                unit: item.unit,
+                                storeName: item.storeName,
+                              }, 1);
+                              toast.success('Producto agregado al carrito');
+                            }}>
+                              + Carrito
+                            </Button>
+                            <Button size="sm" onClick={() => {
+                              if (!isAuthenticated) {
+                                toast.warning('Debes iniciar sesión para comprar productos');
+                                return;
+                              }
+                              setCheckoutItem(item);
+                              setCheckoutOpen(true);
+                            }}>
+                              Comprar
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -240,6 +293,27 @@ export const PriceComparatorPage: React.FC = () => {
           </Card>
         </div>
       </div>
+
+      {/* Checkout Modal */}
+      {checkoutItem && (
+        <CheckoutModal open={checkoutOpen} onClose={() => setCheckoutOpen(false)} item={checkoutItem} />
+      )}
+      
+      {/* Cart Drawer */}
+      <CartDrawer 
+        open={cartOpen} 
+        onClose={() => setCartOpen(false)}
+        onCheckout={() => {
+          setCartOpen(false);
+          setCartCheckoutOpen(true);
+        }}
+      />
+      
+      {/* Cart Checkout Modal */}
+      <CartCheckoutModal 
+        open={cartCheckoutOpen}
+        onClose={() => setCartCheckoutOpen(false)}
+      />
     </div>
   );
 };
