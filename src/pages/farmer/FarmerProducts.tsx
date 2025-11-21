@@ -294,7 +294,9 @@ export const FarmerProducts: React.FC = () => {
       await marketplaceService.deleteProduct(productToDelete.id);
       toast.success('Producto eliminado exitosamente');
       addToHistory('Eliminar', productToDelete.name);
-      await loadProducts();
+      
+      // Eliminar el producto de la lista inmediatamente (solución temporal)
+      setProducts(prevProducts => prevProducts.filter(p => p.id !== productToDelete.id));
     } catch (error: any) {
       console.error('Error al eliminar producto:', error);
       
@@ -303,7 +305,8 @@ export const FarmerProducts: React.FC = () => {
         toast.error('No se puede eliminar este producto porque tiene órdenes asociadas. Por favor, contacta al administrador o marca el stock como 0 para ocultarlo.');
       } else if (error?.status === 404) {
         toast.error('El producto ya no existe');
-        await loadProducts(); // Recargar para actualizar la lista
+        // Eliminar de la lista si ya no existe
+        setProducts(prevProducts => prevProducts.filter(p => p.id !== productToDelete.id));
       } else if (error?.status === 403) {
         toast.error('No tienes permisos para eliminar este producto');
       } else {
