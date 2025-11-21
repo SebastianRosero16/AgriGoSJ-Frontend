@@ -125,13 +125,13 @@ const CheckoutForm: React.FC<{ item: any; qty: number; onDone: () => void; onErr
 const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose, item, initialQty = 1 }) => {
   const [qty, setQty] = useState(initialQty);
   const [error, setError] = useState<string | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const stripeKeyAvailable = Boolean(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
   const handleDone = () => {
     setError(null);
-    alert('Pago realizado con éxito. Revisa tus órdenes.');
-    onClose();
+    setShowSuccess(true);
   };
 
   const handleError = (err: any) => {
@@ -139,7 +139,37 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose, item, init
     setError(String(err?.message || err));
   };
 
+  const handleCloseSuccess = () => {
+    setShowSuccess(false);
+    onClose();
+  };
+
   if (!open) return null;
+
+  // Modal de éxito
+  if (showSuccess) {
+    return createPortal(
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+        <div className="bg-white dark:bg-gray-800 p-8 rounded-lg max-w-md w-full text-center">
+          <div className="mb-4">
+            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100">
+              <svg className="h-10 w-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+          </div>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">¡Pago Exitoso!</h3>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
+            Tu pago se ha procesado correctamente. Puedes revisar el estado de tu orden en la sección "Mis Órdenes".
+          </p>
+          <Button variant="primary" onClick={handleCloseSuccess} fullWidth>
+            Entendido
+          </Button>
+        </div>
+      </div>,
+      document.body
+    );
+  }
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
