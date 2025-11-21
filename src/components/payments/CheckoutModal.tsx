@@ -22,11 +22,41 @@ const CheckoutForm: React.FC<{ item: any; qty: number; onDone: () => void; onErr
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({ address: '', phone: '' });
+
+  const validateFields = () => {
+    const errors = { address: '', phone: '' };
+    let isValid = true;
+
+    // Validar dirección
+    const trimmedAddress = address.trim();
+    if (!trimmedAddress) {
+      errors.address = 'La dirección es requerida';
+      isValid = false;
+    } else if (trimmedAddress.length < 5) {
+      errors.address = 'La dirección debe tener al menos 5 caracteres';
+      isValid = false;
+    }
+
+    // Validar teléfono
+    const trimmedPhone = phone.trim();
+    if (!trimmedPhone) {
+      errors.phone = 'El teléfono es requerido';
+      isValid = false;
+    } else if (!/^\d{7,10}$/.test(trimmedPhone)) {
+      errors.phone = 'El teléfono debe tener entre 7 y 10 dígitos';
+      isValid = false;
+    }
+
+    setFieldErrors(errors);
+    return isValid;
+  };
 
   const handlePay = async () => {
     if (!stripe || !elements) return;
-    if (!address || !phone) {
-      onError(new Error('Dirección y teléfono son requeridos'));
+    
+    // Validar campos
+    if (!validateFields()) {
       return;
     }
 
@@ -104,15 +134,36 @@ const CheckoutForm: React.FC<{ item: any; qty: number; onDone: () => void; onErr
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700">Dirección</label>
-        <Input value={address} onChange={(e:any)=>setAddress(e.target.value)} placeholder="Dirección de envío" />
+        <label className="block text-sm font-medium text-gray-700">Dirección *</label>
+        <Input 
+          value={address} 
+          onChange={(e:any)=>{
+            setAddress(e.target.value);
+            setFieldErrors(prev => ({ ...prev, address: '' }));
+          }} 
+          placeholder="Dirección de envío" 
+        />
+        {fieldErrors.address && (
+          <p className="mt-1 text-sm text-red-600">{fieldErrors.address}</p>
+        )}
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Teléfono</label>
-        <Input value={phone} onChange={(e:any)=>setPhone(e.target.value)} placeholder="Teléfono" />
+        <label className="block text-sm font-medium text-gray-700">Teléfono *</label>
+        <Input 
+          value={phone} 
+          onChange={(e:any)=>{
+            setPhone(e.target.value);
+            setFieldErrors(prev => ({ ...prev, phone: '' }));
+          }} 
+          placeholder="Teléfono (solo números)" 
+          maxLength={10}
+        />
+        {fieldErrors.phone && (
+          <p className="mt-1 text-sm text-red-600">{fieldErrors.phone}</p>
+        )}
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Tarjeta</label>
+        <label className="block text-sm font-medium text-gray-700">Tarjeta *</label>
         <div className="p-3 border rounded bg-white"><CardElement options={{ style: { base: { fontSize: '16px' } } }} /></div>
       </div>
       <div className="flex gap-2">
@@ -128,6 +179,23 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose, item, init
   const [showSuccess, setShowSuccess] = useState(false);
 
   const stripeKeyAvailable = Boolean(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+  
+  // Límite máximo de cantidad (basado en stock disponible o límite razonable)
+  const maxQty = Math.min(item?.stock || 100, 100);
+
+  const handleQtyChange = (value: string) => {
+    const numValue = parseInt(value) || 1;
+    if (numValue < 1) {
+      setQty(1);
+    } else if (numValue > maxQty) {
+      setQty(maxQty);
+      setError(`La cantidad máxima disponible es ${maxQty}`);
+      setTimeout(() => setError(null), 3000);
+    } else {
+      setQty(numValue);
+      setError(null);
+    }
+  };
 
   const handleDone = () => {
     setError(null);
@@ -180,8 +248,16 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose, item, init
         )}
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Cantidad</label>
-            <input type="number" min={1} value={qty} onChange={(e)=>setQty(Math.max(1, Number(e.target.value || 1)))} className="w-full px-3 py-2 border rounded" />
+            <label className="block text-sm font-medium text-gray-700">Cantidad *</label>
+            <input 
+              type="number" 
+              min={1} 
+              max={maxQty}
+              value={qty} 
+              onChange={(e)=>handleQtyChange(e.target.value)} 
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary-500" 
+            />
+            <p className="mt-1 text-xs text-gray-500">Máximo: {maxQty} unidades</p>
           </div>
 
           <Elements stripe={stripePromise}>
