@@ -22,7 +22,6 @@ export const FarmerOverview: React.FC = () => {
   const [stats, setStats] = useState({
     activeCrops: 0,
     publishedProducts: 0,
-    aiRecommendations: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [inputs, setInputs] = useState<any[]>([]);
@@ -52,11 +51,9 @@ export const FarmerOverview: React.FC = () => {
         console.warn('No se pudieron obtener cultivos para estadísticas:', err);
       }
 
-      // TODO: recommendations endpoint
       setStats({
         activeCrops: activeCropsCount,
         publishedProducts: productsCount,
-        aiRecommendations: 0,
       });
 
       // Para evitar mostrar insumos editables en el panel del agricultor,
@@ -69,7 +66,6 @@ export const FarmerOverview: React.FC = () => {
       setStats({
         activeCrops: 0,
         publishedProducts: 0,
-        aiRecommendations: 0,
       });
     } finally {
       setIsLoading(false);
@@ -90,7 +86,7 @@ export const FarmerOverview: React.FC = () => {
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <div className="flex items-center justify-between">
             <div>
@@ -111,18 +107,6 @@ export const FarmerOverview: React.FC = () => {
             </div>
             <div className="text-primary-600">
               <ShoppingBagIcon className="w-10 h-10" />
-            </div>
-          </div>
-        </Card>
-
-        <Card>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Recomendaciones IA</p>
-              <p className="text-3xl font-bold text-primary-600 mt-2">{stats.aiRecommendations}</p>
-            </div>
-            <div className="text-primary-600">
-              <Cog6ToothIcon className="w-10 h-10" />
             </div>
           </div>
         </Card>
