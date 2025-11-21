@@ -90,7 +90,7 @@ export const PriceComparatorPage: React.FC = () => {
               </h1>
             </Link>
             <div className="flex gap-4 items-center">
-              <Link to={ROUTES.MARKETPLACE}>
+              <Link to={user?.role === 'BUYER' ? ROUTES.BUYER.MARKETPLACE : ROUTES.MARKETPLACE}>
                 <Button variant="outline">Marketplace</Button>
               </Link>
               {isAuthenticated && (

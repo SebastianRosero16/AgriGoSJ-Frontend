@@ -90,10 +90,16 @@ export const ShoppingAssistantPage: React.FC = () => {
     try {
       const response = await aiService.shoppingAssistant(currentInput, 'es');
       
+      // Si no hay sugerencias, agregar enlace al marketplace
+      let messageContent = response.message;
+      if (!response.suggestions || response.suggestions.length === 0) {
+        messageContent += '\n\n💡 **Sugerencia**: Puedes explorar todos los productos disponibles en el [Marketplace](/marketplace) donde encontrarás una variedad de productos agrícolas frescos.';
+      }
+      
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: response.message,
+        content: messageContent,
         suggestions: response.suggestions || [],
         timestamp: new Date(),
       };
@@ -104,7 +110,7 @@ export const ShoppingAssistantPage: React.FC = () => {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: 'Lo siento, hubo un error al procesar tu solicitud. Por favor intenta de nuevo.',
+        content: 'Lo siento, hubo un error al procesar tu solicitud. Por favor intenta de nuevo.\n\n💡 Mientras tanto, puedes explorar el [Marketplace](/marketplace) para ver todos los productos disponibles.',
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -142,7 +148,7 @@ export const ShoppingAssistantPage: React.FC = () => {
               </h1>
             </Link>
             <div className="flex gap-4">
-              <Link to={ROUTES.MARKETPLACE}>
+              <Link to={user?.role === 'BUYER' ? ROUTES.BUYER.MARKETPLACE : ROUTES.MARKETPLACE}>
                 <Button variant="outline">Marketplace</Button>
               </Link>
               {isAuthenticated && user ? (
@@ -178,6 +184,17 @@ export const ShoppingAssistantPage: React.FC = () => {
               <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[80%] ${message.type === 'user' ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-900'} rounded-lg p-4`}>
                   <p className="whitespace-pre-wrap">{message.content}</p>
+                  
+                  {/* Marketplace Link if no suggestions */}
+                  {message.type === 'assistant' && (!message.suggestions || message.suggestions.length === 0) && (
+                    <div className="mt-4">
+                      <Link to={user?.role === 'BUYER' ? ROUTES.BUYER.MARKETPLACE : ROUTES.MARKETPLACE}>
+                        <Button variant="outline" size="sm" className="w-full">
+                          🛒 Ver Marketplace Completo
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
                   
                   {/* Product Suggestions */}
                   {message.suggestions && message.suggestions.length > 0 && (
