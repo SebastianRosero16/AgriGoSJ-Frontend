@@ -28,10 +28,14 @@ export const PriceComparatorPage: React.FC = () => {
     try {
       setIsLoading(true);
       const data = await storeService.getInputsPublic();
-      setAllInputs(Array.isArray(data) ? data : []);
+      const inputs = Array.isArray(data) ? data : [];
+      setAllInputs(inputs);
+      setFilteredInputs(inputs); // Mostrar todos los insumos al cargar
+      setHasSearched(true); // Marcar como si ya se hubiera buscado
     } catch (err) {
       console.error('Error al cargar insumos:', err);
       setAllInputs([]);
+      setFilteredInputs([]);
     } finally {
       setIsLoading(false);
     }
@@ -127,16 +131,25 @@ export const PriceComparatorPage: React.FC = () => {
             <Card>
               <div className="text-center py-8">
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  No se encontraron resultados
+                  {searchQuery ? 'No se encontraron resultados' : 'No hay insumos disponibles'}
                 </h3>
                 <p className="text-gray-600">
-                  Intenta con otro término de búsqueda
+                  {searchQuery ? 'Intenta con otro término de búsqueda' : 'Las tiendas aún no han publicado insumos'}
                 </p>
               </div>
             </Card>
           ) : (
-            <div className="space-y-6">
-              {Object.entries(groupByProduct(filteredInputs)).map(([productName, items]) => (
+            <>
+              <div className="mb-4">
+                <p className="text-gray-600">
+                  {searchQuery 
+                    ? `Mostrando ${filteredInputs.length} resultado(s) para "${searchQuery}"`
+                    : `Mostrando todos los insumos disponibles (${filteredInputs.length})`
+                  }
+                </p>
+              </div>
+              <div className="space-y-6">
+                {Object.entries(groupByProduct(filteredInputs)).map(([productName, items]) => (
                 <Card key={productName}>
                   <h3 className="text-xl font-bold text-gray-900 mb-4">{productName}</h3>
                   <div className="space-y-3">
@@ -169,8 +182,9 @@ export const PriceComparatorPage: React.FC = () => {
                     </div>
                   )}
                 </Card>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           )
         ) : (
           <Card>
