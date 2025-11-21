@@ -42,6 +42,8 @@ const CheckoutForm: React.FC<{ item: any; qty: number; onDone: () => void; onErr
         shippingPhone: phone,
         notes: `Compra desde Marketplace - ${item.name || item.title}`,
       };
+      
+      console.log('Enviando orden al backend:', payload);
 
       const order = await orderService.createOrder(payload as any);
       console.log('Orden creada:', order);
@@ -97,10 +99,6 @@ const CheckoutForm: React.FC<{ item: any; qty: number; onDone: () => void; onErr
 
   return (
     <div className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Cantidad</label>
-        <Input value={qty} readOnly />
-      </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">Dirección</label>
         <Input value={address} onChange={(e:any)=>setAddress(e.target.value)} placeholder="Dirección de envío" />
