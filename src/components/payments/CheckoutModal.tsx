@@ -44,9 +44,16 @@ const CheckoutForm: React.FC<{ item: any; qty: number; onDone: () => void; onErr
       };
 
       const order = await orderService.createOrder(payload as any);
+      console.log('Orden creada:', order);
+      
+      // Validar que la orden tenga orderNumber
+      if (!order || !order.orderNumber) {
+        throw new Error('No se pudo crear la orden o falta el orderNumber');
+      }
 
       // 2) Iniciar pago en backend (esperamos clientSecret)
-      const payResp: any = await paymentService.initiatePayment({ orderNumber: order.orderNumber, method: 'STRIPE' });
+      console.log('Iniciando pago con orderNumber:', order.orderNumber);
+      const payResp: any = await paymentService.initiatePayment({ orderNumber: order.orderNumber, paymentMethod: 'STRIPE' });
       const clientSecret = payResp?.clientSecret || payResp?.paymentIntentClientSecret;
       if (!clientSecret) throw new Error('No se recibió clientSecret desde el servidor');
 
