@@ -277,9 +277,22 @@ export const FarmerProducts: React.FC = () => {
       addToHistory('Eliminar', productToDelete.name);
       await loadProducts();
     } catch (error: any) {
-      toast.error(error?.message || 'Error al eliminar producto');
+      console.error('Error al eliminar producto:', error);
+      
+      // Manejar errores específicos
+      if (error?.status === 500 || error?.message?.includes('foreign key constraint')) {
+        toast.error('No se puede eliminar este producto porque tiene órdenes asociadas. Por favor, contacta al administrador o marca el stock como 0 para ocultarlo.');
+      } else if (error?.status === 404) {
+        toast.error('El producto ya no existe');
+        await loadProducts(); // Recargar para actualizar la lista
+      } else if (error?.status === 403) {
+        toast.error('No tienes permisos para eliminar este producto');
+      } else {
+        toast.error(error?.message || 'Error al eliminar producto. Por favor, intenta de nuevo.');
+      }
     } finally {
       setProductToDelete(null);
+      setShowDeleteModal(false);
     }
   };
 
