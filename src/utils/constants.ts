@@ -94,6 +94,7 @@ export const ROUTES = {
   
   // Public routes
   MARKETPLACE: '/marketplace',
+  SHOPPING_ASSISTANT: '/shopping-assistant',
   PRICE_COMPARATOR: '/price-comparator',
   ABOUT: '/about',
   PROFILE: '/profile',

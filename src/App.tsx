@@ -21,6 +21,7 @@ const BuyerDashboard = React.lazy(() => import('./pages/buyer/BuyerDashboard'));
 const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard'));
 const MarketplacePage = React.lazy(() => import('./pages/public/MarketplacePage'));
 const PriceComparatorPage = React.lazy(() => import('./pages/public/PriceComparatorPage'));
+const ShoppingAssistantPage = React.lazy(() => import('./pages/public/ShoppingAssistantPage'));
 
 // Loading component
 const LoadingFallback: React.FC = () => (
@@ -103,6 +104,7 @@ const App: React.FC = () => {
         />
         <Route path={ROUTES.MARKETPLACE} element={<MarketplacePage />} />
         <Route path={ROUTES.PRICE_COMPARATOR} element={<PriceComparatorPage />} />
+        <Route path={ROUTES.SHOPPING_ASSISTANT} element={<ShoppingAssistantPage />} />
 
         {/* Farmer Routes */}
         <Route

@@ -167,6 +167,19 @@ export const FarmerOverview: React.FC = () => {
               <p className="text-sm text-gray-600">Comprar insumos</p>
             </div>
           </Link>
+
+          <Link
+            to={ROUTES.SHOPPING_ASSISTANT}
+            className="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 transition-colors"
+          >
+            <span className="mr-4 text-primary-600">
+              <SparklesIcon className="w-8 h-8" />
+            </span>
+            <div>
+              <p className="font-medium text-gray-900">Asistente de Compras IA</p>
+              <p className="text-sm text-gray-600">Busca con lenguaje natural</p>
+            </div>
+          </Link>
         </div>
       </Card>
 

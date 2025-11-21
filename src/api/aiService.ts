@@ -124,6 +124,30 @@ class AIService {
   async getRecommendations(cropId: number): Promise<AIRecommendation[]> {
     return await httpClient.get<AIRecommendation[]>(API_ENDPOINTS.AI.RECOMMENDATIONS(cropId));
   }
+
+  /**
+   * Shopping Assistant - Búsqueda de productos con IA
+   */
+  async shoppingAssistant(query: string, language: string = 'es'): Promise<any> {
+    return await httpClient.post<any>('/ai/shopping-assistant', {
+      query,
+      language
+    });
+  }
+
+  /**
+   * Quick Purchase - Compra rápida desde el asistente
+   */
+  async quickPurchase(data: {
+    productId: number;
+    quantity: number;
+    shippingAddress: string;
+    shippingCity: string;
+    shippingPhone: string;
+    notes?: string;
+  }): Promise<any> {
+    return await httpClient.post<any>('/ai/quick-purchase', data);
+  }
 }
 
 export const aiService = new AIService();
