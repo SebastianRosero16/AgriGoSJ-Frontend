@@ -10,10 +10,8 @@ import {
   Cog6ToothIcon,
   MapPinIcon,
   SparklesIcon,
-  PhotoIcon,
   ArrowUpTrayIcon,
   ClockIcon,
-  XMarkIcon,
   LightBulbIcon,
   ChartBarIcon,
 } from '@heroicons/react/24/outline';
@@ -26,7 +24,6 @@ interface ChatMessage {
   sender: 'user' | 'ai';
   content: string;
   timestamp: Date;
-  imageUrl?: string;
 }
 
 interface RequestQueue {
@@ -41,10 +38,7 @@ export const FarmerAI: React.FC = () => {
   const [messageInput, setMessageInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const requestQueue = useQueue<RequestQueue>();
 
   useEffect(() => {
@@ -89,33 +83,7 @@ export const FarmerAI: React.FC = () => {
     ]);
   };
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('La imagen no debe superar 5MB');
-        return;
-      }
-      if (!file.type.startsWith('image/')) {
-        toast.error('Solo se permiten archivos de imagen');
-        return;
-      }
-      setSelectedImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
-  const handleRemoveImage = () => {
-    setSelectedImage(null);
-    setImagePreview(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,8 +93,8 @@ export const FarmerAI: React.FC = () => {
       return;
     }
 
-    if (!messageInput.trim() && !selectedImage) {
-      toast.warning('Escribe un mensaje o selecciona una imagen');
+    if (!messageInput.trim()) {
+      toast.warning('Escribe un mensaje');
       return;
     }
 
@@ -145,19 +113,12 @@ export const FarmerAI: React.FC = () => {
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
       sender: 'user',
-      content: messageInput || 'Imagen adjunta',
+      content: messageInput,
       timestamp: new Date(),
-      imageUrl: imagePreview || undefined,
     };
 
     setChatMessages((prev) => [...prev, userMessage]);
     setMessageInput('');
-    const tempImage = selectedImage;
-    setSelectedImage(null);
-    setImagePreview(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
 
     // Add to queue
     requestQueue.enqueue({ type: 'message', timestamp: new Date() });
@@ -192,7 +153,6 @@ export const FarmerAI: React.FC = () => {
           climate: selectedCrop.climate || 'No especificado',
           area: selectedCrop.area,
           location: selectedCrop.location,
-          hasImage: !!tempImage,
           responseLanguage: 'SPANISH', // Idioma de respuesta
           language: 'es',
           responseFormat: 'CONVERSATIONAL', // Formato conversacional, no técnico
@@ -430,13 +390,6 @@ NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimiza
                         : 'bg-gray-100 text-gray-900'
                     }`}
                   >
-                    {message.imageUrl && (
-                      <img
-                        src={message.imageUrl}
-                        alt="Uploaded"
-                        className="w-full rounded-lg mb-2 max-h-48 object-cover"
-                      />
-                    )}
                     <p className="whitespace-pre-line text-sm">{message.content}</p>
                     <p className={`text-xs mt-1 ${
                       message.sender === 'user' ? 'text-primary-100' : 'text-gray-500'
@@ -459,44 +412,9 @@ NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimiza
               <div ref={chatEndRef} />
             </div>
 
-            {/* Image Preview */}
-            {imagePreview && (
-              <div className="px-4 pb-2">
-                <div className="relative inline-block">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="h-20 w-20 object-cover rounded-lg border-2 border-primary-500"
-                  />
-                  <button
-                    onClick={handleRemoveImage}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
-                    aria-label="Eliminar imagen previa"
-                  >
-                    <XMarkIcon className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-
             {/* Chat Input */}
             <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200">
               <div className="flex gap-2">
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleImageSelect}
-                  accept="image/*"
-                  className="hidden"
-                />
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isSending}
-                  className="flex-shrink-0"
-                  icon={<PhotoIcon className="w-5 h-5" />}
-                />
                 <input
                   type="text"
                   value={messageInput}
@@ -508,7 +426,7 @@ NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimiza
                 <Button
                   type="submit"
                   variant="primary"
-                  disabled={isSending || (!messageInput.trim() && !selectedImage)}
+                  disabled={isSending || !messageInput.trim()}
                   className="flex-shrink-0"
                   icon={isSending ? <ClockIcon className="w-5 h-5" /> : <ArrowUpTrayIcon className="w-5 h-5" />}
                 >
@@ -529,7 +447,7 @@ NO des respuestas técnicas sobre fertilizantes, pesticidas o planes de optimiza
                 <ul className="text-sm text-gray-700 space-y-1">
                   <li>• Sé específico en tus preguntas (ej: "¿Cuándo debo regar?")</li>
                   <li>• Menciona síntomas si ves problemas (ej: "hojas amarillas")</li>
-                  <li>• Sube fotos claras de las plantas para análisis visual</li>
+                  <li>• Pregunta sobre fertilizantes, plagas o cuidados específicos</li>
                   <li>• Espera 3 segundos entre mensajes (sistema anti-spam)</li>
                 </ul>
               </div>
