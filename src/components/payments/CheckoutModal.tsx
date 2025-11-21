@@ -32,6 +32,10 @@ const CheckoutForm: React.FC<{ item: any; qty: number; onDone: () => void; onErr
 
     setIsProcessing(true);
     try {
+      // Log del item completo para debugging
+      console.log('Item recibido en CheckoutModal:', item);
+      console.log('ID del producto:', item.id);
+      
       // 1) Crear la orden en backend
       const payload = {
         items: [{ productId: Number(item.id), quantity: Number(qty) }],
