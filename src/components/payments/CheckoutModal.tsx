@@ -193,7 +193,7 @@ const CheckoutForm: React.FC<{ item: any; qty: number; onDone: () => void; onErr
   );
 };
 
-const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose, item, initialQty = 1 }) => {
+const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose, item }) => {
   const [qty, setQty] = useState<number | string>('');
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
