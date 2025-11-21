@@ -8,7 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks';
 import { Button, Card } from '@/components/ui';
-import { ShoppingCartIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline';
+import { ShoppingCartIcon, CurrencyDollarIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { ROUTES, APP_INFO } from '@/utils/constants';
 
 export const BuyerDashboard: React.FC = () => {
@@ -56,7 +56,7 @@ export const BuyerDashboard: React.FC = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <Link to={ROUTES.MARKETPLACE}>
               <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="text-center py-8">
@@ -84,6 +84,22 @@ export const BuyerDashboard: React.FC = () => {
                   </h3>
                   <p className="text-gray-600">
                     Encuentra los mejores precios del mercado
+                  </p>
+                </div>
+              </Card>
+            </Link>
+
+            <Link to={ROUTES.SHOPPING_ASSISTANT}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                <div className="text-center py-8">
+                  <div className="text-purple-600 mb-4">
+                    <SparklesIcon className="w-16 h-16 mx-auto" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    Asistente de Compras IA
+                  </h3>
+                  <p className="text-gray-600">
+                    Busca productos con lenguaje natural
                   </p>
                 </div>
               </Card>
