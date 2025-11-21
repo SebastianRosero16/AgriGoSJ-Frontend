@@ -6,13 +6,14 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useAuth } from '@/hooks';
+import { useAuth, useCart } from '@/hooks';
 import { Button, Card } from '@/components/ui';
-import { SparklesIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
+import { SparklesIcon, ClipboardDocumentListIcon, ShoppingBagIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
 import { ROUTES, APP_INFO } from '@/utils/constants';
 
 export const BuyerDashboard: React.FC = () => {
   const { user, logout } = useAuth();
+  const { getTotalItems } = useCart();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -40,6 +41,16 @@ export const BuyerDashboard: React.FC = () => {
               </p>
             </div>
             <div className="flex items-center gap-3">
+              <Link to={ROUTES.BUYER.MARKETPLACE}>
+                <button className="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
+                  <ShoppingCartIcon className="w-6 h-6 text-gray-700" />
+                  {getTotalItems() > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {getTotalItems()}
+                    </span>
+                  )}
+                </button>
+              </Link>
               <Button variant="danger" onClick={handleLogout}>
                 Cerrar Sesión
               </Button>
@@ -56,7 +67,23 @@ export const BuyerDashboard: React.FC = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <Link to={ROUTES.BUYER.MARKETPLACE}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                <div className="text-center py-8">
+                  <div className="text-green-600 mb-4">
+                    <ShoppingBagIcon className="w-16 h-16 mx-auto" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    Marketplace
+                  </h3>
+                  <p className="text-gray-600">
+                    Explora y compra productos agrícolas
+                  </p>
+                </div>
+              </Card>
+            </Link>
+
             <Link to={ROUTES.SHOPPING_ASSISTANT}>
               <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="text-center py-8">

@@ -18,6 +18,7 @@ const StoreDashboard = React.lazy(() => import('./pages/store/StoreDashboard'));
 const StoreOverview = React.lazy(() => import('./pages/store/StoreOverview'));
 const StoreInputs = React.lazy(() => import('./pages/store/StoreInputs'));
 const BuyerDashboard = React.lazy(() => import('./pages/buyer/BuyerDashboard'));
+const BuyerMarketplace = React.lazy(() => import('./pages/buyer/BuyerMarketplace'));
 const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard'));
 const MarketplacePage = React.lazy(() => import('./pages/public/MarketplacePage'));
 const PriceComparatorPage = React.lazy(() => import('./pages/public/PriceComparatorPage'));
@@ -143,6 +144,14 @@ const App: React.FC = () => {
           element={
             <ProtectedRoute allowedRoles={[USER_ROLES.BUYER]}>
               <BuyerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.BUYER.MARKETPLACE}
+          element={
+            <ProtectedRoute allowedRoles={[USER_ROLES.BUYER]}>
+              <BuyerMarketplace />
             </ProtectedRoute>
           }
         />
