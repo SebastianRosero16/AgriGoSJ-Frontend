@@ -155,6 +155,8 @@ export interface Product {
   imageUrl?: string;
   farmerId?: number;
   farmerName?: string;
+  active?: boolean; // Para soft delete
+  deleted?: boolean; // Para soft delete
   createdAt?: string;
   updatedAt?: string;
 }
