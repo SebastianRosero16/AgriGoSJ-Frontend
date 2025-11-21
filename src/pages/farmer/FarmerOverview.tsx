@@ -44,8 +44,8 @@ export const FarmerOverview: React.FC = () => {
       try {
         const crops = await farmerService.getCrops();
         if (Array.isArray(crops)) {
-          // Consideramos "activo" cualquier cultivo que no esté en etapa HARVEST
-          activeCropsCount = crops.filter(c => c.stage !== 'HARVEST').length;
+          // Contar todos los cultivos registrados
+          activeCropsCount = crops.length;
         }
       } catch (err) {
         console.warn('No se pudieron obtener cultivos para estadísticas:', err);
