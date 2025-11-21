@@ -140,6 +140,12 @@ export const FarmerProducts: React.FC = () => {
       toast.error('La categoría debe tener al menos 2 caracteres');
       return false;
     }
+    // Validar que la categoría solo contenga letras y espacios
+    const categoryPattern = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\-]+$/;
+    if (!categoryPattern.test(formData.category.trim())) {
+      toast.error('La categoría solo puede contener letras y espacios');
+      return false;
+    }
 
     // Validar precio
     if (!formData.price || formData.price.trim() === '') {
@@ -331,6 +337,12 @@ export const FarmerProducts: React.FC = () => {
       }
       setFormData(prev => ({ ...prev, [name]: value }));
     } else if (name === 'category') {
+      // Solo permitir letras, espacios, guiones y tildes (sin números)
+      const categoryPattern = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\-]*$/;
+      if (!categoryPattern.test(value)) {
+        toast.warning('La categoría solo puede contener letras y espacios');
+        return;
+      }
       // Limitar longitud de la categoría
       if (value.length > 50) {
         return;
@@ -422,7 +434,8 @@ export const FarmerProducts: React.FC = () => {
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-                  placeholder="Ej: Verduras"
+                  placeholder="Ej: Verduras, Frutas, Cereales"
+                  helperText="Solo letras y espacios"
                   required
                 />
                 <Input
