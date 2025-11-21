@@ -35,12 +35,36 @@ export const BuyerMarketplace: React.FC = () => {
   const loadProducts = async () => {
     setIsLoading(true);
     try {
+      console.log('🔍 Cargando productos del marketplace...');
       const prods = await marketplaceService.getProducts();
+      console.log('📦 Productos recibidos:', prods);
+      console.log('📊 Cantidad de productos:', prods?.length || 0);
+      
+      if (!prods || prods.length === 0) {
+        console.warn('⚠️ No se recibieron productos del backend');
+        toast.info('No hay productos disponibles en este momento');
+      }
+      
       setItems(Array.isArray(prods) ? prods : []);
-    } catch (err) {
-      console.warn('Error loading products:', err);
+    } catch (err: any) {
+      console.error('❌ Error loading products:', err);
+      console.error('Error details:', {
+        message: err?.message,
+        status: err?.status,
+        response: err?.response
+      });
       setItems([]);
-      toast.error('Error al cargar productos');
+      
+      let errorMessage = 'Error al cargar productos';
+      if (err?.message?.includes('Network Error')) {
+        errorMessage = 'No se puede conectar con el servidor. Verifica que el backend esté corriendo.';
+      } else if (err?.status === 404) {
+        errorMessage = 'Endpoint de productos no encontrado. Verifica la configuración del backend.';
+      } else if (err?.status === 401 || err?.status === 403) {
+        errorMessage = 'No tienes permisos para ver los productos.';
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

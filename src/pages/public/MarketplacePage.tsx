@@ -35,18 +35,28 @@ export const MarketplacePage: React.FC = () => {
       setIsLoading(true);
       try {
         if (user?.role === 'FARMER') {
+          console.log('👨‍🌾 Usuario es agricultor, cargando insumos...');
           setCategory('inputs');
           const ins = await storeService.getInputsPublic();
+          console.log('📦 Insumos recibidos:', ins?.length || 0);
           setItems(Array.isArray(ins) ? ins : []);
         } else {
-          // Default to marketplace products
+          console.log('🛒 Cargando productos del marketplace...');
           setCategory('products');
           const prods = await marketplaceService.getProducts();
+          console.log('📦 Productos recibidos:', prods?.length || 0);
+          console.log('Productos:', prods);
           setItems(Array.isArray(prods) ? prods : []);
         }
-      } catch (err) {
-        console.warn('Error loading marketplace items:', err);
+      } catch (err: any) {
+        console.error('❌ Error loading marketplace items:', err);
+        console.error('Error details:', {
+          message: err?.message,
+          status: err?.status,
+          response: err?.response
+        });
         setItems([]);
+        toast.error('Error al cargar productos');
       } finally {
         setIsLoading(false);
       }
