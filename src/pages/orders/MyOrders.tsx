@@ -3,7 +3,7 @@ import { Card, Loading, Button } from '@/components/ui';
 import { orderService } from '@/api';
 import type { Order } from '@/types';
 import { formatCurrencyInteger } from '@/utils/format';
-import { useNavigate } from 'react-router-dom';
+
 
 const statusBadge = (status: string) => {
   switch (status) {
@@ -39,7 +39,8 @@ const translateStatus = (status: string) => {
 const MyOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     loadOrders();
@@ -55,6 +56,26 @@ const MyOrders: React.FC = () => {
       setOrders([]);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleViewOrder = (order: Order) => {
+    setSelectedOrder(order);
+    setShowDetails(true);
+  };
+
+  const handleDeleteOrder = async (orderNumber: string) => {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta orden?')) {
+      return;
+    }
+    
+    try {
+      await orderService.cancelOrder(orderNumber);
+      // Recargar órdenes después de eliminar
+      await loadOrders();
+    } catch (err) {
+      console.error('Error al eliminar orden:', err);
+      alert('No se pudo eliminar la orden');
     }
   };
 
@@ -88,12 +109,80 @@ const MyOrders: React.FC = () => {
                   <div className={`px-3 py-1 rounded-full text-sm font-medium ${statusBadge(o.status)}`}>{translateStatus(o.status)}</div>
                   <div className="text-xl font-bold text-primary-600 mt-2">{formatCurrencyInteger(o.total)}</div>
                   <div className="mt-3 flex gap-2 justify-end">
-                    <Button variant="secondary" onClick={() => navigate(`/orders/${o.orderNumber}`)}>Ver</Button>
+                    <Button variant="secondary" onClick={() => handleViewOrder(o)}>Ver</Button>
+                    <Button variant="danger" onClick={() => handleDeleteOrder(o.orderNumber)}>Eliminar</Button>
                   </div>
                 </div>
               </div>
             </Card>
           ))}
+        </div>
+      )}
+
+      {/* Modal de detalles de la orden */}
+      {showDetails && selectedOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900">Detalles de la Orden</h3>
+                <p className="text-gray-600">{selectedOrder.orderNumber}</p>
+              </div>
+              <button onClick={() => setShowDetails(false)} className="text-gray-400 hover:text-gray-600">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500">Estado</p>
+                  <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${statusBadge(selectedOrder.status)}`}>
+                    {translateStatus(selectedOrder.status)}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Total</p>
+                  <p className="text-xl font-bold text-primary-600">{formatCurrencyInteger(selectedOrder.total)}</p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm text-gray-500">Fecha de creación</p>
+                <p className="text-gray-900">{new Date(selectedOrder.createdAt).toLocaleString()}</p>
+              </div>
+
+              {selectedOrder.items && selectedOrder.items.length > 0 && (
+                <div>
+                  <p className="text-sm text-gray-500 mb-2">Productos</p>
+                  <div className="space-y-2">
+                    {selectedOrder.items.map((item: any, index: number) => (
+                      <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                        <div>
+                          <p className="font-medium text-gray-900">{item.productName || `Producto ID: ${item.productId}`}</p>
+                          <p className="text-sm text-gray-600">Cantidad: {item.quantity}</p>
+                        </div>
+                        <p className="font-semibold text-gray-900">{formatCurrencyInteger(item.price * item.quantity)}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {selectedOrder.shippingAddress && (
+                <div>
+                  <p className="text-sm text-gray-500">Dirección de envío</p>
+                  <p className="text-gray-900">{selectedOrder.shippingAddress}</p>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <Button variant="secondary" onClick={() => setShowDetails(false)}>Cerrar</Button>
+            </div>
+          </div>
         </div>
       )}
     </div>
