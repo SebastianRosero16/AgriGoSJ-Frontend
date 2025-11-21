@@ -116,14 +116,20 @@ export const MarketplacePage: React.FC = () => {
               placeholder="Buscar productos..."
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
-              <option value="">Todas las categorías</option>
-              <option value="crops">Cultivos</option>
-              <option value="inputs">Insumos</option>
-            </select>
+            {user?.role === 'FARMER' ? (
+              <div className="px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-700 font-medium">
+                Insumos
+              </div>
+            ) : (
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+                <option value="">Todas las categorías</option>
+                <option value="crops">Cultivos</option>
+                <option value="inputs">Insumos</option>
+              </select>
+            )}
             <Button variant="primary" fullWidth onClick={async () => {
               setIsLoading(true);
               try {
