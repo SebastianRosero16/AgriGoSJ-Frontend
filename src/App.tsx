@@ -118,6 +118,7 @@ const App: React.FC = () => {
           <Route path="crops" element={<FarmerCrops />} />
           <Route path="products" element={<FarmerProducts />} />
           <Route path="ai" element={<FarmerAI />} />
+          <Route path="orders" element={<MyOrders />} />
         </Route>
 
         {/* Store Routes */}

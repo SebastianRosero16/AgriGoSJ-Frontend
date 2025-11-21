@@ -67,6 +67,7 @@ export const ROUTES = {
     CROPS: '/farmer/crops',
     AI_RECOMMENDATIONS: '/farmer/ai',
     PRODUCTS: '/farmer/products',
+    ORDERS: '/farmer/orders',
   },
   
   // Store routes

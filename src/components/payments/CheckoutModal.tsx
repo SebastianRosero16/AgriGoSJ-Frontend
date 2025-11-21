@@ -5,6 +5,8 @@ import { Elements, CardElement, useStripe, useElements } from '@stripe/react-str
 import { Button, Input } from '@/components/ui';
 import { orderService, paymentService } from '@/api';
 import { useAuth } from '@/hooks';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/utils/constants';
 
 interface CheckoutModalProps {
   open: boolean;
@@ -198,6 +200,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose, item }) =>
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [qtyError, setQtyError] = useState<string>('');
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const stripeKeyAvailable = Boolean(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
   
@@ -254,6 +258,14 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose, item }) =>
   const handleCloseSuccess = () => {
     setShowSuccess(false);
     onClose();
+    // Redirigir a Mis Órdenes según el rol del usuario
+    if (user?.role === 'FARMER') {
+      navigate(ROUTES.FARMER.ORDERS);
+    } else if (user?.role === 'BUYER') {
+      navigate(ROUTES.BUYER.ORDERS);
+    } else if (user?.role === 'STORE') {
+      navigate(ROUTES.STORE.ORDERS);
+    }
   };
 
   if (!open) return null;
