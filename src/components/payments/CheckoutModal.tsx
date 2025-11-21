@@ -25,6 +25,14 @@ const CheckoutForm: React.FC<{ item: any; qty: number; onDone: () => void; onErr
   const [address, setAddress] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({ address: '', phone: '' });
+  const [isStripeReady, setIsStripeReady] = useState(false);
+
+  // Verificar cuando Stripe está listo
+  React.useEffect(() => {
+    if (stripe && elements) {
+      setIsStripeReady(true);
+    }
+  }, [stripe, elements]);
 
   const validateFields = () => {
     const errors = { address: '', phone: '' };
@@ -185,8 +193,36 @@ const CheckoutForm: React.FC<{ item: any; qty: number; onDone: () => void; onErr
         )}
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Tarjeta *</label>
-        <div className="p-3 border rounded bg-white"><CardElement options={{ style: { base: { fontSize: '16px' } } }} /></div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Tarjeta *</label>
+        {!isStripeReady ? (
+          <div className="p-4 border-2 border-gray-300 rounded-lg bg-gray-50 animate-pulse">
+            <div className="h-6 bg-gray-200 rounded"></div>
+          </div>
+        ) : (
+          <div className="p-4 border-2 border-gray-300 rounded-lg bg-white hover:border-primary-500 transition-colors">
+            <CardElement 
+              options={{ 
+                style: { 
+                  base: { 
+                    fontSize: '16px',
+                    color: '#424770',
+                    '::placeholder': {
+                      color: '#aab7c4',
+                    },
+                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                  },
+                  invalid: {
+                    color: '#9e2146',
+                  },
+                },
+                hidePostalCode: true,
+              }} 
+            />
+          </div>
+        )}
+        <p className="mt-1 text-xs text-gray-500">
+          {isStripeReady ? 'Ingresa los datos de tu tarjeta de crédito o débito' : 'Cargando Stripe...'}
+        </p>
       </div>
       <div className="flex gap-2">
         <Button variant="primary" onClick={handlePay} disabled={isProcessing || !stripe}>{isProcessing ? 'Procesando...' : 'Pagar con Stripe'}</Button>

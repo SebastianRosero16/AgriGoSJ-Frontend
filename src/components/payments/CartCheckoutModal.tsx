@@ -25,6 +25,14 @@ const CheckoutForm: React.FC<{ onDone: () => void; onError: (err: any) => void }
   const [address, setAddress] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({ address: '', phone: '' });
+  const [isStripeReady, setIsStripeReady] = useState(false);
+
+  // Verificar cuando Stripe está listo
+  React.useEffect(() => {
+    if (stripe && elements) {
+      setIsStripeReady(true);
+    }
+  }, [stripe, elements]);
 
   const validateFields = () => {
     const errors = { address: '', phone: '' };
@@ -159,10 +167,36 @@ const CheckoutForm: React.FC<{ onDone: () => void; onError: (err: any) => void }
         )}
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Tarjeta *</label>
-        <div className="p-3 border rounded bg-white">
-          <CardElement options={{ style: { base: { fontSize: '16px' } } }} />
-        </div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Tarjeta *</label>
+        {!isStripeReady ? (
+          <div className="p-4 border-2 border-gray-300 rounded-lg bg-gray-50 animate-pulse">
+            <div className="h-6 bg-gray-200 rounded"></div>
+          </div>
+        ) : (
+          <div className="p-4 border-2 border-gray-300 rounded-lg bg-white hover:border-primary-500 transition-colors">
+            <CardElement 
+              options={{ 
+                style: { 
+                  base: { 
+                    fontSize: '16px',
+                    color: '#424770',
+                    '::placeholder': {
+                      color: '#aab7c4',
+                    },
+                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                  },
+                  invalid: {
+                    color: '#9e2146',
+                  },
+                },
+                hidePostalCode: true,
+              }} 
+            />
+          </div>
+        )}
+        <p className="mt-1 text-xs text-gray-500">
+          {isStripeReady ? 'Ingresa los datos de tu tarjeta de crédito o débito' : 'Cargando Stripe...'}
+        </p>
       </div>
       
       {/* Resumen */}
@@ -259,8 +293,31 @@ const CartCheckoutModal: React.FC<CartCheckoutModalProps> = ({ open, onClose }) 
         <h3 className="text-xl font-bold mb-4">Finalizar Compra</h3>
         
         {!stripeKeyAvailable && (
-          <div className="p-3 mb-4 bg-yellow-50 text-yellow-700 rounded">
-            No se ha configurado Stripe. Configura VITE_STRIPE_PUBLISHABLE_KEY.
+          <div className="p-4 mb-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 rounded">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium">Stripe no configurado</h3>
+                <div className="mt-2 text-sm">
+                  <p>Para procesar pagos, necesitas configurar tu clave de Stripe.</p>
+                  <p className="mt-1">
+                    <strong>Pasos:</strong>
+                  </p>
+                  <ol className="list-decimal ml-4 mt-1">
+                    <li>Abre el archivo <code className="bg-yellow-100 px-1 rounded">.env</code></li>
+                    <li>Agrega: <code className="bg-yellow-100 px-1 rounded">VITE_STRIPE_PUBLISHABLE_KEY=tu_clave</code></li>
+                    <li>Reinicia el servidor</li>
+                  </ol>
+                  <p className="mt-2">
+                    <a href="/CONFIGURAR_STRIPE.md" className="underline font-medium">Ver guía completa →</a>
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
