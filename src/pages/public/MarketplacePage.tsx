@@ -6,22 +6,28 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Button, Loading } from '@/components/ui';
+import { CartDrawer } from '@/components/ui/CartDrawer';
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 import { ROUTES, APP_INFO } from '@/utils/constants';
-import { useAuth } from '@/hooks';
+import { useAuth, useCart } from '@/hooks';
 import { useEffect, useState } from 'react';
 import { marketplaceService, storeService } from '@/api';
 import { formatCurrencyInteger } from '@/utils/format';
 import CheckoutModal from '@/components/payments/CheckoutModal';
+import CartCheckoutModal from '@/components/payments/CartCheckoutModal';
+import { toast } from 'react-toastify';
 
 export const MarketplacePage: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
+  const { addItem, getTotalItems } = useCart();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('');
   const [items, setItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [checkoutItem, setCheckoutItem] = useState<any | null>(null);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [cartCheckoutOpen, setCartCheckoutOpen] = useState(false);
 
   useEffect(() => {
     // If user is farmer, default to 'inputs' and load public inputs
@@ -65,6 +71,19 @@ export const MarketplacePage: React.FC = () => {
               <Link to={ROUTES.PRICE_COMPARATOR}>
                 <Button variant="outline">Comparar Precios</Button>
               </Link>
+              {isAuthenticated && (
+                <button
+                  onClick={() => setCartOpen(true)}
+                  className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <ShoppingCartIcon className="w-6 h-6 text-gray-700" />
+                  {getTotalItems() > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {getTotalItems()}
+                    </span>
+                  )}
+                </button>
+              )}
               {isAuthenticated && user ? (
                 <Link to={ROUTES.HOME}>
                   <Button variant="primary">Mi Panel</Button>
@@ -155,15 +174,33 @@ export const MarketplacePage: React.FC = () => {
                   <p className="text-sm text-gray-600 mt-1">{it.storeName || it.vendorName || ''}</p>
                   <div className="mt-4 flex items-center justify-between">
                     <div className="text-lg font-bold text-gray-900">{formatCurrencyInteger(Number(it.price || it.unitPrice || 0))}</div>
-                    <div>
-                      <Button size="sm" onClick={() => {
-                        if (user?.role === 'FARMER') {
-                          setCheckoutItem(it);
-                          setCheckoutOpen(true);
-                        } else {
-                          alert('Funcionalidad de compra disponible solo para agricultores.');
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" onClick={() => {
+                        if (!isAuthenticated) {
+                          toast.warning('Debes iniciar sesión para agregar productos');
+                          return;
                         }
-                      }} disabled={user?.role === 'FARMER' ? (category !== 'inputs') : false}>
+                        addItem({
+                          id: it.id,
+                          name: it.name || it.title,
+                          price: Number(it.price || it.unitPrice || 0),
+                          stock: it.stock || it.availableStock || 100,
+                          unit: it.unit,
+                          storeName: it.storeName,
+                          vendorName: it.vendorName,
+                        }, 1);
+                        toast.success('Producto agregado al carrito');
+                      }}>
+                        + Carrito
+                      </Button>
+                      <Button size="sm" onClick={() => {
+                        if (!isAuthenticated) {
+                          toast.warning('Debes iniciar sesión para comprar productos');
+                          return;
+                        }
+                        setCheckoutItem(it);
+                        setCheckoutOpen(true);
+                      }}>
                         Comprar
                       </Button>
                     </div>
@@ -176,6 +213,20 @@ export const MarketplacePage: React.FC = () => {
         {checkoutItem && (
           <CheckoutModal open={checkoutOpen} onClose={() => setCheckoutOpen(false)} item={checkoutItem} />
         )}
+        
+        <CartDrawer 
+          open={cartOpen} 
+          onClose={() => setCartOpen(false)}
+          onCheckout={() => {
+            setCartOpen(false);
+            setCartCheckoutOpen(true);
+          }}
+        />
+        
+        <CartCheckoutModal 
+          open={cartCheckoutOpen}
+          onClose={() => setCartCheckoutOpen(false)}
+        />
       </div>
     </div>
   );

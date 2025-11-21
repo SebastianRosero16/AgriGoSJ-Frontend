@@ -9,3 +9,4 @@ export { useStack } from './useStack';
 export { useLocalStorage } from './useLocalStorage';
 export { useDebounce } from './useDebounce';
 export { useCache } from './useCache';
+export { useCart } from './useCart';

@@ -18,6 +18,8 @@ AgriGoSJ es una plataforma web moderna para conectar agricultores, agrotiendas y
 - **Axios** - Cliente HTTP
 - **React Hook Form + Zod** - Validación de formularios
 - **React Toastify** - Notificaciones
+- **Stripe** - Pasarela de pagos
+- **Zustand** - Gestión de estado global
 
 ## Estructuras de Datos Implementadas
 
@@ -45,6 +47,35 @@ AgriGoSJ es una plataforma web moderna para conectar agricultores, agrotiendas y
 - ✅ Rutas protegidas por rol (FARMER, STORE, BUYER, ADMIN)
 - ✅ Validaciones estrictas anti-espacios múltiples
 
+## 🛒 Sistema de Compras
+
+### Características Principales
+- ✅ **Compra sin restricciones**: Cualquier usuario autenticado puede comprar cualquier producto
+- ✅ **Carrito de compras**: Sistema completo con persistencia en localStorage
+- ✅ **Dos formas de comprar**:
+  - Compra rápida (un producto)
+  - Compra múltiple (carrito con varios productos)
+- ✅ **Pago con Stripe**: Integración completa y segura
+- ✅ **Validaciones en tiempo real**: Dirección, teléfono, cantidad
+
+### Documentación del Sistema de Compras
+- 📖 [INICIO_RAPIDO.md](./INICIO_RAPIDO.md) - Guía de inicio en 5 minutos
+- 📖 [RESUMEN_EJECUTIVO.md](./RESUMEN_EJECUTIVO.md) - Visión general del sistema
+- 📖 [COMPRAS_README.md](./COMPRAS_README.md) - Documentación técnica completa
+- 📖 [MEJORAS_IMPLEMENTADAS.md](./MEJORAS_IMPLEMENTADAS.md) - Detalle de cambios
+- 📖 [GUIA_PRUEBAS.md](./GUIA_PRUEBAS.md) - Checklist de pruebas
+
+### Configuración de Stripe
+```env
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_tu_clave_aqui
+```
+
+### Tarjetas de Prueba
+```
+Éxito: 4242 4242 4242 4242
+Falla: 4000 0000 0000 0002
+```
+
 ## Validaciones Implementadas
 
 - Sin campos vacíos
@@ -52,6 +83,9 @@ AgriGoSJ es una plataforma web moderna para conectar agricultores, agrotiendas y
 - Validación de email
 - Contraseñas seguras (8+ caracteres, mayúsculas, minúsculas, números)
 - Usernames alfanuméricos
+- Validación de dirección de envío (mínimo 10 caracteres)
+- Validación de teléfono (7-10 dígitos)
+- Validación de cantidad de productos (1-100 unidades)
 
 ## Roles del Sistema
 
