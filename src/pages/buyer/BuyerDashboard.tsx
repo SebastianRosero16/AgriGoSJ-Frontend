@@ -8,7 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks';
 import { Button, Card } from '@/components/ui';
-import { ShoppingCartIcon, CurrencyDollarIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { SparklesIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import { ROUTES, APP_INFO } from '@/utils/constants';
 
 export const BuyerDashboard: React.FC = () => {
@@ -56,39 +56,7 @@ export const BuyerDashboard: React.FC = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <Link to={ROUTES.MARKETPLACE}>
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                <div className="text-center py-8">
-                  <div className="text-primary-600 mb-4">
-                    <ShoppingCartIcon className="w-16 h-16 mx-auto" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    Explorar Marketplace
-                  </h3>
-                  <p className="text-gray-600">
-                    Descubre productos agrícolas y agrotiendas
-                  </p>
-                </div>
-              </Card>
-            </Link>
-
-            <Link to={ROUTES.PRICE_COMPARATOR}>
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                <div className="text-center py-8">
-                  <div className="text-green-700 mb-4">
-                    <CurrencyDollarIcon className="w-16 h-16 mx-auto" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    Comparar Precios
-                  </h3>
-                  <p className="text-gray-600">
-                    Encuentra los mejores precios del mercado
-                  </p>
-                </div>
-              </Card>
-            </Link>
-
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
             <Link to={ROUTES.SHOPPING_ASSISTANT}>
               <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="text-center py-8">
@@ -100,6 +68,22 @@ export const BuyerDashboard: React.FC = () => {
                   </h3>
                   <p className="text-gray-600">
                     Busca productos con lenguaje natural
+                  </p>
+                </div>
+              </Card>
+            </Link>
+
+            <Link to={ROUTES.BUYER.ORDERS}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                <div className="text-center py-8">
+                  <div className="text-blue-600 mb-4">
+                    <ClipboardDocumentListIcon className="w-16 h-16 mx-auto" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    Mis Órdenes
+                  </h3>
+                  <p className="text-gray-600">
+                    Historial y estado de tus pedidos
                   </p>
                 </div>
               </Card>
