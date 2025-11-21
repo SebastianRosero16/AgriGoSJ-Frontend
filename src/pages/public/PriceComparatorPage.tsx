@@ -3,15 +3,67 @@
  * Compare prices across different stores
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, Button } from '@/components/ui';
+import { Card, Button, Loading } from '@/components/ui';
 import { CurrencyDollarIcon, ChartBarIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { ROUTES, APP_INFO } from '@/utils/constants';
 import { useAuth } from '@/hooks';
+import { storeService } from '@/api';
+import { formatCurrencyInteger } from '@/utils/format';
 
 export const PriceComparatorPage: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [allInputs, setAllInputs] = useState<any[]>([]);
+  const [filteredInputs, setFilteredInputs] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+
+  useEffect(() => {
+    loadInputs();
+  }, []);
+
+  const loadInputs = async () => {
+    try {
+      setIsLoading(true);
+      const data = await storeService.getInputsPublic();
+      setAllInputs(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('Error al cargar insumos:', err);
+      setAllInputs([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSearch = () => {
+    setHasSearched(true);
+    if (!searchQuery.trim()) {
+      setFilteredInputs(allInputs);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const results = allInputs.filter(input => 
+      input.name?.toLowerCase().includes(query) ||
+      input.type?.toLowerCase().includes(query) ||
+      input.description?.toLowerCase().includes(query)
+    );
+    setFilteredInputs(results);
+  };
+
+  const groupByProduct = (inputs: any[]) => {
+    const grouped: { [key: string]: any[] } = {};
+    inputs.forEach(input => {
+      const productName = input.name || 'Sin nombre';
+      if (!grouped[productName]) {
+        grouped[productName] = [];
+      }
+      grouped[productName].push(input);
+    });
+    return grouped;
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -55,29 +107,83 @@ export const PriceComparatorPage: React.FC = () => {
           <div className="flex flex-col md:flex-row gap-4">
             <input
               type="text"
-              placeholder="Buscar producto para comparar..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              placeholder="Buscar insumo para comparar (ej: fertilizante, semilla)..."
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
-            <Button variant="primary" className="md:w-auto">
+            <Button variant="primary" className="md:w-auto" onClick={handleSearch}>
               Comparar Precios
             </Button>
           </div>
         </Card>
 
         {/* Comparison Results */}
-        <div className="space-y-6">
-          {/* Empty State */}
+        {isLoading ? (
+          <Loading />
+        ) : hasSearched ? (
+          filteredInputs.length === 0 ? (
+            <Card>
+              <div className="text-center py-8">
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  No se encontraron resultados
+                </h3>
+                <p className="text-gray-600">
+                  Intenta con otro término de búsqueda
+                </p>
+              </div>
+            </Card>
+          ) : (
+            <div className="space-y-6">
+              {Object.entries(groupByProduct(filteredInputs)).map(([productName, items]) => (
+                <Card key={productName}>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">{productName}</h3>
+                  <div className="space-y-3">
+                    {items.sort((a, b) => a.price - b.price).map((item, index) => (
+                      <div key={item.id} className={`flex justify-between items-center p-4 rounded-lg ${index === 0 ? 'bg-green-50 border-2 border-green-500' : 'bg-gray-50'}`}>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <p className="font-semibold text-gray-900">{item.storeName || 'Tienda'}</p>
+                            {index === 0 && (
+                              <span className="px-2 py-1 bg-green-500 text-white text-xs rounded-full">Mejor Precio</span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600">{item.type || 'Insumo'}</p>
+                          {item.stock > 0 && (
+                            <p className="text-xs text-gray-500">Stock: {item.stock} {item.unit || 'unidades'}</p>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-primary-600">{formatCurrencyInteger(item.price)}</p>
+                          <p className="text-sm text-gray-500">por {item.unit || 'unidad'}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {items.length > 1 && (
+                    <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                      <p className="text-sm text-blue-800">
+                        💡 Ahorro máximo: <span className="font-bold">{formatCurrencyInteger(items[items.length - 1].price - items[0].price)}</span> comprando en {items[0].storeName || 'la tienda más económica'}
+                      </p>
+                    </div>
+                  )}
+                </Card>
+              ))}
+            </div>
+          )
+        ) : (
           <Card>
             <div className="text-center py-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Busca un producto para comparar
+                Busca un insumo para comparar
               </h3>
               <p className="text-gray-600">
-                Ingresa el nombre de un producto para ver las mejores ofertas
+                Ingresa el nombre de un insumo agrícola para ver las mejores ofertas
               </p>
             </div>
           </Card>
-        </div>
+        )}
 
         {/* Info Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
