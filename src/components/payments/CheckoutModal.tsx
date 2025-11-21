@@ -64,6 +64,12 @@ const CheckoutForm: React.FC<{ item: any; qty: number; onDone: () => void; onErr
   const handlePay = async () => {
     if (!stripe || !elements) return;
     
+    // Validar cantidad
+    if (!qty || qty < 1) {
+      onError(new Error('Debes ingresar una cantidad válida'));
+      return;
+    }
+    
     // Validar campos
     if (!validateFields()) {
       return;
@@ -159,10 +165,15 @@ const CheckoutForm: React.FC<{ item: any; qty: number; onDone: () => void; onErr
       <div>
         <label className="block text-sm font-medium text-gray-700">Teléfono *</label>
         <Input 
+          type="tel"
           value={phone} 
           onChange={(e:any)=>{
-            setPhone(e.target.value);
-            setFieldErrors(prev => ({ ...prev, phone: '' }));
+            const value = e.target.value;
+            // Solo permitir números
+            if (value === '' || /^\d+$/.test(value)) {
+              setPhone(value);
+              setFieldErrors(prev => ({ ...prev, phone: '' }));
+            }
           }} 
           placeholder="Teléfono (solo números)" 
           maxLength={10}
@@ -183,9 +194,10 @@ const CheckoutForm: React.FC<{ item: any; qty: number; onDone: () => void; onErr
 };
 
 const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose, item, initialQty = 1 }) => {
-  const [qty, setQty] = useState<number | string>(initialQty);
+  const [qty, setQty] = useState<number | string>('');
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [qtyError, setQtyError] = useState<string>('');
 
   const stripeKeyAvailable = Boolean(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
   
@@ -196,6 +208,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose, item, init
     // Permitir campo vacío temporalmente mientras el usuario escribe
     if (value === '') {
       setQty('');
+      setQtyError('');
       return;
     }
     
@@ -208,20 +221,23 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose, item, init
     
     if (numValue < 1) {
       setQty(1);
+      setQtyError('');
     } else if (numValue > maxQty) {
       setQty(maxQty);
-      setError(`La cantidad máxima disponible es ${maxQty}`);
-      setTimeout(() => setError(null), 3000);
+      setQtyError(`La cantidad máxima disponible es ${maxQty}`);
+      setTimeout(() => setQtyError(''), 3000);
     } else {
       setQty(numValue);
-      setError(null);
+      setQtyError('');
     }
   };
 
   const handleQtyBlur = () => {
-    // Cuando el usuario sale del campo, asegurar que hay un valor válido
+    // Cuando el usuario sale del campo, validar que hay un valor
     if (qty === '' || Number(qty) < 1 || isNaN(Number(qty))) {
-      setQty(1);
+      setQtyError('Debes ingresar una cantidad válida (1-100)');
+    } else {
+      setQtyError('');
     }
   };
 
@@ -284,9 +300,14 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose, item, init
               value={qty} 
               onChange={(e)=>handleQtyChange(e.target.value)}
               onBlur={handleQtyBlur}
+              placeholder="Ingresa la cantidad (1-100)"
               className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary-500" 
             />
-            <p className="mt-1 text-xs text-gray-500">Máximo: {maxQty} unidades</p>
+            {qtyError ? (
+              <p className="mt-1 text-sm text-red-600">{qtyError}</p>
+            ) : (
+              <p className="mt-1 text-xs text-gray-500">Máximo: {maxQty} unidades</p>
+            )}
           </div>
 
           <Elements stripe={stripePromise}>
