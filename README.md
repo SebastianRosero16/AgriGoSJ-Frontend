@@ -1,8 +1,5 @@
 # AgriGoSJ - Frontend
 
-Plataforma Agrícola Inteligente de San José
-
-**Backend API**: https://web-production-a81779.up.railway.app
 
 ## Descripción
 
