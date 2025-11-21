@@ -11,6 +11,7 @@ import { useAuth } from '@/hooks';
 import { aiService } from '@/api';
 import { formatCurrencyInteger } from '@/utils/format';
 import { SparklesIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import CheckoutModal from '@/components/payments/CheckoutModal';
 
 interface Message {
   id: string;
@@ -33,7 +34,7 @@ export const ShoppingAssistantPage: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -89,8 +90,16 @@ export const ShoppingAssistantPage: React.FC = () => {
       alert('Debes iniciar sesión para comprar productos');
       return;
     }
-    setSelectedProduct(product);
-    setShowPurchaseModal(true);
+    // Convertir el producto del asistente al formato que espera CheckoutModal
+    const productForCheckout = {
+      id: product.productId,
+      name: product.productName,
+      price: product.price,
+      unit: product.unit,
+      stock: product.availableStock,
+    };
+    setSelectedProduct(productForCheckout);
+    setShowCheckout(true);
   };
 
   return (
@@ -212,24 +221,13 @@ export const ShoppingAssistantPage: React.FC = () => {
         </Card>
       </div>
 
-      {/* Purchase Modal - Placeholder for now */}
-      {showPurchaseModal && selectedProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-bold mb-4">Compra Rápida</h3>
-            <p className="text-gray-600 mb-4">
-              Funcionalidad de compra rápida en desarrollo. Por ahora, ve al Marketplace para comprar.
-            </p>
-            <div className="flex gap-2">
-              <Button variant="secondary" onClick={() => setShowPurchaseModal(false)}>
-                Cerrar
-              </Button>
-              <Link to={ROUTES.MARKETPLACE}>
-                <Button variant="primary">Ir al Marketplace</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
+      {/* Checkout Modal */}
+      {selectedProduct && (
+        <CheckoutModal 
+          open={showCheckout} 
+          onClose={() => setShowCheckout(false)} 
+          item={selectedProduct}
+        />
       )}
     </div>
   );
