@@ -50,7 +50,9 @@ const MyOrders: React.FC = () => {
     try {
       setIsLoading(true);
       const data = await orderService.getMyOrders();
-      setOrders(Array.isArray(data) ? data : []);
+      // Filtrar órdenes canceladas para que no aparezcan en la lista
+      const activeOrders = Array.isArray(data) ? data.filter(order => order.status !== 'CANCELLED') : [];
+      setOrders(activeOrders);
     } catch (err) {
       console.error('Error al cargar órdenes:', err);
       setOrders([]);
