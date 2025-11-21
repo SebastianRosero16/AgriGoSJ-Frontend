@@ -7,6 +7,17 @@ import { API_ENDPOINTS, STORAGE_KEYS } from '@/utils/constants';
 import type { AuthResponse, LoginRequest, RegisterRequest } from '@/types';
 
 /**
+ * Check Availability Response
+ */
+export interface CheckAvailabilityResponse {
+  available: boolean;
+  usernameAvailable: boolean;
+  emailAvailable: boolean;
+  message: string;
+  field?: 'username' | 'email';
+}
+
+/**
  * Validate Email Response
  */
 export interface ValidateEmailResponse {
@@ -93,6 +104,16 @@ class AuthService {
     } finally {
       httpClient.removeToken();
     }
+  }
+
+  /**
+   * Check if username and email are available
+   */
+  async checkAvailability(username: string, email: string): Promise<CheckAvailabilityResponse> {
+    return await httpClient.post<CheckAvailabilityResponse>(
+      API_ENDPOINTS.AUTH.CHECK_AVAILABILITY,
+      { username, email }
+    );
   }
 
   /**

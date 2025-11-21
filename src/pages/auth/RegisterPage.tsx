@@ -153,10 +153,40 @@ export const RegisterPage: React.FC = () => {
     if (!emailVerified) {
       setIsLoading(true);
       try {
-        // Step 1: Validate email with backend
-        const validation = await authService.validateEmail(formData.email);
+        // Step 1: Check if username and email are available
+        const availability = await authService.checkAvailability(
+          formData.username,
+          formData.email
+        );
         
-        console.log('Respuesta de validación:', validation);
+        console.log('Respuesta de disponibilidad:', availability);
+        
+        // If NOT available, show error and STOP
+        if (!availability.available) {
+          const errorMsg = availability.message || 'Usuario o email no disponible';
+          toast.error(errorMsg);
+          
+          // Set error in the appropriate field
+          if (availability.field === 'email') {
+            setErrors(prev => ({ ...prev, email: errorMsg }));
+          } else if (availability.field === 'username') {
+            setErrors(prev => ({ ...prev, username: errorMsg }));
+          } else {
+            // If both are taken, show in both fields
+            if (!availability.emailAvailable) {
+              setErrors(prev => ({ ...prev, email: 'Este correo electrónico ya está registrado' }));
+            }
+            if (!availability.usernameAvailable) {
+              setErrors(prev => ({ ...prev, username: 'Este nombre de usuario ya está registrado' }));
+            }
+          }
+          
+          setIsLoading(false);
+          return; // ⚠️ CRITICAL: Stop here if not available
+        }
+
+        // Step 2: Validate email format
+        const validation = await authService.validateEmail(formData.email);
         
         if (!validation.valid) {
           const errorMsg = validation.reason || 'Email inválido';
@@ -166,13 +196,13 @@ export const RegisterPage: React.FC = () => {
           return;
         }
 
-        // Step 2: Show verification component
-        toast.success('Email válido. Enviando código de verificación...');
+        // Step 3: Only if available and valid, show verification component
+        toast.success('Email válido. Preparando verificación...');
         setShowVerification(true);
         setIsLoading(false);
       } catch (error: any) {
         // Distinguish between network errors and validation errors
-        let errorMessage = 'Error al validar email';
+        let errorMessage = 'Error al validar datos';
         
         if (error?.message?.includes('Network Error') || error?.status === 0) {
           errorMessage = 'No se puede conectar con el servidor. Verifica que el backend esté corriendo.';

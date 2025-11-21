@@ -110,6 +110,7 @@ export const API_ENDPOINTS = {
     LOGIN: '/auth/login',
     LOGOUT: '/auth/logout',
     REFRESH: '/auth/refresh',
+    CHECK_AVAILABILITY: '/auth/check-availability',
     VALIDATE_EMAIL: '/auth/validate-email',
     SEND_VERIFICATION_CODE: '/auth/send-verification-code',
     VERIFY_CODE: '/auth/verify-code',
