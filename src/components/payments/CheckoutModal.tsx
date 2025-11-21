@@ -33,8 +33,17 @@ const CheckoutForm: React.FC<{ item: any; qty: number; onDone: () => void; onErr
     if (!trimmedAddress) {
       errors.address = 'La dirección es requerida';
       isValid = false;
-    } else if (trimmedAddress.length < 5) {
-      errors.address = 'La dirección debe tener al menos 5 caracteres';
+    } else if (trimmedAddress.length < 10) {
+      errors.address = 'La dirección debe tener al menos 10 caracteres';
+      isValid = false;
+    } else if (!/[a-zA-Z]/.test(trimmedAddress)) {
+      errors.address = 'La dirección debe contener letras';
+      isValid = false;
+    } else if (!/\d/.test(trimmedAddress)) {
+      errors.address = 'La dirección debe contener números (ej: Calle 10 #20-30)';
+      isValid = false;
+    } else if (/^[\s\d\-#]+$/.test(trimmedAddress)) {
+      errors.address = 'La dirección debe incluir el nombre de la calle o carrera';
       isValid = false;
     }
 
@@ -141,7 +150,7 @@ const CheckoutForm: React.FC<{ item: any; qty: number; onDone: () => void; onErr
             setAddress(e.target.value);
             setFieldErrors(prev => ({ ...prev, address: '' }));
           }} 
-          placeholder="Dirección de envío" 
+          placeholder="Ej: Calle 10 #20-30, Barrio Centro" 
         />
         {fieldErrors.address && (
           <p className="mt-1 text-sm text-red-600">{fieldErrors.address}</p>
@@ -174,7 +183,7 @@ const CheckoutForm: React.FC<{ item: any; qty: number; onDone: () => void; onErr
 };
 
 const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose, item, initialQty = 1 }) => {
-  const [qty, setQty] = useState(initialQty);
+  const [qty, setQty] = useState<number | string>(initialQty);
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -184,7 +193,19 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose, item, init
   const maxQty = Math.min(item?.stock || 100, 100);
 
   const handleQtyChange = (value: string) => {
-    const numValue = parseInt(value) || 1;
+    // Permitir campo vacío temporalmente mientras el usuario escribe
+    if (value === '') {
+      setQty('');
+      return;
+    }
+    
+    const numValue = parseInt(value);
+    
+    // Si no es un número válido, no hacer nada
+    if (isNaN(numValue)) {
+      return;
+    }
+    
     if (numValue < 1) {
       setQty(1);
     } else if (numValue > maxQty) {
@@ -194,6 +215,13 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose, item, init
     } else {
       setQty(numValue);
       setError(null);
+    }
+  };
+
+  const handleQtyBlur = () => {
+    // Cuando el usuario sale del campo, asegurar que hay un valor válido
+    if (qty === '' || Number(qty) < 1 || isNaN(Number(qty))) {
+      setQty(1);
     }
   };
 
@@ -254,14 +282,15 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose, item, init
               min={1} 
               max={maxQty}
               value={qty} 
-              onChange={(e)=>handleQtyChange(e.target.value)} 
+              onChange={(e)=>handleQtyChange(e.target.value)}
+              onBlur={handleQtyBlur}
               className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary-500" 
             />
             <p className="mt-1 text-xs text-gray-500">Máximo: {maxQty} unidades</p>
           </div>
 
           <Elements stripe={stripePromise}>
-            <CheckoutForm item={item} qty={qty} onDone={handleDone} onError={handleError} />
+            <CheckoutForm item={item} qty={Number(qty) || 1} onDone={handleDone} onError={handleError} />
           </Elements>
         </div>
         {error && <div className="mt-4 text-sm text-red-600">{error}</div>}
